@@ -1,5 +1,8 @@
-import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import '../Controls/Banco.dart';
+import '../Models/Pedido.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,10 +59,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int selectIndex = -1;
+  int selectIndex = 0;
+
+  List<pedido> teste = [
+    pedido(1, 1, 1, 1, 1, 'Teste', '123', 'Teste'),
+    pedido(2, 2, 2, 2, 2, 'Teste2', '123', 'Teste2'),
+    pedido(3, 3, 3, 3, 3, 'Teste3', '123', 'Teste3'),
+    pedido(4, 4, 4, 4, 4, 'Teste4', '123', 'Teste4')
+  ];
+
   @override
   Widget build(BuildContext context) {
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -71,7 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text(
           "MULTILIST",
-          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
         ),
       ),
       floatingActionButton: Padding(
@@ -89,7 +100,65 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.lightGreenAccent,
                   ),
                   child: IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.edit)),
+                      onPressed: () {
+                        if (selectIndex != -1) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleDialog(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: SizedBox(
+                                        width: 800,
+                                        height: 400,
+                                        child: DataTable(
+                                            headingTextStyle: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
+                                            dataTextStyle: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                            columns: const <DataColumn>[
+                                              DataColumn(label: Text('Seq')),
+                                              DataColumn(
+                                                  label: Text('Vol_Rom')),
+                                              DataColumn(
+                                                  label: Text('Vol_Exp')),
+                                              DataColumn(label: Text('Cont')),
+                                              DataColumn(label: Text('Caixa')),
+                                              DataColumn(label: Text('Origem')),
+                                              DataColumn(label: Text('Pedido')),
+                                              DataColumn(label: Text('Obs')),
+                                            ],
+                                            rows: <DataRow>[
+                                              DataRow(cells: <DataCell>[
+                                                DataCell(Text(
+                                                    '${teste[selectIndex].Seq}')),
+                                                DataCell(Text(
+                                                    '${teste[selectIndex].Vol_Rom}')),
+                                                DataCell(Text(
+                                                    '${teste[selectIndex].Vol_Exp}')),
+                                                DataCell(Text(
+                                                    '${teste[selectIndex].Cont}')),
+                                                DataCell(Text(
+                                                    '${teste[selectIndex].Caixa}')),
+                                                DataCell(Text(
+                                                    teste[selectIndex].Origem)),
+                                                DataCell(Text(
+                                                    teste[selectIndex].Pedido)),
+                                                DataCell(Text(
+                                                    teste[selectIndex].Obs))
+                                              ]),
+                                            ])),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.edit)),
                 )),
             SizedBox(
                 width: 80,
@@ -101,7 +170,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.red,
                   ),
                   child: IconButton(
-                      onPressed: () {}, icon: const Icon(Icons.delete_forever)),
+                      onPressed: () {
+                        setState(() {
+                          teste.removeAt(selectIndex);
+                        });
+                      },
+                      icon: const Icon(Icons.delete_forever)),
                 )),
           ],
         ),
@@ -132,25 +206,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 12,
                       ),
                       columns: const <DataColumn>[
-                        DataColumn(label: Text('Column2')),
-                        DataColumn(label: Text('Column2')),
-                        DataColumn(label: Text('Column3')),
-                        DataColumn(label: Text('Column4')),
-                        DataColumn(label: Text('Column5')),
-                        DataColumn(label: Text('Column6')),
+                        DataColumn(label: Text('Seq')),
+                        DataColumn(label: Text('Vol_Rom')),
+                        DataColumn(label: Text('Vol_Exp')),
+                        DataColumn(label: Text('Cont')),
+                        DataColumn(label: Text('Caixa')),
+                        DataColumn(label: Text('Origem')),
+                        DataColumn(label: Text('Pedido')),
+                        DataColumn(label: Text('Obs')),
                       ],
                       rows: List<DataRow>.generate(
-                        4,
-                        (index) => const DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text('2')),
-                              DataCell(Text('4')),
-                              DataCell(Text('4')),
-                              DataCell(Text('4')),
-                              DataCell(Text('4')),
-                              DataCell(Text('4'))
-                            ]),
-                      ))),
+                          teste.length,
+                          (index) => DataRow(
+                                  selected: index == selectIndex,
+                                  onSelectChanged: (val) {
+                                    setState(() {
+                                      if (kDebugMode) {
+                                        print(index);
+                                      }
+                                      selectIndex = index;
+                                    });
+                                  },
+                                  cells: <DataCell>[
+                                    DataCell(Text('${teste[index].Seq}')),
+                                    DataCell(Text('${teste[index].Vol_Rom}')),
+                                    DataCell(Text('${teste[index].Vol_Exp}')),
+                                    DataCell(Text('${teste[index].Cont}')),
+                                    DataCell(Text('${teste[index].Caixa}')),
+                                    DataCell(Text(teste[index].Origem)),
+                                    DataCell(Text(teste[index].Pedido)),
+                                    DataCell(Text(teste[index].Obs))
+                                  ]),
+                          growable: true))),
             ],
           ),
         ),
