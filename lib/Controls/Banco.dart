@@ -12,19 +12,7 @@ class Banco {
 
   ///Function that init the database
   Future<void> init() async {
-    final databasePath = await OpenDatabaseOptions()
-
-    db = await da
+    final databasePath = await OpenDatabaseOptions();
   }
-
-  Future<void> insertPedido(List<pedido> list) async {
-    for (final price in list) {
-      await db.insert('Pedido', {
-        'Seq': price.Seq
-      });
-    }
-  }
-
-
 
 }
