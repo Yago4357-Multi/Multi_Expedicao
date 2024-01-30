@@ -10,20 +10,11 @@ class Banco {
   ///Database init
   Banco();
 
-  ///Variable for database
-  late Database db;
-
   ///Function that init the database
   Future<void> init() async {
-    final databasePath = await getDatabasesPath();
-    final path = '$databasePath/database2.db';
+    final databasePath = await OpenDatabaseOptions()
 
-    db = await openDatabase(path, version: _dbVersion,
-        onCreate: (database, version) async {
-          await database.execute('''CREATE TABLE Romaneio(
-          Seq INTEGER NOT NULL
-          PRIMARY KEY(ID AUTOINCREMENT));''');
-        });
+    db = await da
   }
 
   Future<void> insertPedido(List<pedido> list) async {
