@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Models/Pedido.dart';
+import '../../Models/Pedido.dart';
 
 class NConformidade extends StatefulWidget {
 

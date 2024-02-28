@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 
 String Visualizacao(){
   if (kIsWeb){
-    return '/Romaneio';
+    return '/';
   }
   else{
-    return '/Contagem';
+    return '/';
   }
 }

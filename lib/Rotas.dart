@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import '/Views/Contagem.dart';
-import '/Views/NConformidade.dart';
-import 'Views/RomaneioTela.dart';
+import 'package:romaneio_teste/Views/home_page_widget.dart';
+import 'package:romaneio_teste/Views/lista_pedido_widget.dart';
+import 'package:romaneio_teste/Views/lista_romaneio_conf_widget.dart';
 
 Map<String, Widget Function(BuildContext)> namedRoutes = {
-  '/Contagem': (context) => const ContagemTela(),
-  '/Conformidade': (context) => const NConformidade(),
-  '/Romaneio': (context) => const RomaneioTela()
+  '/': (context) => const HomePageWidget(),
+  '/ListaPedido': (context) => const ListaPedidoWidget(),
+  '/ListaRomaneioConf': (context) => const ListaRomaneioConfWidget()
 };
