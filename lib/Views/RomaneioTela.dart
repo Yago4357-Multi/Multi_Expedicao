@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:romaneio_teste/Models/Romaneio.dart';
+import '/Models/Romaneio.dart';
 
 class RomaneioTela extends StatefulWidget {
   const RomaneioTela({super.key});

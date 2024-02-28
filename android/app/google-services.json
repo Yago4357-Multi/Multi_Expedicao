@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "885322918652",
+    "project_id": "romaneio-fc637",
+    "storage_bucket": "romaneio-fc637.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885322918652:android:7481ef97ccbf13be68c579",
+        "android_client_info": {
+          "package_name": "com.example.romaneio_teste"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRmj4h2z2rwuIKsQuSDJRsmTM4h_19I3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

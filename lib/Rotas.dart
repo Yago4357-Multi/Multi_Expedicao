@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:romaneio_teste/Views/Contagem.dart';
-import 'package:romaneio_teste/Views/NConformidade.dart';
+import '/Views/Contagem.dart';
+import '/Views/NConformidade.dart';
 import 'Views/RomaneioTela.dart';
 
 Map<String, Widget Function(BuildContext)> namedRoutes = {
