@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../Models/Contagem.dart';
 import '/components/Widget/drawer_widget.dart';
 import '/components/Widget/painel_edicao_widget.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -20,6 +21,10 @@ class ListaRomaneioConfWidget extends StatefulWidget {
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
+
+
+  late List<List<Contagem>> Pedidos = [];
+
   late ListaRomaneioConfModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -108,7 +113,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                       ),
                       count: _model.countControllerValue ??= 1,
                       updateCount: (count) =>
-                          setState(() => _model.countControllerValue = count),
+                          setState(() => {
+                            if (count>=1){
+                            _model.countControllerValue = count
+                            }
+                            else{
+                              _model.countControllerValue = 1
+                          }
+                          }
+                          ),
                       stepSize: 1,
                     ),
                   ),
@@ -195,7 +208,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(0, 20, 24, 0),
                                         child: Text(
-                                          '***1',
+                                          '${_model.countControllerValue}',
                                           textAlign: TextAlign.end,
                                           style: FlutterFlowTheme.of(context)
                                               .headlineMedium
@@ -258,7 +271,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                               '_model.textController',
                                               const Duration(
                                                   milliseconds: 1000),
-                                              () => setState(() {}),
+                                              () => setState(() {
+                                                if (Pedidos.length <= _model.countControllerValue){
+                                                  Pedidos.add([Contagem(_model.textController.text, _model.countControllerValue)]);
+                                                }
+                                                else {
+                                                  Pedidos[_model.countControllerValue-1].add(Contagem(_model.textController.text, _model.countControllerValue));
+                                                }
+                                                _model.textController.text = "";
+                                              }),
                                             ),
                                             autofocus: true,
                                             obscureText: false,
@@ -350,7 +371,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                   primary: false,
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
-                                  itemCount: 3,
+                                  itemCount: (Pedidos.isEmpty) ? 0 : (Pedidos.length >= _model.countControllerValue) ? (Pedidos[_model.countControllerValue-1].isEmpty) ? 0 : Pedidos[_model.countControllerValue-1].length : 0,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Padding(
@@ -443,17 +464,17 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                         },
                                                         child: RichText(
                                                           text: TextSpan(
-                                                            children: const [
-                                                              TextSpan(
+                                                            children: [
+                                                              const TextSpan(
                                                                 text: 'Ped. : ',
                                                                 style:
                                                                     TextStyle(),
                                                               ),
                                                               TextSpan(
                                                                 text:
-                                                                    '\n2000204242',
+                                                                    Pedidos[_model.countControllerValue-1][index].Cod_Arrumado,
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Color(
                                                                       0xFF007000),
                                                                   fontWeight:
@@ -482,7 +503,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                 .fromSTEB(
                                                                 0, 4, 0, 0),
                                                         child: Text(
-                                                          'Cliente : 169',
+                                                          'Palete : ${ Pedidos[_model.countControllerValue-1][index].Palete}',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .labelMedium,
@@ -494,7 +515,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                 .fromSTEB(
                                                                 0, 4, 0, 0),
                                                         child: Text(
-                                                          'Cidade : Tubarão',
+                                                          'Cidade : ${ Pedidos[_model.countControllerValue-1][index].Cx}',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .labelMedium,
@@ -554,7 +575,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                           8,
                                                                           0),
                                                                   child: Text(
-                                                                    'Vol : 1 / 5',
+                                                                    'Vol : ${ Pedidos[_model.countControllerValue-1][index].Cx} / ${ Pedidos[_model.countControllerValue-1][index].Vol}',
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -611,7 +632,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                           8,
                                                                           0),
                                                                   child: Text(
-                                                                    'Vol : 1 / 5',
+                                                                    'Vol : ${ Pedidos[_model.countControllerValue-1][index].Cx} / ${ Pedidos[_model.countControllerValue-1][index].Vol}',
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -668,7 +689,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                           8,
                                                                           0),
                                                                   child: Text(
-                                                                    'Vol : 1 / 5',
+                                                                    'Vol : ${ Pedidos[_model.countControllerValue-1][index].Cx} / ${ Pedidos[_model.countControllerValue-1][index].Vol}',
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -756,11 +777,11 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                                 fontWeight: FontWeight.w800,
                                                                               ),
                                                                         ),
-                                                                        const TextSpan(
+                                                                        TextSpan(
                                                                           text:
-                                                                              '1 / 5',
+                                                                              '${ Pedidos[_model.countControllerValue-1][index].Cx} / ${ Pedidos[_model.countControllerValue-1][index].Vol}',
                                                                           style:
-                                                                              TextStyle(
+                                                                              const TextStyle(
                                                                             fontSize:
                                                                                 26,
                                                                           ),
@@ -856,10 +877,10 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                               .w800,
                                                                     ),
                                                               ),
-                                                              const TextSpan(
-                                                                text: '1 / 5',
+                                                              TextSpan(
+                                                                text: '${ Pedidos[_model.countControllerValue-1][index].Cx} / ${ Pedidos[_model.countControllerValue-1][index].Vol}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 26,
                                                                 ),
                                                               )

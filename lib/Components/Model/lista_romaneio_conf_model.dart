@@ -8,7 +8,7 @@ class ListaRomaneioConfModel extends FlutterFlowModel<ListaRomaneioConfWidget> {
 
   final unfocusNode = FocusNode();
   // State field(s) for CountController widget.
-  int? countControllerValue;
+  int countControllerValue = 1;
   // Model for Drawer component.
   late DrawerModel drawerModel;
   // State field(s) for TextField widget.

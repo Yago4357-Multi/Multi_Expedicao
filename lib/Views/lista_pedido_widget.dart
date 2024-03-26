@@ -280,9 +280,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                               CrossAxisAlignment.start,
                                               children: [
                                                 RichText(
-                                                  textScaleFactor:
-                                                  MediaQuery.of(context)
-                                                      .textScaleFactor,
                                                   text: TextSpan(
                                                     children: const [
                                                       TextSpan(
@@ -566,10 +563,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                 1,
                                                                 0),
                                                             child: RichText(
-                                                              textScaleFactor:
-                                                              MediaQuery.of(
-                                                                  context)
-                                                                  .textScaleFactor,
                                                               text: TextSpan(
                                                                 children: [
                                                                   TextSpan(
@@ -661,9 +654,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                   padding: const EdgeInsetsDirectional
                                                       .fromSTEB(1, 0, 1, 0),
                                                   child: RichText(
-                                                    textScaleFactor:
-                                                    MediaQuery.of(context)
-                                                        .textScaleFactor,
                                                     text: TextSpan(
                                                       children: [
                                                         TextSpan(
