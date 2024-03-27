@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ class ListaRomaneioConfWidget extends StatefulWidget {
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
+  late final DatabaseReference _databaseReference;
+  late StreamSubscription<DatabaseEvent> _streamSubscription;
+
   List<String> listPedDig = [];
   late List<List<Contagem>> Pedidos = [];
 
@@ -39,6 +43,27 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
     _model.textFieldFocusNode!.addListener(() => setState(() {}));
+    init();
+  }
+
+  init() async {
+    _databaseReference = FirebaseDatabase.instance.ref('Pedidos Inseridos');
+    try{
+      final likeSnapshot = await _databaseReference.get();
+      Pedidos.add([Contagem(likeSnapshot.value as String,1)]);
+    }catch(error){
+      print(error.toString());
+    }
+
+    _streamSubscription = _databaseReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        Pedidos.add([Contagem((event.snapshot.value ?? 0) as String, 1)]);
+      });
+    });
+  }
+
+  pedidos() async{
+    await _databaseReference.set(Pedidos);
   }
 
   @override
@@ -260,13 +285,16 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                         child: TextFormField(
                                           controller: _model.textController,
                                           focusNode: _model.textFieldFocusNode,
-                                          onFieldSubmitted: (value) => EasyDebounce.debounce(
-                                              '_model.textController',
-                                              const Duration(milliseconds: 1000),
-                                                  () => setState(() {
-                                                    if (_model.textController.text.length == 33){
+                                          onFieldSubmitted: (value) =>
+                                              EasyDebounce.debounce(
+                                            '_model.textController',
+                                            const Duration(milliseconds: 1000),
+                                            () => setState(() {
+                                              if (_model.textController.text
+                                                      .length ==
+                                                  33) {
                                                 if (listPedDig.contains(_model
-                                                    .textController.text) ==
+                                                        .textController.text) ==
                                                     false) {
                                                   if (Pedidos.length >=
                                                       _model
@@ -274,12 +302,13 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                     listPedDig.add(_model
                                                         .textController.text);
                                                     Pedidos[_model.countControllerValue -
-                                                        1]
+                                                            1]
                                                         .add(Contagem(
-                                                        _model.textController
-                                                            .text,
-                                                        _model
-                                                            .countControllerValue));
+                                                            _model
+                                                                .textController
+                                                                .text,
+                                                            _model
+                                                                .countControllerValue));
                                                   } else {
                                                     listPedDig.add(_model
                                                         .textController.text);
@@ -291,46 +320,57 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                               .countControllerValue)
                                                     ]);
                                                   }
-                                                  _model.textController.text = '';
+                                                  _model.textController.text =
+                                                      '';
                                                 } else {
-                                                  unawaited(showCupertinoModalPopup(
+                                                  unawaited(
+                                                      showCupertinoModalPopup(
                                                     barrierDismissible: false,
                                                     builder: (context) {
                                                       return CupertinoAlertDialog(
-                                                        title: Text('Código Duplicado'),
+                                                        title: Text(
+                                                            'Código Duplicado'),
                                                         actions: <CupertinoDialogAction>[
                                                           CupertinoDialogAction(
-                                                              isDefaultAction: true,
+                                                              isDefaultAction:
+                                                                  true,
                                                               onPressed: () {
-                                                                Navigator.pop(context);
+                                                                Navigator.pop(
+                                                                    context);
                                                               },
-                                                              child: const Text('Voltar'))
+                                                              child: const Text(
+                                                                  'Voltar'))
                                                         ],
                                                       );
                                                     },
                                                     context: context,
                                                   ));
                                                 }
-                                              } else{
-                                                      unawaited(showCupertinoModalPopup(
-                                                        barrierDismissible: false,
-                                                        builder: (context) {
-                                                          return CupertinoAlertDialog(
-                                                            title: Text('Código Inválido: Menos do que 34 Dígitos'),
-                                                            actions: <CupertinoDialogAction>[
-                                                              CupertinoDialogAction(
-                                                                  isDefaultAction: true,
-                                                                  onPressed: () {
-                                                                    Navigator.pop(context);
-                                                                  },
-                                                                  child: const Text('Voltar'))
-                                                            ],
-                                                          );
-                                                        },
-                                                        context: context,
-                                                      ));
-                                                    }
-                                                  }),
+                                              } else {
+                                                unawaited(
+                                                    showCupertinoModalPopup(
+                                                  barrierDismissible: false,
+                                                  builder: (context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Text(
+                                                          'Código Inválido: Menos do que 34 Dígitos'),
+                                                      actions: <CupertinoDialogAction>[
+                                                        CupertinoDialogAction(
+                                                            isDefaultAction:
+                                                                true,
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                'Voltar'))
+                                                      ],
+                                                    );
+                                                  },
+                                                  context: context,
+                                                ));
+                                              }
+                                            }),
                                           ),
                                           autofocus: true,
                                           obscureText: false,
@@ -363,8 +403,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                color:
-                                                Colors.green.shade500,
+                                                color: Colors.green.shade500,
                                                 width: 2,
                                               ),
                                               borderRadius:
@@ -372,8 +411,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             ),
                                             errorBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                color:
-                                                Colors.green.shade100,
+                                                color: Colors.green.shade100,
                                                 width: 2,
                                               ),
                                               borderRadius:
@@ -382,8 +420,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             focusedErrorBorder:
                                                 OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                color:
-                                                    Colors.green.shade100,
+                                                color: Colors.green.shade100,
                                                 width: 2,
                                               ),
                                               borderRadius:
@@ -392,13 +429,16 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           ),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium,
-                                          keyboardType: const TextInputType.numberWithOptions(),
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(),
                                           validator: _model
                                               .textControllerValidator
                                               .asValidator(context),
                                           inputFormatters: [
-                                            LengthLimitingTextInputFormatter(33),
-                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                33),
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
                                           ],
                                         ),
                                       ),
