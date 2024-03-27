@@ -28,6 +28,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   late final DatabaseReference _databaseReference;
   late StreamSubscription<DatabaseEvent> _streamSubscription;
 
+
   List<String> listPedDig = [];
   late List<List<Contagem>> Pedidos = [];
 
@@ -47,27 +48,43 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   }
 
   init() async {
-    _databaseReference = FirebaseDatabase.instance.ref('Pedidos Inseridos');
+    print('AAAAAAAAAAAAAA');
+    _databaseReference = FirebaseDatabase.instance.refFromURL('https://romaneio-fc637-default-rtdb.firebaseio.com/Pedidos%20Inseridos');
+    print('AAAAAAAAAAAAAA222222222222');
     try{
       final likeSnapshot = await _databaseReference.get();
-      Pedidos.add([Contagem(likeSnapshot.value as String,1)]);
+      if (likeSnapshot.value != null) {
+        for (var element in List.from(likeSnapshot.value as dynamic)) {
+
+          listPedDig.add(element);
+          Pedidos.add([Contagem(element, 1)]);
+        }
+      }
     }catch(error){
-      print(error.toString());
+      print(error);
     }
 
     _streamSubscription = _databaseReference.onValue.listen((DatabaseEvent event) {
       setState(() {
-        Pedidos.add([Contagem((event.snapshot.value ?? 0) as String, 1)]);
+        if (event.snapshot.value != null) {
+          for (var element in List.from(event.snapshot.value as dynamic)) {
+            print('BBBBBBBBBBBBBBBBBBBBBB');
+            listPedDig.add(element);
+            Pedidos.add([Contagem(element, 1)]);
+          }
+        }
       });
     });
   }
 
   pedidos() async{
-    await _databaseReference.set(Pedidos);
+    print('aaaaaaa');
+    await _databaseReference.set(listPedDig);
   }
 
   @override
   void dispose() {
+    _streamSubscription.cancel();
     _model.dispose();
 
     super.dispose();
@@ -319,6 +336,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                           _model
                                                               .countControllerValue)
                                                     ]);
+                                                    pedidos();
                                                   }
                                                   _model.textController.text =
                                                       '';

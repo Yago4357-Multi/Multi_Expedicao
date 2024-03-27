@@ -23,9 +23,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -61,25 +67,5 @@ class DefaultFirebaseOptions {
     projectId: 'romaneio-fc637',
     databaseURL: 'https://romaneio-fc637-default-rtdb.firebaseio.com',
     storageBucket: 'romaneio-fc637.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAd1yHMj9AhhNWM4wnjGVC5YLooI7Cvsoo',
-    appId: '1:885322918652:ios:8a40666ed7d686e368c579',
-    messagingSenderId: '885322918652',
-    projectId: 'romaneio-fc637',
-    databaseURL: 'https://romaneio-fc637-default-rtdb.firebaseio.com',
-    storageBucket: 'romaneio-fc637.appspot.com',
-    iosBundleId: 'com.example.romaneioTeste',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAd1yHMj9AhhNWM4wnjGVC5YLooI7Cvsoo',
-    appId: '1:885322918652:ios:ae5a4895f473a41b68c579',
-    messagingSenderId: '885322918652',
-    projectId: 'romaneio-fc637',
-    databaseURL: 'https://romaneio-fc637-default-rtdb.firebaseio.com',
-    storageBucket: 'romaneio-fc637.appspot.com',
-    iosBundleId: 'com.example.romaneioTeste.RunnerTests',
   );
 }
