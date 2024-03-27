@@ -26,8 +26,8 @@ class ListaRomaneioConfWidget extends StatefulWidget {
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   late final DatabaseReference _databaseReference;
+  late DatabaseReference _insertRef;
   late StreamSubscription<DatabaseEvent> _streamSubscription;
-
 
   List<String> listPedDig = [];
   late List<List<Contagem>> Pedidos = [];
@@ -48,38 +48,44 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   }
 
   init() async {
-    print('AAAAAAAAAAAAAA');
-    _databaseReference = FirebaseDatabase.instance.refFromURL('https://romaneio-fc637-default-rtdb.firebaseio.com/Pedidos%20Inseridos');
-    print('AAAAAAAAAAAAAA222222222222');
-    try{
+    _databaseReference = FirebaseDatabase.instance.refFromURL(
+        'https://romaneio-fc637-default-rtdb.firebaseio.com/Pedidos%20Inseridos');
+    try {
       final likeSnapshot = await _databaseReference.get();
       if (likeSnapshot.value != null) {
         for (var element in List.from(likeSnapshot.value as dynamic)) {
-
-          listPedDig.add(element);
+          print(element);
+          listPedDig.add(element as String);
           Pedidos.add([Contagem(element, 1)]);
         }
       }
-    }catch(error){
+    } catch (error) {
       print(error);
     }
 
-    _streamSubscription = _databaseReference.onValue.listen((DatabaseEvent event) {
+    _streamSubscription =
+        _databaseReference.onValue.listen((DatabaseEvent event) {
       setState(() {
         if (event.snapshot.value != null) {
           for (var element in List.from(event.snapshot.value as dynamic)) {
-            print('BBBBBBBBBBBBBBBBBBBBBB');
-            listPedDig.add(element);
-            Pedidos.add([Contagem(element, 1)]);
+            listPedDig.add('$element');
+            Pedidos.add([Contagem('$element',1)]);
+           /* if (Pedidos.length >= 0) {
+              Pedidos[0].add(Contagem(element, 1));
+            }
+            else{
+              Pedidos.add([Contagem(element,1)]);
+            }*/
           }
         }
       });
     });
   }
 
-  pedidos() async{
-    print('aaaaaaa');
-    await _databaseReference.set(listPedDig);
+  pedidos(int num, String Cod) async {
+    _insertRef = FirebaseDatabase.instance.refFromURL(
+        'https://romaneio-fc637-default-rtdb.firebaseio.com/Pedidos%20Inseridos/$Cod');
+    await _insertRef.set([(num)]);
   }
 
   @override
@@ -336,10 +342,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                           _model
                                                               .countControllerValue)
                                                     ]);
-                                                    pedidos();
                                                   }
-                                                  _model.textController.text =
-                                                      '';
+                                                  pedidos(_model.countControllerValue,_model.textController.text);
                                                 } else {
                                                   unawaited(
                                                       showCupertinoModalPopup(
@@ -388,6 +392,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                   context: context,
                                                 ));
                                               }
+                                              _model.textController.text =
+                                              '';
                                             }),
                                           ),
                                           autofocus: true,
