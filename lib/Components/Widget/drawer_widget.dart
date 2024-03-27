@@ -106,7 +106,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
                         child: MaterialButton(
                           onPressed: () async {
-                            Navigator.popAndPushNamed(context,'/ListaRomaneioConf');
+                            Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context,'/ListaRomaneioConf');
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -153,10 +154,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
                         child: MaterialButton(
                           onPressed: () async {
-                            if (Navigator.of(context).canPop()) {
-                              Navigator.pop;
-                            }
-                            Navigator.popAndPushNamed(context,'/');
+                            Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context,'/');
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
