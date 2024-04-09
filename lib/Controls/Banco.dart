@@ -39,7 +39,7 @@ class Banco{
       await conn.execute(
           'insert into "Teste"("Codigo","Pallet") values ($cod,$pallet);');
     }
-    on Exception catch(e){
+    on Exception {
       return showCupertinoModalPopup(barrierDismissible:false,builder:(context){
         return CupertinoAlertDialog(
           title:Text(
