@@ -36,7 +36,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
     _model = createModel(context, ListaRomaneioConfModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
-    teste = bd.select('' ,_model.countControllerValue);
+    teste = bd.selectPallet(_model.countControllerValue);
     _model.textFieldFocusNode!.addListener(() => setState(() {}));
   }
 
@@ -109,7 +109,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                       ),
                       count: _model.countControllerValue,
                       updateCount: (count) => setState(() {
-                        teste = bd.select('', count);
+                        teste = bd.selectPallet(count);
                         if (count >= 1) {
                           _model.countControllerValue = count;
                         } else {
@@ -259,10 +259,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             setState(() {
                                               bd.insert(
                                                   _model.textController!.text,
-                                                  _model.textController!.text.substring(14,24),
                                                   _model.countControllerValue,
                                                   context);
-                                              teste = bd.select('', _model.countControllerValue);
+                                              teste = bd.selectPallet(_model.countControllerValue);
                                               _model.textController.text = '';
                                             });
                                           },

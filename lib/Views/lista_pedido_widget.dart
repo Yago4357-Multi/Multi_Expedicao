@@ -32,7 +32,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   @override
   void initState() {
     bd = Banco();
-    getPed = bd.select(cont, 0);
+    getPed = bd.selectPedido(cont);
     super.initState();
     _model = createModel(context, ListaPedidoModel.new);
   }
