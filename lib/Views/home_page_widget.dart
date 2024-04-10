@@ -1,10 +1,9 @@
-import '/components/Widget/drawer_widget.dart';
-import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '/Components/home_page_model.dart';
-export '/Components/home_page_model.dart';
+import '/components/Widget/drawer_widget.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});

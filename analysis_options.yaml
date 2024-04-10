@@ -24,7 +24,6 @@ linter:
     - non_constant_identifier_names
     - constant_identifier_names # prefer
     - directives_ordering
-    - lines_longer_than_80_chars # avoid
     - curly_braces_in_flow_control_structures
     - slash_for_doc_comments
     - package_api_docs # prefer
