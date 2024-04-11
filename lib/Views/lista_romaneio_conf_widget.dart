@@ -448,9 +448,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                     TextStyle(),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: Pedidos[
+                                                                    text: '${Pedidos[
                                                                     index]
-                                                                        .Ped,
+                                                                        .Ped}',
                                                                     style:
                                                                     const TextStyle(
                                                                       color: Color(

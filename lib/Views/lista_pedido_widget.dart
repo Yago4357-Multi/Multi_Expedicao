@@ -10,7 +10,7 @@ import '/Components/Widget/drawer_widget.dart';
 export '../Components/Model/lista_pedido_model.dart';
 
 class ListaPedidoWidget extends StatefulWidget {
-  String cont;
+  int cont;
 
   ListaPedidoWidget({super.key, required this.cont});
 
@@ -19,7 +19,7 @@ class ListaPedidoWidget extends StatefulWidget {
 }
 
 class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
-  String cont;
+  int cont;
 
   _ListaPedidoWidgetState(this.cont);
 
@@ -101,8 +101,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                       child: FutureBuilder(
                         future: getPed,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.hasData) {
                             Pedidos = snapshot.data ?? [];
                             return Column(
                               mainAxisSize: MainAxisSize.max,
@@ -155,7 +154,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                     const EdgeInsetsDirectional
                                                         .fromSTEB(25, 8, 0, 0),
                                                 child: Text(
-                                                  Pedidos[0].Ped,
+                                                  '${Pedidos[0].Ped}',
                                                   textAlign: TextAlign.center,
                                                   style: FlutterFlowTheme.of(
                                                           context)
