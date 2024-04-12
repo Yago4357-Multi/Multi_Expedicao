@@ -9,7 +9,7 @@ import 'Views/lista_romaneio_conf_widget.dart';
 Map<String, Widget Function(BuildContext)> namedRoutes = {
   '/': (context) => const HomePageWidget(),
   '/ListaPedido': (context) => ListaPedidoWidget(cont: 0),
-  '/ListaRomaneioConf': (context) => ListaRomaneioConfWidget(),
+  '/ListaRomaneioConf': (context) => ListaRomaneioConfWidget(palete: 0),
   '/EscolhaRomaneio': (context) => EscolhaRomaneioWidget(),
   '/CriarPalete': (context) => CriarPaleteWidget()
 };

@@ -1,6 +1,7 @@
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:romaneio_teste/Views/lista_pedido_widget.dart';
 import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 export '../Components/Model/criar_palete_model.dart';
@@ -10,6 +11,7 @@ import 'package:printing/printing.dart';
 import 'package:flutter/services.dart';
 
 import '../Controls/Banco.dart';
+import 'lista_romaneio_conf_widget.dart';
 
 class CriarPaleteWidget extends StatefulWidget {
   const CriarPaleteWidget({super.key});
@@ -90,6 +92,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: FutureBuilder(
             future: getPalete,
             builder: (context, snapshot) {
+              int i = 0;
+              i = snapshot.data ?? 0;
               return Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,7 +140,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       BarcodeWidget(
-                        data: '${snapshot.data}',
+                        data: '$i',
                         barcode: Barcode.code128(),
                         width: 300,
                         height: 90,
@@ -162,9 +166,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         bd.createPalete();
                         pdf.addPage(pw.Page(
                           pageFormat: PdfPageFormat.a4,
-                          build: (context) {
+                          build: (context2) {
                             return pw.BarcodeWidget(
-                                data: '1',
+                                data: '$i',
                                 barcode: Barcode.code128(),
                                 width: 800,
                                 height: 200,
@@ -177,6 +181,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                           },
                         ));
                         await Printing.layoutPdf(onLayout: (format) => pdf.save());
+                        print(i);
+                        Navigator.pop(context);
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i ),));
                       },
                       text: 'Criar Palete e Imprimir Cód.',
                       icon: const Icon(

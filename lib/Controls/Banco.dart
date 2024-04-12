@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
+import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/Contagem.dart';
+import '../Views/lista_romaneio_conf_widget.dart';
 
 class Banco {
   late final Connection conn;
@@ -64,6 +65,79 @@ class Banco {
   createPalete() async {
     await conn.execute(
         'insert into "Palete" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,1);');
+  }
+
+  endPalete(int palete) async{
+    await conn.execute('update "Palete" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $palete');
+  }
+
+  paleteExiste(int palete, a) async {
+    final player = AudioPlayer();
+    var teste2;
+    var teste = 0;
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+
+    try {
+      Pedidos = await conn2
+          .execute('select "ID","DATA_FECHAMENTO" from "Palete" where "ID" = $palete;');
+    } catch (e) {
+      print(e);
+    }
+    Pedidos!.forEach((element) {
+      teste = element[0];
+      teste2 = element[1];
+    });
+    if (teste2 != null){
+      await showCupertinoModalPopup(
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Palete finalizado\n',style: TextStyle(fontWeight: FontWeight.bold),),
+              content: const Text('Escolha outro palete ou converse com a Supervisão'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+          context: a);
+      return;
+    }
+    if (teste == 0) {
+      await showCupertinoModalPopup(
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Palete não encontrado'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+          context: a);
+      return;
+    }
+    Navigator.pop(a);
+    await Navigator.push(a, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: teste)));
+
   }
 
   Future<int> getPalete() async {

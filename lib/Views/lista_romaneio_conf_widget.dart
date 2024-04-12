@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../Components/Model/lista_romaneio_conf_model.dart';
 
 import '../Controls/Banco.dart';
@@ -15,14 +15,20 @@ import 'lista_pedido_widget.dart';
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
 class ListaRomaneioConfWidget extends StatefulWidget {
-  ListaRomaneioConfWidget({super.key});
+  int palete;
+
+  ListaRomaneioConfWidget({super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
-      _ListaRomaneioConfWidgetState();
+      _ListaRomaneioConfWidgetState(palete);
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
+  int palete;
+
+  _ListaRomaneioConfWidgetState(this.palete);
+
   List<Contagem> Pedidos = [];
   late ListaRomaneioConfModel _model;
   late final bd;
@@ -36,7 +42,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
     _model = createModel(context, ListaRomaneioConfModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
-    teste = bd.selectPallet(_model.countControllerValue);
+    teste = bd.selectPallet(palete);
     _model.textFieldFocusNode!.addListener(() => setState(() {}));
   }
 
@@ -55,73 +61,46 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {},
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await showCupertinoModalPopup(
+                barrierDismissible: false,
+                builder: (context2) {
+                  return CupertinoAlertDialog(
+                    title: Text(
+                        'Você deseja finalizar o Palete $palete?\n Essa ação bloqueará o Palete de alterações Futuras'),
+                    actions: <CupertinoDialogAction>[
+                      CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () {
+                            bd.endPalete(palete);
+                            Navigator.popAndPushNamed(context, '/');
+                          },
+                          child: Container(
+                              color: Colors.red,
+                              child: const Text(
+                                'Continuar',
+                              ))),
+                      CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () {
+                            Navigator.pop(context2);
+                          },
+                          child: const Text('Voltar'))
+                    ],
+                  );
+                },
+                context: context);
+          },
           backgroundColor: const Color(0xFF007000),
           elevation: 8,
-          label: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    'Pallet',
-                    style: FlutterFlowTheme.of(context).titleLarge.override(
-                          fontFamily: 'Outfit',
-                          color: FlutterFlowTheme.of(context).primaryBackground,
-                        ),
-                  ),
-                  Container(
-                    width: 160,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color(0x00FFFFFF),
-                      borderRadius: BorderRadius.circular(8),
-                      shape: BoxShape.rectangle,
-                      border: Border.all(
-                        color: const Color(0x00E0E3E7),
-                        width: 2,
-                      ),
-                    ),
-                    child: FlutterFlowCountController(
-                      decrementIconBuilder: (enabled) => FaIcon(
-                        FontAwesomeIcons.minus,
-                        color: enabled
-                            ? FlutterFlowTheme.of(context).alternate
-                            : FlutterFlowTheme.of(context).primaryBackground,
-                        size: 20,
-                      ),
-                      incrementIconBuilder: (enabled) => FaIcon(
-                        FontAwesomeIcons.plus,
-                        color: enabled
-                            ? FlutterFlowTheme.of(context).primaryBackground
-                            : FlutterFlowTheme.of(context).primaryBackground,
-                        size: 20,
-                      ),
-                      countBuilder: (count) => Text(
-                        count.toString(),
-                        style: FlutterFlowTheme.of(context).titleLarge.override(
-                              fontFamily: 'Outfit',
-                              color: FlutterFlowTheme.of(context)
-                                  .primaryBackground,
-                            ),
-                      ),
-                      count: _model.countControllerValue,
-                      updateCount: (count) => setState(() {
-                        teste = bd.selectPallet(count);
-                        if (count >= 1) {
-                          _model.countControllerValue = count;
-                        } else {
-                          _model.countControllerValue = 1;
-                        }
-                      }),
-                      stepSize: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          child: const Text(
+            'Finalizar Palete',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 24,
+            ),
           ),
         ),
         drawer: Drawer(
@@ -200,7 +179,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           const EdgeInsetsDirectional.fromSTEB(
                                               0, 20, 24, 0),
                                       child: Text(
-                                        '${_model.countControllerValue}',
+                                        '$palete',
                                         textAlign: TextAlign.end,
                                         style: FlutterFlowTheme.of(context)
                                             .headlineMedium
@@ -259,9 +238,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             setState(() {
                                               bd.insert(
                                                   _model.textController!.text,
-                                                  _model.countControllerValue,
+                                                  palete,
                                                   context);
-                                              teste = bd.selectPallet(_model.countControllerValue);
+                                              teste = bd.selectPallet(palete);
                                               _model.textController.text = '';
                                             });
                                           },
@@ -343,7 +322,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                             FutureBuilder(
                               future: teste,
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.done) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
                                   Pedidos = snapshot.data ?? [];
                                   return ListView.builder(
                                       padding: const EdgeInsets.fromLTRB(
@@ -359,9 +339,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                       itemCount: (Pedidos.length),
                                       itemBuilder: (context, index) {
                                         return Padding(
-                                          padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              14, 10, 14, 10),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(14, 10, 14, 10),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
                                             focusColor: Colors.transparent,
@@ -370,27 +349,30 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             onLongPress: () async {
                                               await showModalBottomSheet(
                                                 isScrollControlled: true,
-                                                backgroundColor: Colors.transparent,
+                                                backgroundColor:
+                                                    Colors.transparent,
                                                 context: context,
                                                 builder: (context) {
                                                   return GestureDetector(
-                                                    onTap: () => _model.unfocusNode
-                                                        .canRequestFocus
+                                                    onTap: () => _model
+                                                            .unfocusNode
+                                                            .canRequestFocus
                                                         ? FocusScope.of(context)
-                                                        .requestFocus(
-                                                        _model.unfocusNode)
+                                                            .requestFocus(_model
+                                                                .unfocusNode)
                                                         : FocusScope.of(context)
-                                                        .unfocus(),
+                                                            .unfocus(),
                                                     child: Padding(
-                                                      padding:
-                                                      MediaQuery.viewInsetsOf(
-                                                          context),
+                                                      padding: MediaQuery
+                                                          .viewInsetsOf(
+                                                              context),
                                                       child:
-                                                      const PainelEdicaoWidget(),
+                                                          const PainelEdicaoWidget(),
                                                     ),
                                                   );
                                                 },
-                                              ).then((value) => safeSetState(() {}));
+                                              ).then((value) =>
+                                                  safeSetState(() {}));
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -398,106 +380,122 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                 maxWidth: 570,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
                                                 borderRadius:
-                                                BorderRadius.circular(8),
+                                                    BorderRadius.circular(8),
                                                 border: Border.all(
-                                                  color: FlutterFlowTheme.of(context)
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
                                                       .alternate,
                                                   width: 2,
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsetsDirectional
-                                                    .fromSTEB(10, 12, 12, 12),
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        10, 12, 12, 12),
                                                 child: Row(
-                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Expanded(
                                                       flex: 4,
                                                       child: Column(
                                                         mainAxisSize:
-                                                        MainAxisSize.min,
+                                                            MainAxisSize.min,
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment.center,
+                                                            MainAxisAlignment
+                                                                .center,
                                                         crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           InkWell(
-                                                            splashColor:
-                                                            Colors.transparent,
-                                                            focusColor:
-                                                            Colors.transparent,
-                                                            hoverColor:
-                                                            Colors.transparent,
+                                                            splashColor: Colors
+                                                                .transparent,
+                                                            focusColor: Colors
+                                                                .transparent,
+                                                            hoverColor: Colors
+                                                                .transparent,
                                                             highlightColor:
-                                                            Colors.transparent,
+                                                                Colors
+                                                                    .transparent,
                                                             onTap: () async {
-                                                              Navigator.pop(context);
-                                                              await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: Pedidos[index].Ped),));
+                                                              Navigator.pop(
+                                                                  context);
+                                                              await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        ListaPedidoWidget(
+                                                                            cont:
+                                                                                Pedidos[index].Ped),
+                                                                  ));
                                                             },
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
                                                                   const TextSpan(
-                                                                    text: 'Ped. : ',
+                                                                    text:
+                                                                        'Ped. : ',
                                                                     style:
-                                                                    TextStyle(),
+                                                                        TextStyle(),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: '${Pedidos[
-                                                                    index]
-                                                                        .Ped}',
+                                                                    text:
+                                                                        '${Pedidos[index].Ped}',
                                                                     style:
-                                                                    const TextStyle(
+                                                                        const TextStyle(
                                                                       color: Color(
                                                                           0xFF007000),
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .w900,
-                                                                      fontSize: 24,
+                                                                          FontWeight
+                                                                              .w900,
+                                                                      fontSize:
+                                                                          24,
                                                                     ),
                                                                   )
                                                                 ],
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .bodyLarge
                                                                     .override(
-                                                                  fontFamily:
-                                                                  'Readex Pro',
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                                ),
+                                                                      fontFamily:
+                                                                          'Readex Pro',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                    ),
                                                               ),
                                                             ),
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 4, 0, 0),
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    0, 4, 0, 0),
                                                             child: Text(
                                                               'Palete : ${Pedidos[index].Pallet}',
-                                                              style:
-                                                              FlutterFlowTheme.of(
-                                                                  context)
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
                                                                   .labelMedium,
                                                             ),
                                                           ),
                                                           Padding(
                                                             padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 4, 0, 0),
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    0, 4, 0, 0),
                                                             child: Text(
                                                               'Cidade : ${Pedidos[index].Cx}',
-                                                              style:
-                                                              FlutterFlowTheme.of(
-                                                                  context)
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
                                                                   .labelMedium,
                                                             ),
                                                           ),
@@ -514,7 +512,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                         flex: 2,
                                                         child: Row(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           children: [
                                                             if (responsiveVisibility(
                                                               context: context,
@@ -522,21 +520,25 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             ))
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
-                                                                child: Container(
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        0,
+                                                                        4,
+                                                                        0,
+                                                                        0),
+                                                                child:
+                                                                    Container(
                                                                   height: 32,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     color: const Color(
                                                                         0xFFEAB491),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        12),
+                                                                        BorderRadius.circular(
+                                                                            12),
                                                                     border:
-                                                                    Border.all(
+                                                                        Border
+                                                                            .all(
                                                                       color: const Color(
                                                                           0xFFEA5E24),
                                                                       width: 2,
@@ -544,30 +546,28 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                   ),
                                                                   child: Align(
                                                                     alignment:
-                                                                    const AlignmentDirectional(
-                                                                        0, 0),
-                                                                    child: Padding(
-                                                                      padding:
-                                                                      const EdgeInsetsDirectional
+                                                                        const AlignmentDirectional(
+                                                                            0,
+                                                                            0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsetsDirectional
                                                                           .fromSTEB(
                                                                           8,
                                                                           0,
                                                                           8,
                                                                           0),
-                                                                      child: Text(
+                                                                      child:
+                                                                          Text(
                                                                         'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
                                                                         textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                        style: FlutterFlowTheme.of(
-                                                                            context)
+                                                                            TextAlign.center,
+                                                                        style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                          fontFamily:
-                                                                          'Readex Pro',
-                                                                          color: const Color(
-                                                                              0xFFEA5E24),
-                                                                        ),
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: const Color(0xFFEA5E24),
+                                                                            ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -579,21 +579,25 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             ))
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
-                                                                child: Container(
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        0,
+                                                                        4,
+                                                                        0,
+                                                                        0),
+                                                                child:
+                                                                    Container(
                                                                   height: 32,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     color: const Color(
                                                                         0xFFEAB491),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        12),
+                                                                        BorderRadius.circular(
+                                                                            12),
                                                                     border:
-                                                                    Border.all(
+                                                                        Border
+                                                                            .all(
                                                                       color: const Color(
                                                                           0xFFEA5E24),
                                                                       width: 2,
@@ -601,30 +605,28 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                   ),
                                                                   child: Align(
                                                                     alignment:
-                                                                    const AlignmentDirectional(
-                                                                        0, 0),
-                                                                    child: Padding(
-                                                                      padding:
-                                                                      const EdgeInsetsDirectional
+                                                                        const AlignmentDirectional(
+                                                                            0,
+                                                                            0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsetsDirectional
                                                                           .fromSTEB(
                                                                           8,
                                                                           0,
                                                                           8,
                                                                           0),
-                                                                      child: Text(
+                                                                      child:
+                                                                          Text(
                                                                         'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
                                                                         textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                        style: FlutterFlowTheme.of(
-                                                                            context)
+                                                                            TextAlign.center,
+                                                                        style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                          fontFamily:
-                                                                          'Readex Pro',
-                                                                          color: const Color(
-                                                                              0xFFEA5E24),
-                                                                        ),
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: const Color(0xFFEA5E24),
+                                                                            ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -636,21 +638,25 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             ))
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
-                                                                child: Container(
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        0,
+                                                                        4,
+                                                                        0,
+                                                                        0),
+                                                                child:
+                                                                    Container(
                                                                   height: 32,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     color: const Color(
                                                                         0xFFEAB491),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        12),
+                                                                        BorderRadius.circular(
+                                                                            12),
                                                                     border:
-                                                                    Border.all(
+                                                                        Border
+                                                                            .all(
                                                                       color: const Color(
                                                                           0xFFEA5E24),
                                                                       width: 2,
@@ -658,30 +664,28 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                   ),
                                                                   child: Align(
                                                                     alignment:
-                                                                    const AlignmentDirectional(
-                                                                        0, 0),
-                                                                    child: Padding(
-                                                                      padding:
-                                                                      const EdgeInsetsDirectional
+                                                                        const AlignmentDirectional(
+                                                                            0,
+                                                                            0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsetsDirectional
                                                                           .fromSTEB(
                                                                           8,
                                                                           0,
                                                                           8,
                                                                           0),
-                                                                      child: Text(
+                                                                      child:
+                                                                          Text(
                                                                         'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
                                                                         textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                        style: FlutterFlowTheme.of(
-                                                                            context)
+                                                                            TextAlign.center,
+                                                                        style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                          fontFamily:
-                                                                          'Readex Pro',
-                                                                          color: const Color(
-                                                                              0xFFEA5E24),
-                                                                        ),
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: const Color(0xFFEA5E24),
+                                                                            ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -693,39 +697,37 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             ))
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
-                                                                child: Container(
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        0,
+                                                                        4,
+                                                                        0,
+                                                                        0),
+                                                                child:
+                                                                    Container(
                                                                   height: 80,
                                                                   constraints:
-                                                                  BoxConstraints(
-                                                                    minWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                        context)
-                                                                        .width *
-                                                                        0.2,
-                                                                    maxWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                        context)
-                                                                        .width *
-                                                                        0.3,
-                                                                    maxHeight: MediaQuery
-                                                                        .sizeOf(
-                                                                        context)
-                                                                        .height *
-                                                                        0.8,
+                                                                      BoxConstraints(
+                                                                    minWidth:
+                                                                        MediaQuery.sizeOf(context).width *
+                                                                            0.2,
+                                                                    maxWidth:
+                                                                        MediaQuery.sizeOf(context).width *
+                                                                            0.3,
+                                                                    maxHeight:
+                                                                        MediaQuery.sizeOf(context).height *
+                                                                            0.8,
                                                                   ),
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     color: const Color(
                                                                         0xFF6ABD6A),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        12),
+                                                                        BorderRadius.circular(
+                                                                            12),
                                                                     border:
-                                                                    Border.all(
+                                                                        Border
+                                                                            .all(
                                                                       color: const Color(
                                                                           0xFF005200),
                                                                       width: 2,
@@ -733,59 +735,49 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                   ),
                                                                   child: Align(
                                                                     alignment:
-                                                                    const AlignmentDirectional(
-                                                                        0, 0),
-                                                                    child: Padding(
-                                                                      padding:
-                                                                      const EdgeInsetsDirectional
+                                                                        const AlignmentDirectional(
+                                                                            0,
+                                                                            0),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsetsDirectional
                                                                           .fromSTEB(
                                                                           1,
                                                                           0,
                                                                           1,
                                                                           0),
-                                                                      child: RichText(
+                                                                      child:
+                                                                          RichText(
                                                                         text:
-                                                                        TextSpan(
+                                                                            TextSpan(
                                                                           children: [
                                                                             TextSpan(
-                                                                              text:
-                                                                              'Vol. :\n',
-                                                                              style: FlutterFlowTheme.of(context)
-                                                                                  .bodyMedium
-                                                                                  .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                color: const Color(0xFF005200),
-                                                                                fontSize: 18,
-                                                                                fontWeight: FontWeight.w800,
-                                                                              ),
+                                                                              text: 'Vol. :\n',
+                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    color: const Color(0xFF005200),
+                                                                                    fontSize: 18,
+                                                                                    fontWeight: FontWeight.w800,
+                                                                                  ),
                                                                             ),
                                                                             TextSpan(
-                                                                              text:
-                                                                              '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                              style:
-                                                                              const TextStyle(
-                                                                                fontSize:
-                                                                                26,
+                                                                              text: '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 26,
                                                                               ),
                                                                             )
                                                                           ],
-                                                                          style: FlutterFlowTheme.of(
-                                                                              context)
+                                                                          style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                            fontFamily:
-                                                                            'Readex Pro',
-                                                                            color:
-                                                                            const Color(0xFF005200),
-                                                                            fontSize:
-                                                                            24,
-                                                                            fontWeight:
-                                                                            FontWeight.w800,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                color: const Color(0xFF005200),
+                                                                                fontSize: 24,
+                                                                                fontWeight: FontWeight.w800,
+                                                                              ),
                                                                         ),
                                                                         textAlign:
-                                                                        TextAlign
-                                                                            .center,
+                                                                            TextAlign.center,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -796,31 +788,36 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                       ),
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 4, 0, 0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              0, 4, 0, 0),
                                                       child: Container(
                                                         height: 80,
-                                                        constraints: BoxConstraints(
-                                                          minWidth: MediaQuery.sizeOf(
-                                                              context)
-                                                              .width *
-                                                              0.2,
-                                                          maxWidth: MediaQuery.sizeOf(
-                                                              context)
-                                                              .width *
-                                                              0.3,
+                                                        constraints:
+                                                            BoxConstraints(
+                                                          minWidth:
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .width *
+                                                                  0.2,
+                                                          maxWidth:
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .width *
+                                                                  0.3,
                                                           maxHeight:
-                                                          MediaQuery.sizeOf(
-                                                              context)
-                                                              .height *
-                                                              0.8,
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .height *
+                                                                  0.8,
                                                         ),
-                                                        decoration: BoxDecoration(
-                                                          color:
-                                                          const Color(0xFF6ABD6A),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFF6ABD6A),
                                                           borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                              BorderRadius
+                                                                  .circular(12),
                                                           border: Border.all(
                                                             color: const Color(
                                                                 0xFF005200),
@@ -829,58 +826,61 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                         ),
                                                         child: Align(
                                                           alignment:
-                                                          const AlignmentDirectional(
-                                                              0, 0),
+                                                              const AlignmentDirectional(
+                                                                  0, 0),
                                                           child: Padding(
                                                             padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                1, 0, 1, 0),
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    1, 0, 1, 0),
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
                                                                   TextSpan(
-                                                                    text: 'Vol. :\n',
-                                                                    style: FlutterFlowTheme
-                                                                        .of(context)
+                                                                    text:
+                                                                        'Vol. :\n',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                      fontFamily:
-                                                                      'Readex Pro',
-                                                                      color: const Color(
-                                                                          0xFF005200),
-                                                                      fontSize:
-                                                                      18,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .w800,
-                                                                    ),
+                                                                          fontFamily:
+                                                                              'Readex Pro',
+                                                                          color:
+                                                                              const Color(0xFF005200),
+                                                                          fontSize:
+                                                                              18,
+                                                                          fontWeight:
+                                                                              FontWeight.w800,
+                                                                        ),
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
+                                                                        '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
                                                                     style:
-                                                                    const TextStyle(
-                                                                      fontSize: 26,
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          26,
                                                                     ),
                                                                   )
                                                                 ],
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                  fontFamily:
-                                                                  'Readex Pro',
-                                                                  color: const Color(
-                                                                      0xFF005200),
-                                                                  fontSize: 24,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                                ),
+                                                                      fontFamily:
+                                                                          'Readex Pro',
+                                                                      color: const Color(
+                                                                          0xFF005200),
+                                                                      fontSize:
+                                                                          24,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w800,
+                                                                    ),
                                                               ),
                                                               textAlign:
-                                                              TextAlign.center,
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
                                                           ),
                                                         ),
@@ -893,8 +893,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           ),
                                         );
                                       });
-                                }else{
-                                  return const Center(child: CircularProgressIndicator());
+                                } else {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
                                 }
                               },
                             ),

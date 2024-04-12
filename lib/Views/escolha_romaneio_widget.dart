@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
+import '../Controls/Banco.dart';
+import 'lista_romaneio_conf_widget.dart';
 export '../Components/Model/escolha_romaneio_model.dart';
 
 class EscolhaRomaneioWidget extends StatefulWidget {
@@ -16,6 +18,7 @@ class EscolhaRomaneioWidget extends StatefulWidget {
 
 class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
   late EscolhaRomaneioModel _model;
+  final bd = Banco();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -94,37 +97,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
               Align(
                 alignment: const AlignmentDirectional(0, 0),
                 child: FFButtonWidget(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, '/CriarPalete');
-                  },
-                  text: 'Criar Novo Palete',
-                  options: FFButtonOptions(
-                    width: 300,
-                    height: 60,
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: Colors.green.shade700,
-                    textStyle: FlutterFlowTheme
-                        .of(context)
-                        .titleSmall
-                        .override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 0,
-                    ),
-                    elevation: 3,
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: const AlignmentDirectional(0, 0),
-                child: FFButtonWidget(
+                  text: 'Continuar Palete',
                   onPressed: () async {
                     return showModalBottomSheet(
                       context: context, builder: (context) {
@@ -151,6 +124,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                   focusNode: _model.textFieldFocusNode,
                                   onFieldSubmitted: (value) {
                                     setState(() {
+                                      bd.paleteExiste(int.parse(value), context);
                                     });
                                   },
                                   autofocus: true,
@@ -229,13 +203,43 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                       );
                     },);
                   },
-                  text: 'Continuar Palete',
                   options: FFButtonOptions(
                     width: 260,
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                     iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.green.shade700,
+                    textStyle: FlutterFlowTheme
+                        .of(context)
+                        .titleSmall
+                        .override(
+                      fontFamily: 'Readex Pro',
+                      color: Colors.white,
+                      fontSize: 20,
+                      letterSpacing: 0,
+                    ),
+                    elevation: 3,
+                    borderSide: const BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: const AlignmentDirectional(0, 0),
+                child: FFButtonWidget(
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, '/CriarPalete');
+                  },
+                  text: 'Criar Novo Palete',
+                  options: FFButtonOptions(
+                    width: 300,
+                    height: 60,
+                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
+                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    color: Colors.orange.shade700,
                     textStyle: FlutterFlowTheme
                         .of(context)
                         .titleSmall
