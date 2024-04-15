@@ -107,6 +107,54 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context,'/ListaRomaneio');
+                          },
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.list,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  size: 24,
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                  child: Text(
+                                    'Listagem do Romaneio',
+                                    style:
+                                    FlutterFlowTheme.of(context).bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
                             await Navigator.popAndPushNamed(context,'/EscolhaRomaneio');
                           },
                           child: InkWell(

@@ -1,7 +1,8 @@
-import 'package:romaneio_teste/components/Widget/drawer_widget.dart';
-import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:romaneio_teste/Views/lista_romaneio_conf_widget.dart' show ListaRomaneioConfWidget;
 import 'package:flutter/material.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
+
+import '../../Views/lista_romaneio_conf_widget.dart' show ListaRomaneioConfWidget;
+import '../../components/Widget/drawer_widget.dart';
 
 class ListaRomaneioConfModel extends FlutterFlowModel<ListaRomaneioConfWidget> {
   ///  State fields for stateful widgets in this page.
@@ -18,7 +19,7 @@ class ListaRomaneioConfModel extends FlutterFlowModel<ListaRomaneioConfWidget> {
 
   @override
   void initState(BuildContext context) {
-    drawerModel = createModel(context, () => DrawerModel());
+    drawerModel = createModel(context, DrawerModel.new);
   }
 
   @override

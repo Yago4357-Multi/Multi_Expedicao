@@ -67,12 +67,12 @@ class Banco {
         'insert into "Palete" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,1);');
   }
 
-  endPalete(int palete) async{
-    await conn.execute('update "Palete" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $palete');
+  endPalete(int palete) async {
+    await conn.execute(
+        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $palete');
   }
 
   paleteExiste(int palete, a) async {
-    final player = AudioPlayer();
     var teste2;
     var teste = 0;
     late final Pedidos;
@@ -87,8 +87,8 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
 
     try {
-      Pedidos = await conn2
-          .execute('select "ID","DATA_FECHAMENTO" from "Palete" where "ID" = $palete;');
+      Pedidos = await conn2.execute(
+          'select "ID","DATA_FECHAMENTO" from "Palete" where "ID" = $palete;');
     } catch (e) {
       print(e);
     }
@@ -96,13 +96,17 @@ class Banco {
       teste = element[0];
       teste2 = element[1];
     });
-    if (teste2 != null){
+    if (teste2 != null) {
       await showCupertinoModalPopup(
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
-              title: const Text('Palete finalizado\n',style: TextStyle(fontWeight: FontWeight.bold),),
-              content: const Text('Escolha outro palete ou converse com a Supervisão'),
+              title: const Text(
+                'Palete finalizado\n',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: const Text(
+                  'Escolha outro palete ou converse com a Supervisão'),
               actions: <CupertinoDialogAction>[
                 CupertinoDialogAction(
                     isDefaultAction: true,
@@ -136,8 +140,34 @@ class Banco {
       return;
     }
     Navigator.pop(a);
-    await Navigator.push(a, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: teste)));
+    await Navigator.push(
+        a,
+        MaterialPageRoute(
+            builder: (context) => ListaRomaneioConfWidget(palete: teste)));
+  }
 
+  Future<List<int>> paleteFinalizado() async {
+    var teste = <int>[];
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      Pedidos = await conn2.execute(
+          'select "ID" from "Palete" where "DATA_FECHAMENTO" is not null');
+    } catch (e) {
+      print(e);
+    }
+    Pedidos!.forEach((element) {
+      teste.add(element[0]);
+    });
+    return teste;
   }
 
   Future<int> getPalete() async {
@@ -152,7 +182,6 @@ class Banco {
           port: 5432,
         ),
         settings: const ConnectionSettings(sslMode: SslMode.disable));
-
     try {
       Pedidos =
           await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
@@ -198,6 +227,48 @@ class Banco {
         print(e);
       }
     });
+    return teste;
+  }
+
+  Future<List<Contagem>> selectPalletRomaneio(List<int> Pallets) async {
+    var teste = <Contagem>[];
+    late final Pedidos;
+    late Result VolumeResponse;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      if (Pallets.isNotEmpty){
+      Pedidos = await conn2
+          .execute('select * from "Bipagem" where "PALETE" in (${Pallets.join(',')});');
+      }
+    } catch (e) {
+      print('Erro: $e');
+    }
+    try {
+      Pedidos!.forEach((element) async {
+        try {
+          VolumeResponse = await conn2.execute(
+              'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
+          VolumeResponse.forEach((element2) async {
+            if (element2[0] != null) {
+              teste.add(Contagem(element[1], element[5], element[4],
+                  (int.parse('${element2[0]}'))));
+            }
+          });
+        } catch (e) {
+          print(e);
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
     return teste;
   }
 
