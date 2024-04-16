@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/Contagem.dart';
+import '../Models/Pedido.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
 
 class Banco {
@@ -28,7 +29,7 @@ class Banco {
   }
 
   insert(String cod, int pallet, a) async {
-    String Cod_Arrumado = cod.substring(14, 33);
+    var Cod_Arrumado = cod.substring(14, 33);
     String ped = Cod_Arrumado.substring(0, 10);
     String vol = Cod_Arrumado.substring(17, 19);
     String cx = Cod_Arrumado.substring(14, 16);
@@ -37,7 +38,7 @@ class Banco {
         await conn.execute(
             'insert into "Pedidos"("NUMPED","VOLUME_TOTAL") values ($ped,$vol) ON CONFLICT ("NUMPED") DO NOTHING;');
       } catch (e) {
-        print('insert $e');
+        print(e);
       }
       await conn.execute(
           'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$Cod_Arrumado,1);');
@@ -194,6 +195,57 @@ class Banco {
     return teste + 1;
   }
 
+  Future<int> getRomaneio() async {
+    var teste;
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      Pedidos =
+      await conn2.execute('select MAX("ID") from "Romaneio";');
+    } catch (e) {
+      print(e);
+    }
+    if (Pedidos == null){
+      print('aaaaaaaaaaaaaaaaaaaa');
+    }
+    Pedidos!.forEach((element) {
+      teste = element[0];
+    });
+    return teste;
+  }
+
+  Future<int> getRomaneioNovo() async {
+    var teste;
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      Pedidos =
+      await conn2.execute('select COALESCE(MAX("ID"),0) from "Romaneio";');
+    } catch (e) {
+      print(e);
+    }
+    Pedidos!.forEach((element) {
+      teste = element[0];
+    });
+    return teste + 1;
+  }
+
   Future<List<Contagem>> selectAll() async {
     var teste = <Contagem>[];
     late final Pedidos;
@@ -217,7 +269,7 @@ class Banco {
       try {
         VolumeResponse = (await conn2.execute(
             'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};'));
-        VolumeResponse!.forEach((element2) async {
+        VolumeResponse.forEach((element2) async {
           if (element2[0] != null) {
             teste.add(Contagem(element[1], element[5], element[4],
                 (int.parse('${element2[0]}'))));
@@ -230,10 +282,10 @@ class Banco {
     return teste;
   }
 
-  Future<List<Contagem>> selectPalletRomaneio(List<int> Pallets) async {
-    var teste = <Contagem>[];
+  Future<List<pedido>> selectPalletRomaneio(List<int> Pallets) async {
+    var teste = <pedido>[];
     late final Pedidos;
-    late Result VolumeResponse;
+    var Status = 'OK';
     var conn2 = await Connection.open(
         Endpoint(
           host: 'localhost',
@@ -246,30 +298,24 @@ class Banco {
     try {
       if (Pallets.isNotEmpty){
       Pedidos = await conn2
-          .execute('select * from "Bipagem" where "PALETE" in (${Pallets.join(',')});');
+          .execute('select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '"', '"') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${Pallets.join(',')})) group by P."NUMPED";');
       }
     } catch (e) {
       print('Erro: $e');
     }
-    try {
       Pedidos!.forEach((element) async {
-        try {
-          VolumeResponse = await conn2.execute(
-              'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
-          VolumeResponse.forEach((element2) async {
-            if (element2[0] != null) {
-              teste.add(Contagem(element[1], element[5], element[4],
-                  (int.parse('${element2[0]}'))));
+        print(element[1].toString().replaceAll(RegExp(',| '), '').length);
+        print(Pallets.length);
+        if (element[2] < element [3] || element[1].toString().replaceAll(RegExp(',| '), '').length > Pallets.length){
+          Status = 'Errado';
+        }else{
+          Status = 'OK';
+        }
+            if (element != null) {
+              teste.add(pedido(element[0],element[1],element[2],element[3],Status));
             }
           });
-        } catch (e) {
-          print(e);
-        }
-      });
-    } catch (e) {
-      print(e);
-    }
-    return teste;
+        return teste;
   }
 
   Future<List<Contagem>> selectPallet(int Pallet) async {
@@ -337,7 +383,7 @@ class Banco {
       try {
         VolumeResponse = (await conn2.execute(
             'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};'));
-        VolumeResponse!.forEach((element2) async {
+        VolumeResponse.forEach((element2) async {
           if (element2[0] != null) {
             teste.add(Contagem(element[1], element[5], element[4],
                 (int.parse('${element2[0]}'))));
