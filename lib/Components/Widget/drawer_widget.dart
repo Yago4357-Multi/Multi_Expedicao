@@ -107,7 +107,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
-                            await Navigator.popAndPushNamed(context,'/ListaRomaneio');
+                            await Navigator.popAndPushNamed(context,'/CriarRomaneio');
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -126,7 +126,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                   padding:
                                   const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                   child: Text(
-                                    'Listagem do Romaneio',
+                                    'Romaneio',
                                     style:
                                     FlutterFlowTheme.of(context).bodyMedium,
                                   ),

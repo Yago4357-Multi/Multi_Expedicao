@@ -7,6 +7,7 @@ import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/Banco.dart';
 import 'lista_romaneio_conf_widget.dart';
+import 'lista_romaneio_widget.dart';
 export '../Components/Model/escolha_romaneio_model.dart';
 
 class EscolhaRomaneioWidget extends StatefulWidget {
@@ -38,8 +39,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-      _model.unfocusNode.canRequestFocus
+      onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -69,25 +69,18 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
             },
           ),
           title: Text(
-            'Criar Palete',
-            style: FlutterFlowTheme
-                .of(context)
-                .headlineMedium
-                .override(
-              fontFamily: 'Outfit',
-              color: FlutterFlowTheme
-                  .of(context)
-                  .primaryBackground,
-            ),
+            'Criar Romaneio',
+            style: FlutterFlowTheme.of(context).headlineMedium.override(
+                  fontFamily: 'Outfit',
+                  color: FlutterFlowTheme.of(context).primaryBackground,
+                ),
           ),
           actions: const [],
           centerTitle: true,
           elevation: 2,
         ),
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme
-            .of(context)
-            .primaryBackground,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -97,127 +90,31 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
               Align(
                 alignment: const AlignmentDirectional(0, 0),
                 child: FFButtonWidget(
-                  text: 'Continuar Palete',
+                  text: 'Continuar Romaneio',
                   onPressed: () async {
-                    return showModalBottomSheet(
-                      context: context, builder: (context) {
-                      return SizedBox(
-                        width: MediaQuery
-                            .sizeOf(
-                            context)
-                            .width * 0.8,
-                        height: MediaQuery
-                            .sizeOf(
-                            context)
-                            .height * 0.6,
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              16, 12, 16, 12),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _model.textController,
-                                  focusNode: _model.textFieldFocusNode,
-                                  onFieldSubmitted: (value) {
-                                    setState(() {
-                                      bd.paleteExiste(int.parse(value), context);
-                                    });
-                                  },
-                                  autofocus: true,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Insira o Palete',
-                                    labelStyle: FlutterFlowTheme.of(
-                                        context)
-                                        .labelMedium
-                                        .override(
-                                      fontFamily: 'Readex Pro',
-                                      color: FlutterFlowTheme.of(
-                                          context)
-                                          .secondaryText,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    alignLabelWithHint: false,
-                                    hintStyle:
-                                    FlutterFlowTheme.of(context)
-                                        .labelMedium,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                        FlutterFlowTheme.of(context)
-                                            .alternate,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade500,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade100,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    focusedErrorBorder:
-                                    OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade100,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium,
-                                  keyboardType: const TextInputType
-                                      .numberWithOptions(),
-                                  validator: _model
-                                      .textControllerValidator
-                                      .asValidator(context),
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(
-                                        33),
-                                    FilteringTextInputFormatter
-                                        .digitsOnly,
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },);
+                    var i = await bd.getRomaneio(context) ?? 0;
+                    if (i != 0) {
+                      Navigator.pop(context);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ListaRomaneioWidget(romaneio: i)));
+                    }
                   },
                   options: FFButtonOptions(
                     width: 260,
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.green.shade700,
-                    textStyle: FlutterFlowTheme
-                        .of(context)
-                        .titleSmall
-                        .override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 0,
-                    ),
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 20,
+                          letterSpacing: 0,
+                        ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,
@@ -233,22 +130,20 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                   onPressed: () {
                     Navigator.popAndPushNamed(context, '/CriarPalete');
                   },
-                  text: 'Criar Novo Palete',
+                  text: 'Criar Novo Romaneio',
                   options: FFButtonOptions(
                     width: 300,
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.orange.shade700,
-                    textStyle: FlutterFlowTheme
-                        .of(context)
-                        .titleSmall
-                        .override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 0,
-                    ),
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 20,
+                          letterSpacing: 0,
+                        ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,

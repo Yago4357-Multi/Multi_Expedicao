@@ -1,7 +1,6 @@
 class pedido{
-  int Seq, Vol_Rom, Vol_Exp, Cont, Caixa;
-  String Origem, Pedido, Obs;
+  late String Pallet, Status;
+  late int Ped, Vol, Cxs;
 
-  pedido(this.Seq, this.Vol_Rom, this.Vol_Exp, this.Cont, this.Caixa,
-      this.Origem, this.Pedido, this.Obs);
+  pedido(this.Ped, this.Pallet, this.Cxs, this.Vol, this.Status);
 }
