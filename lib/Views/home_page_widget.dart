@@ -59,7 +59,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
     getPed = bd.selectAll();
     super.initState();
     _model = createModel(context, HomePageModel.new);
-
     setupAnimations(
       animationsMap.values.where((anim) =>
           anim.trigger == AnimationTrigger.onActionTrigger ||

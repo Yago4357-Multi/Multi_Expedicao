@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/lista_romaneio_conf_model.dart';
 
 import '../Controls/Banco.dart';
 import '../Models/Contagem.dart';
 import '/components/Widget/drawer_widget.dart';
-import '/components/Widget/painel_edicao_widget.dart';
 import 'lista_pedido_widget.dart';
 
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
@@ -61,45 +61,50 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await showCupertinoModalPopup(
-                barrierDismissible: false,
-                builder: (context2) {
-                  return CupertinoAlertDialog(
-                    title: Text(
-                        'Você deseja finalizar o Palete $palete?\n Essa ação bloqueará o Palete de alterações Futuras'),
-                    actions: <CupertinoDialogAction>[
-                      CupertinoDialogAction(
-                          isDefaultAction: true,
-                          onPressed: () {
-                            bd.endPalete(palete);
-                            Navigator.popAndPushNamed(context, '/');
-                          },
-                          child: Container(
-                              color: Colors.red,
-                              child: const Text(
-                                'Continuar',
-                              ))),
-                      CupertinoDialogAction(
-                          isDefaultAction: true,
-                          onPressed: () {
-                            Navigator.pop(context2);
-                          },
-                          child: const Text('Voltar'))
-                    ],
-                  );
-                },
-                context: context);
-          },
-          backgroundColor: const Color(0xFF007000),
-          elevation: 8,
-          child: const Text(
-            'Finalizar Palete',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              fontSize: 24,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButton: SizedBox(
+          width: 200,
+          height: 50,
+          child: FloatingActionButton(
+            onPressed: () async {
+              await showCupertinoModalPopup(
+                  barrierDismissible: false,
+                  builder: (context2) {
+                    return CupertinoAlertDialog(
+                      title: Text('Você deseja finalizar o Palete $palete?'),
+                      content: const Text(
+                          'Essa ação bloqueará o Palete de alterações Futuras'),
+                      actions: <CupertinoDialogAction>[
+                        CupertinoDialogAction(
+                            isDefaultAction: true,
+                            isDestructiveAction: true,
+                            onPressed: () {
+                              bd.endPalete(palete);
+                              Navigator.popAndPushNamed(context, '/');
+                            },
+                            child: const Text(
+                              'Continuar',
+                            )),
+                        CupertinoDialogAction(
+                            isDefaultAction: true,
+                            onPressed: () {
+                              Navigator.pop(context2);
+                            },
+                            child: const Text('Voltar'))
+                      ],
+                    );
+                  },
+                  context: context);
+            },
+            backgroundColor: Colors.orange.shade400,
+            elevation: 8,
+            child: const Text(
+              'Finalizar Palete',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+              ),
             ),
           ),
         ),
@@ -338,522 +343,234 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                       shrinkWrap: true,
                                       itemCount: (Pedidos.length),
                                       itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(14, 10, 14, 10),
-                                          child: Container(
-                                            width: double.infinity,
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 570,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: FlutterFlowTheme.of(
-                                                        context)
-                                                    .alternate,
-                                                width: 2,
+                                        return InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            Navigator.pop(context);
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ListaPedidoWidget(
+                                                          cont: Pedidos[index]
+                                                              .Ped),
+                                                ));
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(14, 10, 14, 10),
+                                            child: Container(
+                                              width: double.infinity,
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 570,
                                               ),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                      10, 12, 12, 12),
-                                              child: Row(
-                                                mainAxisSize:
-                                                    MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Column(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        10, 12, 12, 12),
+                                                child: Column(
+                                                  children: [
+                                                    Align(
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                        textAlign: TextAlign.start,
+                                                        text: TextSpan(
+                                                          children: [
+                                                            const TextSpan(
+                                                              text:
+                                                              'Ped. : ',
+                                                              style:
+                                                              TextStyle(),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                              '${Pedidos[index].Ped}',
+                                                              style:
+                                                              const TextStyle(
+                                                                color: Color(
+                                                                    0xFF007000),
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w900,
+                                                                fontSize:
+                                                                24,
+                                                              ),
+                                                            )
+                                                          ],
+                                                          style: FlutterFlowTheme
+                                                              .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                            fontFamily:
+                                                            'Readex Pro',
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .normal,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Row(
                                                       mainAxisSize:
-                                                          MainAxisSize.min,
+                                                          MainAxisSize.max,
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                              .spaceBetween,
                                                       children: [
-                                                        InkWell(
-                                                          splashColor: Colors
-                                                              .transparent,
-                                                          focusColor: Colors
-                                                              .transparent,
-                                                          hoverColor: Colors
-                                                              .transparent,
-                                                          highlightColor:
-                                                              Colors
-                                                                  .transparent,
-                                                          onTap: () async {
-                                                            Navigator.pop(
-                                                                context);
-                                                            await Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      ListaPedidoWidget(
-                                                                          cont:
-                                                                              Pedidos[index].Ped),
-                                                                ));
-                                                          },
-                                                          child: RichText(
-                                                            text: TextSpan(
-                                                              children: [
-                                                                const TextSpan(
-                                                                  text:
-                                                                      'Ped. : ',
-                                                                  style:
-                                                                      TextStyle(),
-                                                                ),
-                                                                TextSpan(
-                                                                  text:
-                                                                      '${Pedidos[index].Ped}',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Color(
-                                                                        0xFF007000),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w900,
-                                                                    fontSize:
-                                                                        24,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                              style: FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyLarge
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                  ),
+                                                        Column(
+                                                          mainAxisSize:
+                                                          MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0, 4, 0, 0),
+                                                              child: Text(
+                                                                'Palete : ${Pedidos[index].Pallet}',
+                                                                style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                    .labelMedium,
+                                                              ),
                                                             ),
-                                                          ),
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0, 4, 0, 0),
+                                                              child: Text(
+                                                                'Cidade : ${Pedidos[index].Cx}',
+                                                                style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                    .labelMedium,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                         Padding(
                                                           padding:
                                                               const EdgeInsetsDirectional
                                                                   .fromSTEB(
                                                                   0, 4, 0, 0),
-                                                          child: Text(
-                                                            'Palete : ${Pedidos[index].Pallet}',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .labelMedium,
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  0, 4, 0, 0),
-                                                          child: Text(
-                                                            'Cidade : ${Pedidos[index].Cx}',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .labelMedium,
+                                                          child: Container(
+                                                            height: 80,
+                                                            constraints:
+                                                                BoxConstraints(
+                                                              minWidth:
+                                                                  MediaQuery.sizeOf(
+                                                                              context)
+                                                                          .width *
+                                                                      0.2,
+                                                              maxWidth:
+                                                                  MediaQuery.sizeOf(
+                                                                              context)
+                                                                          .width *
+                                                                      0.3,
+                                                              maxHeight:
+                                                                  MediaQuery.sizeOf(
+                                                                              context)
+                                                                          .height *
+                                                                      0.8,
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: const Color(
+                                                                  0xFF6ABD6A),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(12),
+                                                              border: Border.all(
+                                                                color: const Color(
+                                                                    0xFF005200),
+                                                                width: 2,
+                                                              ),
+                                                            ),
+                                                            child: Align(
+                                                              alignment:
+                                                                  const AlignmentDirectional(
+                                                                      0, 0),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        1, 0, 1, 0),
+                                                                child: RichText(
+                                                                  text: TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Vol. :\n',
+                                                                        style: FlutterFlowTheme.of(
+                                                                                context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily:
+                                                                                  'Readex Pro',
+                                                                              color:
+                                                                                  const Color(0xFF005200),
+                                                                              fontSize:
+                                                                                  18,
+                                                                              fontWeight:
+                                                                                  FontWeight.w800,
+                                                                            ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              26,
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Readex Pro',
+                                                                          color: const Color(
+                                                                              0xFF005200),
+                                                                          fontSize:
+                                                                              24,
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .w800,
+                                                                        ),
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                  ),
-                                                  if (responsiveVisibility(
-                                                    context: context,
-                                                    phone: false,
-                                                    tablet: false,
-                                                    tabletLandscape: false,
-                                                  ))
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          if (responsiveVisibility(
-                                                            context: context,
-                                                            desktop: false,
-                                                          ))
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child:
-                                                                  Container(
-                                                                height: 32,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: const Color(
-                                                                      0xFFEAB491),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          12),
-                                                                  border:
-                                                                      Border
-                                                                          .all(
-                                                                    color: const Color(
-                                                                        0xFFEA5E24),
-                                                                    width: 2,
-                                                                  ),
-                                                                ),
-                                                                child: Align(
-                                                                  alignment:
-                                                                      const AlignmentDirectional(
-                                                                          0,
-                                                                          0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        8,
-                                                                        0,
-                                                                        8,
-                                                                        0),
-                                                                    child:
-                                                                        Text(
-                                                                      'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                      textAlign:
-                                                                          TextAlign.center,
-                                                                      style: FlutterFlowTheme.of(context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            color: const Color(0xFFEA5E24),
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if (responsiveVisibility(
-                                                            context: context,
-                                                            desktop: false,
-                                                          ))
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child:
-                                                                  Container(
-                                                                height: 32,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: const Color(
-                                                                      0xFFEAB491),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          12),
-                                                                  border:
-                                                                      Border
-                                                                          .all(
-                                                                    color: const Color(
-                                                                        0xFFEA5E24),
-                                                                    width: 2,
-                                                                  ),
-                                                                ),
-                                                                child: Align(
-                                                                  alignment:
-                                                                      const AlignmentDirectional(
-                                                                          0,
-                                                                          0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        8,
-                                                                        0,
-                                                                        8,
-                                                                        0),
-                                                                    child:
-                                                                        Text(
-                                                                      'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                      textAlign:
-                                                                          TextAlign.center,
-                                                                      style: FlutterFlowTheme.of(context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            color: const Color(0xFFEA5E24),
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if (responsiveVisibility(
-                                                            context: context,
-                                                            desktop: false,
-                                                          ))
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child:
-                                                                  Container(
-                                                                height: 32,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: const Color(
-                                                                      0xFFEAB491),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          12),
-                                                                  border:
-                                                                      Border
-                                                                          .all(
-                                                                    color: const Color(
-                                                                        0xFFEA5E24),
-                                                                    width: 2,
-                                                                  ),
-                                                                ),
-                                                                child: Align(
-                                                                  alignment:
-                                                                      const AlignmentDirectional(
-                                                                          0,
-                                                                          0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        8,
-                                                                        0,
-                                                                        8,
-                                                                        0),
-                                                                    child:
-                                                                        Text(
-                                                                      'Vol : ${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                      textAlign:
-                                                                          TextAlign.center,
-                                                                      style: FlutterFlowTheme.of(context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            color: const Color(0xFFEA5E24),
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if (responsiveVisibility(
-                                                            context: context,
-                                                            desktop: false,
-                                                          ))
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child:
-                                                                  Container(
-                                                                height: 80,
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                  minWidth:
-                                                                      MediaQuery.sizeOf(context).width *
-                                                                          0.2,
-                                                                  maxWidth:
-                                                                      MediaQuery.sizeOf(context).width *
-                                                                          0.3,
-                                                                  maxHeight:
-                                                                      MediaQuery.sizeOf(context).height *
-                                                                          0.8,
-                                                                ),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: const Color(
-                                                                      0xFF6ABD6A),
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          12),
-                                                                  border:
-                                                                      Border
-                                                                          .all(
-                                                                    color: const Color(
-                                                                        0xFF005200),
-                                                                    width: 2,
-                                                                  ),
-                                                                ),
-                                                                child: Align(
-                                                                  alignment:
-                                                                      const AlignmentDirectional(
-                                                                          0,
-                                                                          0),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        1,
-                                                                        0,
-                                                                        1,
-                                                                        0),
-                                                                    child:
-                                                                        RichText(
-                                                                      text:
-                                                                          TextSpan(
-                                                                        children: [
-                                                                          TextSpan(
-                                                                            text: 'Vol. :\n',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  color: const Color(0xFF005200),
-                                                                                  fontSize: 18,
-                                                                                  fontWeight: FontWeight.w800,
-                                                                                ),
-                                                                          ),
-                                                                          TextSpan(
-                                                                            text: '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                            style: const TextStyle(
-                                                                              fontSize: 26,
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              color: const Color(0xFF005200),
-                                                                              fontSize: 24,
-                                                                              fontWeight: FontWeight.w800,
-                                                                            ),
-                                                                      ),
-                                                                      textAlign:
-                                                                          TextAlign.center,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            0, 4, 0, 0),
-                                                    child: Container(
-                                                      height: 80,
-                                                      constraints:
-                                                          BoxConstraints(
-                                                        minWidth:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.2,
-                                                        maxWidth:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.3,
-                                                        maxHeight:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.8,
-                                                      ),
-                                                      decoration:
-                                                          BoxDecoration(
-                                                        color: const Color(
-                                                            0xFF6ABD6A),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                          color: const Color(
-                                                              0xFF005200),
-                                                          width: 2,
-                                                        ),
-                                                      ),
-                                                      child: Align(
-                                                        alignment:
-                                                            const AlignmentDirectional(
-                                                                0, 0),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  1, 0, 1, 0),
-                                                          child: RichText(
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Vol. :\n',
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Readex Pro',
-                                                                        color:
-                                                                            const Color(0xFF005200),
-                                                                        fontSize:
-                                                                            18,
-                                                                        fontWeight:
-                                                                            FontWeight.w800,
-                                                                      ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text:
-                                                                      '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        26,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                              style: FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    color: const Color(
-                                                                        0xFF005200),
-                                                                    fontSize:
-                                                                        24,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w800,
-                                                                  ),
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign
-                                                                    .center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),

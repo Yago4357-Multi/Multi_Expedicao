@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/Contagem.dart';
+import '../Models/Palete.dart';
 import '../Models/Pedido.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
 
@@ -19,7 +21,7 @@ class Banco {
   init() async {
     conn = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -79,7 +81,7 @@ class Banco {
     late final Pedidos;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -147,60 +149,12 @@ class Banco {
             builder: (context) => ListaRomaneioConfWidget(palete: teste)));
   }
 
-  Future<List<int>> paleteFinalizado() async {
-    var teste = <int>[];
-    late final Pedidos;
-    var conn2 = await Connection.open(
-        Endpoint(
-          host: 'localhost',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
-    try {
-      Pedidos = await conn2.execute(
-          'select "ID" from "Palete" where "DATA_FECHAMENTO" is not null');
-    } catch (e) {
-      print(e);
-    }
-    Pedidos!.forEach((element) {
-      teste.add(element[0]);
-    });
-    return teste;
-  }
-
-  Future<int> getPalete() async {
-    var teste;
-    late final Pedidos;
-    var conn2 = await Connection.open(
-        Endpoint(
-          host: 'localhost',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
-    try {
-      Pedidos =
-          await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
-    } catch (e) {
-      print(e);
-    }
-    Pedidos!.forEach((element) {
-      teste = element[0];
-    });
-    return teste + 1;
-  }
-
   getRomaneio(a) async {
     var teste;
     late final Pedidos;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -209,8 +163,10 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       Pedidos =
-      await conn2.execute('select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NOT NULL;');
-    } catch (e) {}
+      await conn2.execute('select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
+    } catch (e) {
+      print(e);
+    }
     Pedidos!.forEach((element) {
       teste = element[0];
     });
@@ -233,9 +189,61 @@ class Banco {
           context: a);
     }
     else {
-      return teste + 1;
+      return teste;
     }
     return;
+  }
+
+  Future<List<palete>> paleteFinalizado() async {
+    var teste = <palete>[];
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      Pedidos = await conn2.execute(
+          'select "ID","ID_USUR_CRIACAO","DATA_INCLUSAO","ID_USUR_FECHAMENTO","DATA_FECHAMENTO" from "Palete" where "DATA_FECHAMENTO" is not null');
+    } catch (e) {
+      print(e);
+    }
+    Pedidos!.forEach((element) {
+      if (element[4] == null){
+      teste.add(palete(element[0],element[1],element[2]));
+      }else{
+        teste.add(palete(element[0],element[1],element[2],id_usur_fechamento: element[3],dt_fechamento: element[4] ));
+      }
+    });
+    return teste;
+  }
+
+  Future<int> getPalete() async {
+    var teste;
+    late final Pedidos;
+    var conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      Pedidos =
+          await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+    } catch (e) {
+      print(e);
+    }
+    Pedidos!.forEach((element) {
+      teste = element[0];
+    });
+    return teste + 1;
   }
 
   Future<int> getRomaneioNovo() async {
@@ -243,7 +251,7 @@ class Banco {
     late final Pedidos;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -253,7 +261,7 @@ class Banco {
     try {
       Pedidos =
       await conn2.execute('select COALESCE(MAX("ID"),0) from "Romaneio";');
-    } catch (e) {
+    } on SocketException catch (e){
       print(e);
     }
     Pedidos!.forEach((element) {
@@ -268,7 +276,7 @@ class Banco {
     late Result VolumeResponse;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -298,13 +306,15 @@ class Banco {
     return teste;
   }
 
-  Future<List<pedido>> selectPalletRomaneio(List<int> Pallets) async {
+  Future<List<pedido>> selectPalletRomaneio(List<palete> Pallets) async {
+    var pallets = <int>[];
+    Pallets.forEach((element) {pallets.add(element.pallet);});
     var teste = <pedido>[];
     late final Pedidos;
     var Status = 'OK';
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -314,14 +324,12 @@ class Banco {
     try {
       if (Pallets.isNotEmpty){
       Pedidos = await conn2
-          .execute('select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '"', '"') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${Pallets.join(',')})) group by P."NUMPED";');
+          .execute('select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '"', '"') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${pallets.join(',')})) group by P."NUMPED";');
       }
     } catch (e) {
-      print('Erro: $e');
+      print(e);
     }
       Pedidos!.forEach((element) async {
-        print(element[1].toString().replaceAll(RegExp(',| '), '').length);
-        print(Pallets.length);
         if (element[2] < element [3] || element[1].toString().replaceAll(RegExp(',| '), '').length > Pallets.length){
           Status = 'Errado';
         }else{
@@ -340,7 +348,7 @@ class Banco {
     late Result VolumeResponse;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',
@@ -350,7 +358,7 @@ class Banco {
 
     try {
       Pedidos = await conn2
-          .execute('select * from "Bipagem" where "PALETE" = $Pallet;');
+          .execute('select * from "Bipagem" where "PALETE" = $Pallet order by "ID" desc limit 1;');
     } catch (e) {
       print(e);
     }
@@ -381,7 +389,7 @@ class Banco {
     late Result VolumeResponse;
     var conn2 = await Connection.open(
         Endpoint(
-          host: 'localhost',
+          host: '192.168.1.183',
           database: 'Teste',
           username: 'BI',
           password: '123456',

@@ -101,105 +101,98 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                   text: 'Continuar Palete',
                   onPressed: () async {
                     return showModalBottomSheet(
+                      elevation: MediaQuery.of(context).viewInsets.bottom,
+                      useSafeArea: true,
                       context: context, builder: (context) {
-                      return SizedBox(
-                        width: MediaQuery
-                            .sizeOf(
-                            context)
-                            .width * 0.8,
-                        height: MediaQuery
-                            .sizeOf(
-                            context)
-                            .height * 0.6,
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              16, 12, 16, 12),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _model.textController,
-                                  focusNode: _model.textFieldFocusNode,
-                                  onFieldSubmitted: (value) {
-                                    setState(() {
-                                      bd.paleteExiste(int.parse(value), context);
-                                    });
-                                  },
-                                  autofocus: true,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Insira o Palete',
-                                    labelStyle: FlutterFlowTheme.of(
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            16, 12, 16, 12),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                showCursor: true,
+                                controller: _model.textController,
+                                focusNode: _model.textFieldFocusNode,
+                                onFieldSubmitted: (value) {
+                                  setState(() {
+                                    bd.paleteExiste(int.parse(value), context);
+                                  });
+                                },
+                                autofocus: true,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                  labelText: 'Insira o Palete',
+                                  labelStyle: FlutterFlowTheme.of(
+                                      context)
+                                      .labelMedium
+                                      .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: FlutterFlowTheme.of(
                                         context)
-                                        .labelMedium
-                                        .override(
-                                      fontFamily: 'Readex Pro',
-                                      color: FlutterFlowTheme.of(
-                                          context)
-                                          .secondaryText,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    alignLabelWithHint: false,
-                                    hintStyle:
-                                    FlutterFlowTheme.of(context)
-                                        .labelMedium,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color:
-                                        FlutterFlowTheme.of(context)
-                                            .alternate,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade500,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade100,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
-                                    focusedErrorBorder:
-                                    OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.green.shade100,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                    ),
+                                        .secondaryText,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyMedium,
-                                  keyboardType: const TextInputType
-                                      .numberWithOptions(),
-                                  validator: _model
-                                      .textControllerValidator
-                                      .asValidator(context),
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(
-                                        33),
-                                    FilteringTextInputFormatter
-                                        .digitsOnly,
-                                  ],
+                                  alignLabelWithHint: false,
+                                  hintStyle:
+                                  FlutterFlowTheme.of(context)
+                                      .labelMedium,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color:
+                                      FlutterFlowTheme.of(context)
+                                          .alternate,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade500,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade100,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  focusedErrorBorder:
+                                  OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade100,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
                                 ),
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium,
+                                keyboardType: const TextInputType
+                                    .numberWithOptions(),
+                                validator: _model
+                                    .textControllerValidator
+                                    .asValidator(context),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                      33),
+                                  FilteringTextInputFormatter
+                                      .digitsOnly,
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },);
