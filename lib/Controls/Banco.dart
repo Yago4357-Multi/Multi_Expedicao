@@ -46,22 +46,7 @@ class Banco {
           'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$Cod_Arrumado,1);');
     } on Exception catch (e) {
       print(e);
-      await showCupertinoModalPopup(
-          barrierDismissible: false,
-          builder: (context) {
-            return CupertinoAlertDialog(
-              title: const Text('Código Duplicado'),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                    isDefaultAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Voltar'))
-              ],
-            );
-          },
-          context: a);
+
     }
   }
 
@@ -79,7 +64,7 @@ class Banco {
     var teste2;
     var teste = 0;
     late final Pedidos;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -152,7 +137,7 @@ class Banco {
   getRomaneio(a) async {
     var teste;
     late final Pedidos;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -197,7 +182,7 @@ class Banco {
   Future<List<palete>> paleteFinalizado() async {
     var teste = <palete>[];
     late final Pedidos;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -214,7 +199,7 @@ class Banco {
     }
     Pedidos!.forEach((element) {
       if (element[4] == null){
-      teste.add(palete(element[0],element[1],element[2]));
+        teste.add(palete(element[0],element[1],element[2]));
       }else{
         teste.add(palete(element[0],element[1],element[2],id_usur_fechamento: element[3],dt_fechamento: element[4] ));
       }
@@ -225,7 +210,7 @@ class Banco {
   Future<int> getPalete() async {
     var teste;
     late final Pedidos;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -236,7 +221,7 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       Pedidos =
-          await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+      await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
     } catch (e) {
       print(e);
     }
@@ -249,7 +234,7 @@ class Banco {
   Future<int> getRomaneioNovo() async {
     var teste;
     late final Pedidos;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -274,7 +259,7 @@ class Banco {
     var teste = <Contagem>[];
     late final Pedidos;
     late Result VolumeResponse;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -312,7 +297,7 @@ class Banco {
     var teste = <pedido>[];
     late final Pedidos;
     var Status = 'OK';
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -323,30 +308,30 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       if (Pallets.isNotEmpty){
-      Pedidos = await conn2
-          .execute('select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '"', '"') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${pallets.join(',')})) group by P."NUMPED";');
+        Pedidos = await conn2
+            .execute('select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '"', '"') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${pallets.join(',')})) group by P."NUMPED";');
       }
     } catch (e) {
       print(e);
     }
-      Pedidos!.forEach((element) async {
-        if (element[2] < element [3] || element[1].toString().replaceAll(RegExp(',| '), '').length > Pallets.length){
-          Status = 'Errado';
-        }else{
-          Status = 'OK';
-        }
-            if (element != null) {
-              teste.add(pedido(element[0],element[1],element[2],element[3],Status));
-            }
-          });
-        return teste;
+    Pedidos!.forEach((element) async {
+      if (element[2] < element [3] || element[1].toString().replaceAll(RegExp(',| '), '').length > Pallets.length){
+        Status = 'Errado';
+      }else{
+        Status = 'OK';
+      }
+      if (element != null) {
+        teste.add(pedido(element[0],element[1],element[2],element[3],Status));
+      }
+    });
+    return teste;
   }
 
   Future<List<Contagem>> selectPallet(int Pallet) async {
     var teste = <Contagem>[];
     late final Pedidos;
     late Result VolumeResponse;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -387,7 +372,7 @@ class Banco {
     var teste = <Contagem>[];
     late final Pedidos;
     late Result VolumeResponse;
-    var conn2 = await Connection.open(
+    final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -399,7 +384,7 @@ class Banco {
 
     try {
       Pedidos =
-          await conn2.execute('select * from "Bipagem" where "PEDIDO" = $cod;');
+      await conn2.execute('select * from "Bipagem" where "PEDIDO" = $cod;');
     } catch (e) {
       print(e);
     }
