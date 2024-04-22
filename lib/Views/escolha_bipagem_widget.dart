@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../Components/Model/escolha_bipagem_model.dart';
 import '../Components/Widget/drawer_widget.dart';
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 export '../Components/Model/escolha_bipagem_model.dart';
 
 class EscolhaBipagemWidget extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/Controls/Visualiza%C3%A7%C3%A3o.dart';
-import 'Rotas.dart';
+import 'rotas.dart';
 
 void main() {
   runApp(const MyApp());

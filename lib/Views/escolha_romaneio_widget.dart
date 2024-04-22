@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 import 'lista_romaneio_conf_widget.dart';
 import 'lista_romaneio_widget.dart';
 export '../Components/Model/escolha_romaneio_model.dart';
@@ -26,7 +26,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => EscolhaRomaneioModel());
+    _model = createModel(context, EscolhaRomaneioModel.new);
   }
 
   @override
@@ -99,7 +99,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ListaRomaneioWidget(romaneio: i)));
+                                  ListaRomaneioWidget(i)));
                     }
                   },
                   options: FFButtonOptions(
@@ -127,8 +127,15 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
               Align(
                 alignment: const AlignmentDirectional(0, 0),
                 child: FFButtonWidget(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, '/CriarPalete');
+                  onPressed: () async {
+                    bd.createRomaneio();
+                    var i = await bd.getRomaneio(context) ?? 0;
+                    Navigator.pop(context);
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ListaRomaneioWidget(i)));
                   },
                   text: 'Criar Novo Romaneio',
                   options: FFButtonOptions(

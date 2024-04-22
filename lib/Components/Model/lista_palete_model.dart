@@ -1,10 +1,10 @@
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import '/Views/lista_pedido_widget.dart' show ListaPedidoWidget;
+import '/Views/lista_palete_widget.dart' show ListaPaleteWidget;
 import 'package:flutter/material.dart';
 
 import 'drawer_model.dart';
 
-class ListaPedidoModel extends FlutterFlowModel<ListaPedidoWidget> {
+class ListaPaleteModel extends FlutterFlowModel<ListaPaleteWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();

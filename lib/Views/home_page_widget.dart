@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 import '../Models/Contagem.dart';
 import '../Components/Model/home_page_model.dart';
 import '/components/Widget/drawer_widget.dart';

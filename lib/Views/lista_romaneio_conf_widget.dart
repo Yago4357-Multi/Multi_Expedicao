@@ -3,21 +3,22 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/lista_romaneio_conf_model.dart';
 
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 import '../Models/Contagem.dart';
 import '/components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
 
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
+///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
-  int palete;
+  final int palete;
 
-  ListaRomaneioConfWidget({super.key, required this.palete});
+  ///Construtor da página
+  const ListaRomaneioConfWidget({super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
@@ -356,7 +357,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                   builder: (context) =>
                                                       ListaPedidoWidget(
                                                           cont: Pedidos[index]
-                                                              .Ped),
+                                                                  .Ped ??
+                                                              0),
                                                 ));
                                           },
                                           child: Padding(
@@ -388,42 +390,42 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                 child: Column(
                                                   children: [
                                                     Align(
-                                                      alignment: Alignment.centerLeft,
+                                                      alignment:
+                                                          Alignment.centerLeft,
                                                       child: RichText(
-                                                        textAlign: TextAlign.start,
+                                                        textAlign:
+                                                            TextAlign.start,
                                                         text: TextSpan(
                                                           children: [
                                                             const TextSpan(
-                                                              text:
-                                                              'Ped. : ',
+                                                              text: 'Ped. : ',
                                                               style:
-                                                              TextStyle(),
+                                                                  TextStyle(),
                                                             ),
                                                             TextSpan(
                                                               text:
-                                                              '${Pedidos[index].Ped}',
+                                                                  '${Pedidos[index].Ped}',
                                                               style:
-                                                              const TextStyle(
+                                                                  const TextStyle(
                                                                 color: Color(
                                                                     0xFF007000),
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w900,
-                                                                fontSize:
-                                                                24,
+                                                                    FontWeight
+                                                                        .w900,
+                                                                fontSize: 24,
                                                               ),
                                                             )
                                                           ],
                                                           style: FlutterFlowTheme
-                                                              .of(context)
+                                                                  .of(context)
                                                               .bodyLarge
                                                               .override(
-                                                            fontFamily:
-                                                            'Readex Pro',
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .normal,
-                                                          ),
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                              ),
                                                         ),
                                                       ),
                                                     ),
@@ -436,32 +438,38 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                       children: [
                                                         Column(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
+                                                              MainAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             Padding(
                                                               padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  0, 4, 0, 0),
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      0,
+                                                                      4,
+                                                                      0,
+                                                                      0),
                                                               child: Text(
                                                                 'Palete : ${Pedidos[index].Pallet}',
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
                                                             Padding(
                                                               padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  0, 4, 0, 0),
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      0,
+                                                                      4,
+                                                                      0,
+                                                                      0),
                                                               child: Text(
                                                                 'Cidade : ${Pedidos[index].Cx}',
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
@@ -476,21 +484,21 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             height: 80,
                                                             constraints:
                                                                 BoxConstraints(
-                                                              minWidth:
-                                                                  MediaQuery.sizeOf(
+                                                              minWidth: MediaQuery
+                                                                          .sizeOf(
                                                                               context)
-                                                                          .width *
-                                                                      0.2,
-                                                              maxWidth:
-                                                                  MediaQuery.sizeOf(
+                                                                      .width *
+                                                                  0.2,
+                                                              maxWidth: MediaQuery
+                                                                          .sizeOf(
                                                                               context)
-                                                                          .width *
-                                                                      0.3,
-                                                              maxHeight:
-                                                                  MediaQuery.sizeOf(
+                                                                      .width *
+                                                                  0.3,
+                                                              maxHeight: MediaQuery
+                                                                          .sizeOf(
                                                                               context)
-                                                                          .height *
-                                                                      0.8,
+                                                                      .height *
+                                                                  0.8,
                                                             ),
                                                             decoration:
                                                                 BoxDecoration(
@@ -498,8 +506,10 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                   0xFF6ABD6A),
                                                               borderRadius:
                                                                   BorderRadius
-                                                                      .circular(12),
-                                                              border: Border.all(
+                                                                      .circular(
+                                                                          12),
+                                                              border:
+                                                                  Border.all(
                                                                 color: const Color(
                                                                     0xFF005200),
                                                                 width: 2,
@@ -513,25 +523,24 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                 padding:
                                                                     const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                        1, 0, 1, 0),
+                                                                        1,
+                                                                        0,
+                                                                        1,
+                                                                        0),
                                                                 child: RichText(
-                                                                  text: TextSpan(
+                                                                  text:
+                                                                      TextSpan(
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
                                                                             'Vol. :\n',
-                                                                        style: FlutterFlowTheme.of(
-                                                                                context)
+                                                                        style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
-                                                                              fontFamily:
-                                                                                  'Readex Pro',
-                                                                              color:
-                                                                                  const Color(0xFF005200),
-                                                                              fontSize:
-                                                                                  18,
-                                                                              fontWeight:
-                                                                                  FontWeight.w800,
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: const Color(0xFF005200),
+                                                                              fontSize: 18,
+                                                                              fontWeight: FontWeight.w800,
                                                                             ),
                                                                       ),
                                                                       TextSpan(
@@ -550,13 +559,12 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                         .override(
                                                                           fontFamily:
                                                                               'Readex Pro',
-                                                                          color: const Color(
-                                                                              0xFF005200),
+                                                                          color:
+                                                                              const Color(0xFF005200),
                                                                           fontSize:
                                                                               24,
                                                                           fontWeight:
-                                                                              FontWeight
-                                                                                  .w800,
+                                                                              FontWeight.w800,
                                                                         ),
                                                                   ),
                                                                   textAlign:

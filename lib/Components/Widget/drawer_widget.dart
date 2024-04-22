@@ -1,11 +1,15 @@
-import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../Model/drawer_model.dart';
+
 export '../Model/drawer_model.dart';
 
+///Widget para puxar o mesmo Drawer em todas as telas
 class DrawerWidget extends StatefulWidget {
+
+  ///Construtor do Drawer
   const DrawerWidget({super.key});
 
   @override
@@ -24,7 +28,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => DrawerModel());
+    _model = createModel(context, DrawerModel.new);
   }
 
   @override
@@ -107,6 +111,54 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context,'/EscolhaRomaneio');
+                          },
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.space_dashboard,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  size: 24,
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                  child: Text(
+                                    'Confêrencia',
+                                    style:
+                                    FlutterFlowTheme.of(context).bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
                             await Navigator.popAndPushNamed(context,'/CriarRomaneio');
                           },
                           child: InkWell(
@@ -155,18 +207,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
-                            await Navigator.popAndPushNamed(context,'/EscolhaRomaneio');
+                            await Navigator.popAndPushNamed(context,'/ListaPedido');
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,
                             hoverColor: Colors.transparent,
                             highlightColor: Colors.transparent,
+
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Icon(
-                                  Icons.space_dashboard,
+                                FaIcon(
+                                  Icons.request_page_outlined,
                                   color: FlutterFlowTheme.of(context).primaryText,
                                   size: 24,
                                 ),
@@ -174,7 +227,56 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                   padding:
                                   const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                   child: Text(
-                                    'Confêrencia',
+                                    'Pedidos',
+                                    style:
+                                    FlutterFlowTheme.of(context).bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context,'/ListaPalete');
+                          },
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.pallet,
+                                  color: FlutterFlowTheme.of(context).primaryText,
+                                  size: 24,
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                  child: Text(
+                                    'Paletes',
                                     style:
                                     FlutterFlowTheme.of(context).bodyMedium,
                                   ),

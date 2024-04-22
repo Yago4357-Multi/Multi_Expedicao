@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/lista_romaneio.dart';
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 import '../Models/Palete.dart';
 import '../Models/Pedido.dart';
 import '/Components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
 
 class ListaRomaneioWidget extends StatefulWidget {
+  ///Variável para puxar o número do romaneio
   int romaneio;
 
-  ListaRomaneioWidget({super.key, required this.romaneio});
+  ///Construtor da página
+  ListaRomaneioWidget(this.romaneio, {super.key});
 
   @override
   State<ListaRomaneioWidget> createState() =>
@@ -33,9 +35,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   late ListaRomaneioModel _model;
 
   ///Variáveis para Salvar e Modelar Paletes
-  late Future<List<palete>> Paletes;
+  late Future<List<palete>> PaletesFin;
+  late Future<List<int>> getPaletes;
+
   late List<palete> Palete = [];
-  late List<palete> PaleteSelecionado = [];
   late List<int> PaleteSelecionadoint = [];
 
   ///Variáveis para Salvar e Modelar pedidos
@@ -44,13 +47,12 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   List<pedido> PedidosSalvos = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final bd = Banco();
+  late final Banco bd;
 
   @override
   void initState() {
     super.initState();
-    Paletes = bd.paleteFinalizado();
-    PedidoResposta = bd.selectPalletRomaneio(PaleteSelecionado);
+    bd = Banco();
     _model = createModel(context, ListaRomaneioModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
@@ -58,6 +60,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
     _model.choiceChipsValueController = FormFieldController<List<String>>(
       ['Todos'],
     );
+    rodarBanco();
+  }
+
+  void rodarBanco() async {
+    PaletesFin = bd.paleteFinalizado();
+    getPaletes = bd.selectRomaneio(romaneio);
+    PedidoResposta = bd.selectPalletRomaneio(getPaletes);
   }
 
   @override
@@ -92,39 +101,36 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
               await showCupertinoModalPopup(
                   barrierDismissible: false,
                   builder: (context2) {
-                    if (PaleteSelecionado.isNotEmpty) {
-                      if (PedidosSalvos
-                          .where((element) =>
-                      element.Status == 'Errado')
-                          .isEmpty) {
-                      return CupertinoAlertDialog(
-                        title: Text(
-                            'Você deseja finalizar o Romaneio $romaneio ?'),
-                        content: const Text(
-                            'Essa ação bloqueará o Romaneio de alterações Futuras'),
-                        actions: <CupertinoDialogAction>[
-                          CupertinoDialogAction(
-                              isDefaultAction: true,
-                              isDestructiveAction: true,
-                              onPressed: () {
-                                // bd.endRomaneio(romaneio);
-                                Navigator.popAndPushNamed(context, '/');
-                              },
-                              child: const Text(
-                                'Continuar',
-                              )),
-                          CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () {
-                                Navigator.pop(context2);
-                              },
-                              child: const Text('Voltar'))
-                        ],
-                      );
+                    if (PaleteSelecionadoint.isNotEmpty) {
+                      if (PedidosSalvos.where(
+                          (element) => element.Status == 'Errado').isEmpty) {
+                        return CupertinoAlertDialog(
+                          title: Text(
+                              'Você deseja finalizar o Romaneio $romaneio ?'),
+                          content: const Text(
+                              'Essa ação bloqueará o Romaneio de alterações Futuras'),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                isDestructiveAction: true,
+                                onPressed: () {
+                                  bd.endRomaneio(romaneio);
+                                  Navigator.popAndPushNamed(context, '/');
+                                },
+                                child: const Text(
+                                  'Continuar',
+                                )),
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () {
+                                  Navigator.pop(context2);
+                                },
+                                child: const Text('Voltar'))
+                          ],
+                        );
                       } else {
                         return CupertinoAlertDialog(
-                          title: const Text(
-                              'O Romaneio possui problemas'),
+                          title: const Text('O Romaneio possui problemas'),
                           content: const Text(
                               'Corrija os erros no Romaneio antes de tentar finaliza-lo'),
                           actions: <CupertinoDialogAction>[
@@ -140,10 +146,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                           ],
                         );
                       }
-                    }else{
+                    } else {
                       return CupertinoAlertDialog(
-                        title: const Text(
-                            'Romaneio sem Paletes'),
+                        title: const Text('Romaneio sem Paletes'),
                         content: const Text(
                             'Você deve selecionar pelo menos 1 palete para finalizar o Romaneio'),
                         actions: <CupertinoDialogAction>[
@@ -238,40 +243,55 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       ),
                                 ),
                               ),
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            16, 0, 0, 0),
-                                    child: Text(
-                                      'Paletes Nesse Romaneio',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 18,
-                                            letterSpacing: 0,
+                              FutureBuilder(
+                                future: getPaletes,
+                                builder: (context, snapshot) {
+                                  PaleteSelecionadoint = snapshot.data ?? [];
+                                  PaleteSelecionadoint.sort(
+                                    (a, b) => a.compareTo(b),
+                                  );
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16, 0, 0, 0),
+                                          child: Text(
+                                            'Paletes Nesse Romaneio',
+                                            style: FlutterFlowTheme.of(context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 18,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: const AlignmentDirectional(0, 0),
-                                    child: Text(
-                                      PaleteSelecionadoint.join(','),
-                                      textAlign: TextAlign.end,
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            fontSize: 40,
-                                            letterSpacing: 0,
+                                        ),
+                                        Align(
+                                          alignment:
+                                              const AlignmentDirectional(0, 0),
+                                          child: Text(
+                                            PaleteSelecionadoint.join(','),
+                                            textAlign: TextAlign.end,
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 40,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
-                                    ),
-                                  ),
-                                ],
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -310,7 +330,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 setter) {
                                           internalSetter = setter;
                                           return FutureBuilder(
-                                            future: Paletes,
+                                            future: PaletesFin,
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.done) {
@@ -529,9 +549,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             Palete.length,
                                                         itemBuilder:
                                                             (context, index) {
-                                                          if (PaleteSelecionado
+                                                          if (PaleteSelecionadoint
                                                               .contains(Palete[
-                                                                  index])) {
+                                                                      index]
+                                                                  .pallet)) {
                                                             return Padding(
                                                               padding:
                                                                   const EdgeInsetsDirectional
@@ -546,7 +567,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   color: Colors
-                                                                      .white,
+                                                                      .yellow
+                                                                      .shade50,
                                                                   boxShadow: const [
                                                                     BoxShadow(
                                                                       blurRadius:
@@ -581,14 +603,19 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   onTap:
                                                                       () async {
                                                                     setter(() {
-                                                                      PaleteSelecionado
-                                                                          .remove(
-                                                                              Palete[index]);
-                                                                      PaleteSelecionadoint.remove(Palete[index].pallet);
+                                                                      PaleteSelecionadoint.remove(
+                                                                          Palete[index]
+                                                                              .pallet);
+                                                                      bd.removePalete(
+                                                                          romaneio,
+                                                                          PaleteSelecionadoint);
+                                                                      getPaletes =
+                                                                          bd.selectRomaneio(
+                                                                              romaneio);
                                                                       setState(
                                                                           () {
                                                                         PedidoResposta =
-                                                                            bd.selectPalletRomaneio(PaleteSelecionado);
+                                                                            bd.selectPalletRomaneio(getPaletes);
                                                                       });
                                                                     });
                                                                   },
@@ -611,116 +638,116 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                            Colors.green.shade400,
+                                                                                Colors.green.shade400,
                                                                             borderRadius:
                                                                                 BorderRadius.circular(2),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               '${Palete[index].pallet}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               '${Palete[index].id_usur_inclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               '${Palete[index].dt_inclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               '${Palete[index].id_usur_fechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               '${Palete[index].dt_fechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                         Expanded(
                                                                           child:
-                                                                          Padding(
+                                                                              Padding(
                                                                             padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 12,
                                                                                 0,
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                            Text(
-                                                                              'VOLUMES',
+                                                                                Text(
+                                                                              '${Palete[index].volumetria}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                              ),
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -770,19 +797,24 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                 child: InkWell(
                                                                   onTap: () {
                                                                     setter(() {
-                                                                      PaleteSelecionado.add(
-                                                                          Palete[
-                                                                              index]);
-                                                                      PaleteSelecionado.sort((a, b) => a
-                                                                          .pallet
-                                                                          .compareTo(
-                                                                              b.pallet));
-                                                                      PaleteSelecionadoint.add(Palete[index].pallet);
-                                                                      PaleteSelecionadoint.sort((a, b) => a.compareTo(b),);
+                                                                      PaleteSelecionadoint.add(
+                                                                          Palete[index].pallet ??
+                                                                              0);
+                                                                      PaleteSelecionadoint
+                                                                          .sort(
+                                                                        (a, b) =>
+                                                                            a.compareTo(b),
+                                                                      );
+                                                                      bd.updatePalete(
+                                                                          romaneio,
+                                                                          PaleteSelecionadoint);
+                                                                      getPaletes =
+                                                                          bd.selectRomaneio(
+                                                                              romaneio);
                                                                       setState(
                                                                           () {
                                                                         PedidoResposta =
-                                                                            bd.selectPalletRomaneio(PaleteSelecionado);
+                                                                            bd.selectPalletRomaneio(getPaletes);
                                                                       });
                                                                     });
                                                                   },
@@ -910,7 +942,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              'VOLUMES',
+                                                                              '${Palete[index].volumetria}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -1179,97 +1211,65 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Pedido',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
-                                      ),
+                                    child: Text(
+                                      'Pedido',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Carregamento',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
-                                      ),
+                                    child: Text(
+                                      'Carregamento',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(0.6, 0),
-                                      child: Text(
-                                        'Paletes',
-                                        textAlign: TextAlign.end,
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
-                                      ),
+                                    child: Text(
+                                      'Paletes',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(0.2, 0),
-                                      child: Text(
-                                        'Conferido',
-                                        textAlign: TextAlign.end,
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
-                                      ),
+                                    child: Text(
+                                      'Conferido',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                   Expanded(
                                     child: Padding(
                                       padding:
                                           const EdgeInsetsDirectional.fromSTEB(
-                                              4, 0, 16, 0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Align(
-                                            alignment:
-                                                const AlignmentDirectional(
-                                                    1, 0),
-                                            child: Text(
-                                              'Status',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelSmall
-                                                      .override(
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        letterSpacing: 0,
-                                                      ),
+                                              0, 4, 40, 4),
+                                      child: Text(
+                                        'Status',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
                                             ),
-                                          ),
-                                        ],
                                       ),
                                     ),
                                   ),
@@ -1345,43 +1345,31 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 Expanded(
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            -1, 0),
-                                                    child: Text(
-                                                      '${Pedidos[index].Ped}',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            color:
-                                                                corTextoStatus,
-                                                            fontFamily:
-                                                                'Readex Pro',
-                                                            letterSpacing: 0,
-                                                          ),
-                                                    ),
+                                                  child: Text(
+                                                    '${Pedidos[index].Ped}',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          color: corTextoStatus,
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            -1, 0),
-                                                    child: Text(
-                                                      '    ?',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            color:
-                                                                corTextoStatus,
-                                                            fontFamily:
-                                                                'Readex Pro',
-                                                            letterSpacing: 0,
-                                                          ),
-                                                    ),
+                                                  child: Text(
+                                                    '?',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          color: corTextoStatus,
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                   ),
                                                 ),
                                                 Expanded(
@@ -1401,7 +1389,6 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 Expanded(
                                                   child: Text(
                                                     '${Pedidos[index].Cxs} / ${Pedidos[index].Vol}',
-                                                    textAlign: TextAlign.center,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1414,52 +1401,41 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: corFundoStatus,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          border: Border.all(
-                                                            color:
-                                                                corBordaStatus,
-                                                          ),
-                                                        ),
-                                                        child: Align(
-                                                          alignment:
-                                                              const AlignmentDirectional(
-                                                                  0, 0),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    8, 4, 8, 4),
-                                                            child: Text(
-                                                              Pedidos[index]
-                                                                  .Status,
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodySmall
-                                                                  .override(
-                                                                    color:
-                                                                        corTextoStatus,
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    letterSpacing:
-                                                                        0,
-                                                                  ),
-                                                            ),
-                                                          ),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: corFundoStatus,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      border: Border.all(
+                                                        color: corBordaStatus,
+                                                      ),
+                                                    ),
+                                                    child: Align(
+                                                      alignment:
+                                                          const AlignmentDirectional(
+                                                              0, 0),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                8, 4, 8, 4),
+                                                        child: Text(
+                                                          Pedidos[index].Status,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodySmall
+                                                              .override(
+                                                                color:
+                                                                    corTextoStatus,
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                letterSpacing:
+                                                                    0,
+                                                              ),
                                                         ),
                                                       ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
                                               ],

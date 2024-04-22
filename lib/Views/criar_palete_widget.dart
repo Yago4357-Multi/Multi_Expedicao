@@ -10,7 +10,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart';
 
-import '../Controls/Banco.dart';
+import '../Controls/banco.dart';
 import 'lista_romaneio_conf_widget.dart';
 
 class CriarPaleteWidget extends StatefulWidget {
