@@ -207,6 +207,41 @@ class Banco {
     return teste;
   }
 
+  ///Função para verificar se o palete foi finalizado
+  Future<List<Paletes>> paleteAll(int palete, BuildContext a) async {
+    var teste = <Paletes>[];
+    late final Result pedidos;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      pedidos = await conn2.execute(
+          'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is null and "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO" order by "ID";');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      if (element[4] == null) {
+        teste.add(Paletes(element[0] as int?, element[1] as int?,
+            element[2] as DateTime?, element[3] as int?));
+      } else {
+        teste.add(Paletes(element[0] as int?, element[1] as int?,
+            element[2] as DateTime?, element[3] as int?,
+            idUsurFechamento: element[4] as int?,
+            dtFechamento: element[5] as DateTime?));
+      }
+    }
+    return teste;
+  }
+
   ///Função para finalizar Paletes
   void endPalete(int palete) async {
     await conn.execute(
