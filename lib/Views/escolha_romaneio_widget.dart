@@ -1,16 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
-import 'lista_romaneio_conf_widget.dart';
 import 'lista_romaneio_widget.dart';
+
 export '../Components/Model/escolha_romaneio_model.dart';
 
+///Página para definir a tarefa escolhida para o Romaneio
 class EscolhaRomaneioWidget extends StatefulWidget {
+  ///Construtor da página de escolha do Romaneio
   const EscolhaRomaneioWidget({super.key});
 
   @override
@@ -94,12 +94,13 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                   onPressed: () async {
                     var i = await bd.getRomaneio(context) ?? 0;
                     if (i != 0) {
-                      Navigator.pop(context);
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ListaRomaneioWidget(i)));
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListaRomaneioWidget(i)));
+                      }
                     }
                   },
                   options: FFButtonOptions(
@@ -130,12 +131,13 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                   onPressed: () async {
                     bd.createRomaneio();
                     var i = await bd.getRomaneio(context) ?? 0;
-                    Navigator.pop(context);
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ListaRomaneioWidget(i)));
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ListaRomaneioWidget(i)));
+                    }
                   },
                   text: 'Criar Novo Romaneio',
                   options: FFButtonOptions(

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../Controls/banco.dart';
-import '../Models/Contagem.dart';
 import '../Components/Model/home_page_model.dart';
+import '../Controls/banco.dart';
+import '../Models/contagem.dart';
 import '/components/Widget/drawer_widget.dart';
 
+///Página inicial do Aplicativo
 class HomePageWidget extends StatefulWidget {
+
+  ///Construtor da página inicial
   const HomePageWidget({super.key});
 
   @override
@@ -49,15 +52,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
     ),
   };
 
-  late final bd;
+  late final Banco bd;
   late Future<List<Contagem>> getPed;
-  late List<Contagem> Pedidos;
+  late List<Contagem> pedidos;
 
   @override
   void initState() {
-    bd = Banco();
-    getPed = bd.selectAll();
     super.initState();
+    rodarBanco();
     _model = createModel(context, HomePageModel.new);
     setupAnimations(
       animationsMap.values.where((anim) =>
@@ -65,6 +67,11 @@ class _HomePageWidgetState extends State<HomePageWidget>
           !anim.applyInitialState),
       this,
     );
+  }
+
+  void rodarBanco() async{
+    bd = Banco();
+    getPed = bd.selectAll();
   }
 
   @override
@@ -125,7 +132,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
             future: getPed,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                Pedidos = snapshot.data ?? [];
+                pedidos = snapshot.data ?? [];
                 return Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -236,7 +243,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${Pedidos.length}',
+                                                  '${pedidos.length}',
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .displaySmall,
@@ -530,7 +537,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '${Pedidos.length}',
+                                            '${pedidos.length}',
                                             style: FlutterFlowTheme.of(context)
                                                 .displaySmall,
                                           ),

@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
-import '../Models/Contagem.dart';
-import '../Models/Palete.dart';
-import '../Models/Pedido.dart';
+import '../Models/contagem.dart';
+import '../Models/palete.dart';
+import '../Models/pedido.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
 
 ///Classe para manter funções do Banco
@@ -173,8 +173,8 @@ class Banco {
   }
 
   ///Função para verificar se o palete foi finalizado
-  Future<List<palete>> paleteFinalizado() async {
-    var teste = <palete>[];
+  Future<List<Paletes>> paleteFinalizado() async {
+    var teste = <Paletes>[];
     late final Result pedidos;
     final conn2 = await Connection.open(
         Endpoint(
@@ -195,13 +195,13 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[4] == null) {
-        teste.add(palete(element[0] as int?, element[1] as int?,
+        teste.add(Paletes(element[0] as int?, element[1] as int?,
             element[2] as DateTime?, element[3] as int?));
       } else {
-        teste.add(palete(element[0] as int?, element[1] as int?,
+        teste.add(Paletes(element[0] as int?, element[1] as int?,
             element[2] as DateTime?, element[3] as int?,
-            id_usur_fechamento: element[4] as int?,
-            dt_fechamento: element[5] as DateTime?));
+            idUsurFechamento: element[4] as int?,
+            dtFechamento: element[5] as DateTime?));
       }
     }
     return teste;
@@ -317,10 +317,10 @@ class Banco {
   }
 
   ///Função para buscar todas as bipagens dos paletes selecionados para a tela do Romaneio
-  Future<List<pedido>> selectPalletRomaneio(
+  Future<List<Pedido>> selectPalletRomaneio(
       Future<List<int>> listaPaletes) async {
     var paletes = await listaPaletes;
-    var teste = <pedido>[];
+    var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
     final conn2 = await Connection.open(
@@ -352,7 +352,7 @@ class Banco {
       } else {
         status = 'OK';
       }
-      teste.add(pedido(element[0] as int, element[1] as String,
+      teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status));
     }
     return teste;
@@ -452,12 +452,12 @@ class Banco {
   void updatePedido(List<Contagem> pedidos) async {
     for (var element in pedidos) {
       await conn.execute(
-          'update "Bipagem" set "PALETE" = ${element.Pallet} where "PEDIDO" = ${element.Ped} and "VOLUME_CAIXA" = ${element.Cx};');
+          'update "Bipagem" set "PALETE" = ${element.palete} where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
     }
   }
 
   ///Função para excluir a caixa
-  excluiPedido(List<Contagem> pedidos) async {
+  void excluiPedido(List<Contagem> pedidos) async {
     late Result pedidosResponse;
     final conn2 = await Connection.open(
         Endpoint(
@@ -472,12 +472,12 @@ class Banco {
     for (var element in pedidos) {
       try {
         pedidosResponse = await conn2.execute(
-            'select * from "Bipagem" where "PEDIDO" = ${element.Ped} and "VOLUME_CAIXA" = ${element.Cx} order by "VOLUME_CAIXA";');
+            'select * from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
         for (var element2 in pedidosResponse) {
           await conn2.execute(
               "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,1);");
           await conn2.execute(
-              'delete from "Bipagem" where "PEDIDO" = ${element.Ped} and "VOLUME_CAIXA" = ${element.Cx};');
+              'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
         }
       } on Exception catch (e) {
         if (kDebugMode) {

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-String Visualizacao(){
+///Classe para descobrir o tipo de sistema que está acessando
+String visualizacao(){
   if (kIsWeb){
     return '/';
   }

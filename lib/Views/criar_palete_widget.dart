@@ -1,19 +1,22 @@
-import 'package:flutterflow_ui/flutterflow_ui.dart';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:romaneio_teste/Views/lista_pedido_widget.dart';
-import '../Components/Model/criar_palete_model.dart';
-import '../Components/Widget/drawer_widget.dart';
-export '../Components/Model/criar_palete_model.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:flutter/services.dart';
 
+import '../Components/Model/criar_palete_model.dart';
+import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import 'lista_romaneio_conf_widget.dart';
 
+export '../Components/Model/criar_palete_model.dart';
+
+///Página para a criação de novos Paletes
 class CriarPaleteWidget extends StatefulWidget {
+
+  ///Construtor da página de criação de novos Paletes
   const CriarPaleteWidget({super.key});
 
   @override
@@ -31,8 +34,12 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   @override
   void initState() {
     super.initState();
+    rodarBanco();
+    _model = createModel(context, CriarPaleteModel.new);
+  }
+
+  void rodarBanco() async {
     getPalete = bd.getPalete();
-    _model = createModel(context, () => CriarPaleteModel());
   }
 
   @override
@@ -92,7 +99,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: FutureBuilder(
             future: getPalete,
             builder: (context, snapshot) {
-              int i = 0;
+              var i = 0;
               i = snapshot.data ?? 0;
               return Column(
                 mainAxisSize: MainAxisSize.max,
@@ -181,9 +188,10 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                           },
                         ));
                         await Printing.layoutPdf(onLayout: (format) => pdf.save());
-                        print(i);
+                        if (context.mounted){
                         Navigator.pop(context);
                         await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i ),));
+                        }
                       },
                       text: 'Criar Palete e Imprimir Cód.',
                       icon: const Icon(

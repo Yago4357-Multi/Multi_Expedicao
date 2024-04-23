@@ -6,7 +6,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../Components/Model/lista_pedido_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
-import '../Models/Contagem.dart';
+import '../Models/contagem.dart';
 
 ///Classe para manter a listagem dos pedidos
 class ListaPedidoWidget extends StatefulWidget {
@@ -111,7 +111,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                       pedidosAlt = [];
                                     }
                                     if (pedidosExc.isNotEmpty) {
-                                      await bd.excluiPedido(pedidosExc);
+                                      bd.excluiPedido(pedidosExc);
                                       pedidosExc = [];
                                       getPed = bd.selectPedido(cont);
                                     }
@@ -250,7 +250,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                 FontWeight.w400,
                                                           ),
                                                   hintText: pedidos.isNotEmpty
-                                                      ? '${pedidos[0].Ped}'
+                                                      ? '${pedidos[0].ped}'
                                                       : 'Pedido não encontrado...',
                                                   enabledBorder:
                                                       OutlineInputBorder(
@@ -375,12 +375,12 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       pedidosExc
                                                                           .length) /
                                                                   (pedidos[0]
-                                                                      .Vol?? 0)) <=
+                                                                      .vol?? 0)) <=
                                                               1
                                                           ? ((pedidos.length -
                                                                   pedidosExc
                                                                       .length) /
-                                                      (pedidos[0].Vol ?? 0))
+                                                      (pedidos[0].vol ?? 0))
                                                           : 1
                                                       : 0,
                                                   radius:
@@ -394,7 +394,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                           .isNotEmpty
                                                       ? (((pedidos.length) /
                                                       (pedidos[0]
-                                                                      .Vol ?? 0)) ==
+                                                                      .vol ?? 0)) ==
                                                               1)
                                                           ? Colors.green
                                                           : Colors.deepOrange
@@ -405,13 +405,13 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   .isNotEmpty &&
                                                               (pedidos.length /
                                                                   (pedidos[0]
-                                                                          .Vol ?? 0)) >=
+                                                                          .vol ?? 0)) >=
                                                                   1)
                                                           ? Colors.red
                                                           : Colors.grey
                                                       : Colors.grey,
                                                   center: Text(
-                                                    '${pedidos.length - pedidosExc.length} / ${pedidos.isNotEmpty ? pedidos[0].Vol : 0}',
+                                                    '${pedidos.length - pedidosExc.length} / ${pedidos.isNotEmpty ? pedidos[0].vol : 0}',
                                                     textAlign: TextAlign.center,
                                                     style: FlutterFlowTheme.of(
                                                             context)
@@ -424,7 +424,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                               pedidosExc
                                                                                   .length) /
                                                               (pedidos[0]
-                                                                              .Vol ?? 0)) ==
+                                                                              .vol ?? 0)) ==
                                                                       1)
                                                                   ? Colors.green
                                                                   : Colors
@@ -516,7 +516,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                               )),
                                                           TextSpan(
                                                             text:
-                                                                '${pedidos[index].Pallet}',
+                                                                '${pedidos[index].palete}',
                                                             style:
                                                                 const TextStyle(
                                                               color: Color(
@@ -634,7 +634,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             ),
                                                             TextSpan(
                                                               text:
-                                                                  '${pedidos[index].Cx} / ${pedidos[index].Vol}',
+                                                                  '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontSize: 26,
@@ -733,7 +733,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     )),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${pedidos[index].Pallet}',
+                                                                      '${pedidos[index].palete}',
                                                                   style:
                                                                       const TextStyle(
                                                                     color: Colors
@@ -858,7 +858,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                    '${pedidos[index].Cx} / ${pedidos[index].Vol}',
+                                                                    '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                     style:
                                                                     const TextStyle(
                                                                       fontSize:
@@ -914,7 +914,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                       );
                                     } else {
                                       if (pedidosAlt.where((element) =>
-                                              element.Cx == pedidos[index].Cx)
+                                              element.caixa == pedidos[index].caixa)
                                           .isNotEmpty) {
                                         return Stack(
                                           fit: StackFit.passthrough,
@@ -996,7 +996,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                               fontWeight: FontWeight.w400,
                                                                             ),
                                                                         hintText:
-                                                                            '${pedidos[index].Pallet}'),
+                                                                            '${pedidos[index].palete}'),
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -1017,13 +1017,13 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   setState(() {
                                                                     pedidosAlt.add(Contagem(
                                                                         pedidos[index]
-                                                                            .Ped,
+                                                                            .ped,
                                                                         int.parse(
                                                                             value),
                                                                         pedidos[index]
-                                                                            .Cx,
+                                                                            .caixa,
                                                                         pedidos[index]
-                                                                            .Vol));
+                                                                            .vol));
                                                                   });
                                                                 },
                                                               ),
@@ -1134,7 +1134,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                      '${pedidos[index].Cx} / ${pedidos[index].Vol}',
+                                                                      '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                       style:
                                                                       const TextStyle(
                                                                         fontSize:
@@ -1178,8 +1178,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                   setState(() {
                                                     pedidosAlt.removeWhere(
                                                         (element) =>
-                                                            element.Cx ==
-                                                            pedidos[index].Cx);
+                                                            element.caixa ==
+                                                            pedidos[index].caixa);
                                                     pedidosExc.add(
                                                         pedidos[index]);
                                                   });
@@ -1275,7 +1275,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                               fontWeight: FontWeight.w400,
                                                                             ),
                                                                         hintText:
-                                                                            '${pedidos[index].Pallet}'),
+                                                                            '${pedidos[index].palete}'),
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -1297,13 +1297,13 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   setState(() {
                                                                     pedidosAlt.add(Contagem(
                                                                         pedidos[index]
-                                                                            .Ped,
+                                                                            .ped,
                                                                         int.parse(
                                                                             value),
                                                                         pedidos[index]
-                                                                            .Cx,
+                                                                            .caixa,
                                                                         pedidos[index]
-                                                                            .Vol));
+                                                                            .vol));
                                                                   });
                                                                 },
                                                               ),
@@ -1414,7 +1414,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          '${pedidos[index].Cx} / ${pedidos[index].Vol}',
+                                                                          '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                       style:
                                                                           const TextStyle(
                                                                         fontSize:

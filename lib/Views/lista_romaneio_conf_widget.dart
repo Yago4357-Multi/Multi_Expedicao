@@ -7,7 +7,7 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/lista_romaneio_conf_model.dart';
 
 import '../Controls/banco.dart';
-import '../Models/Contagem.dart';
+import '../Models/contagem.dart';
 import '/components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
 
@@ -15,6 +15,7 @@ export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
 ///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
+  ///Variável para definir o palete que está sendo bipado
   final int palete;
 
   ///Construtor da página
@@ -30,9 +31,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
 
   _ListaRomaneioConfWidgetState(this.palete);
 
-  List<Contagem> Pedidos = [];
+  List<Contagem> pedidos = [];
   late ListaRomaneioConfModel _model;
-  late final bd;
+  late final Banco bd;
   late Future<List<Contagem>> teste;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -43,8 +44,12 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
     _model = createModel(context, ListaRomaneioConfModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
-    teste = bd.selectPallet(palete);
     _model.textFieldFocusNode!.addListener(() => setState(() {}));
+    rodarBanco();
+  }
+
+  void rodarBanco() async{
+    teste = bd.selectPallet(palete);
   }
 
   @override
@@ -240,7 +245,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                         child: TextFormField(
                                           controller: _model.textController,
                                           focusNode: _model.textFieldFocusNode,
-                                          onFieldSubmitted: (value) {
+                                          onFieldSubmitted: (value) async {
                                             setState(() {
                                               bd.insert(
                                                   _model.textController!.text,
@@ -330,7 +335,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
-                                  Pedidos = snapshot.data ?? [];
+                                  pedidos = snapshot.data ?? [];
                                   return ListView.builder(
                                       padding: const EdgeInsets.fromLTRB(
                                         0,
@@ -342,7 +347,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                       scrollDirection: Axis.vertical,
                                       physics: const BouncingScrollPhysics(),
                                       shrinkWrap: true,
-                                      itemCount: (Pedidos.length),
+                                      itemCount: (pedidos.length),
                                       itemBuilder: (context, index) {
                                         return InkWell(
                                           splashColor: Colors.transparent,
@@ -356,8 +361,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       ListaPedidoWidget(
-                                                          cont: Pedidos[index]
-                                                                  .Ped ??
+                                                          cont: pedidos[index]
+                                                                  .ped ??
                                                               0),
                                                 ));
                                           },
@@ -404,7 +409,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             ),
                                                             TextSpan(
                                                               text:
-                                                                  '${Pedidos[index].Ped}',
+                                                                  '${pedidos[index].ped}',
                                                               style:
                                                                   const TextStyle(
                                                                 color: Color(
@@ -452,7 +457,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Palete : ${Pedidos[index].Pallet}',
+                                                                'Palete : ${pedidos[index].palete}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
@@ -467,7 +472,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cidade : ${Pedidos[index].Cx}',
+                                                                'Cidade : ${pedidos[index].caixa}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
@@ -545,7 +550,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${Pedidos[index].Cx} / ${Pedidos[index].Vol}',
+                                                                            '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                         style:
                                                                             const TextStyle(
                                                                           fontSize:

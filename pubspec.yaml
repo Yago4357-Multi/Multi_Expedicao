@@ -28,13 +28,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependency_overrides:
-  flutterflow_ui:
+  flutterflow_ui: any
   rive_common:
   rive: ^0.13.1
 
 dependencies:
   flutter:
     sdk: flutter
+  barcode_widget:
   postgres: ^3.1.2
   flutterflow_ui:
   http:
@@ -44,7 +45,7 @@ dependencies:
   flutter_animate:
   pdf: ^3.10.8
   printing: ^5.12.0
-  audioplayers: ^6.0.0
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

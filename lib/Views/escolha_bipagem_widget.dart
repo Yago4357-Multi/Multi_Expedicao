@@ -1,16 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:flutter/material.dart';
 
 import '../Components/Model/escolha_bipagem_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+
 export '../Components/Model/escolha_bipagem_model.dart';
 
+///Página da escolha de bipagem
 class EscolhaBipagemWidget extends StatefulWidget {
 
-  EscolhaBipagemWidget({super.key});
+  ///Construtor da página de escolha de bipagem
+  const EscolhaBipagemWidget({super.key});
 
   @override
   State<EscolhaBipagemWidget> createState() => _EscolhaBipagemWidgetState();
@@ -224,8 +226,8 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
               Align(
                 alignment: const AlignmentDirectional(0, 0),
                 child: FFButtonWidget(
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, '/CriarPalete');
+                  onPressed: () async {
+                    await Navigator.popAndPushNamed(context, '/CriarPalete');
                   },
                   text: 'Criar Novo Palete',
                   options: FFButtonOptions(

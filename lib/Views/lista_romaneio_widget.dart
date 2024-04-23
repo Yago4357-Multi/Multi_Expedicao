@@ -4,17 +4,18 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/lista_romaneio.dart';
 import '../Controls/banco.dart';
-import '../Models/Palete.dart';
-import '../Models/Pedido.dart';
+import '../Models/palete.dart';
+import '../Models/pedido.dart';
 import '/Components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
 
+///Página da listagem de Romaneio
 class ListaRomaneioWidget extends StatefulWidget {
   ///Variável para puxar o número do romaneio
-  int romaneio;
+  final int romaneio;
 
   ///Construtor da página
-  ListaRomaneioWidget(this.romaneio, {super.key});
+  const ListaRomaneioWidget(this.romaneio, {super.key});
 
   @override
   State<ListaRomaneioWidget> createState() =>
@@ -29,22 +30,22 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
   Color corBorda = Colors.green.shade700;
-  String Dica = 'Procure um pedido...';
+  String dica = 'Procure um pedido...';
 
   late StateSetter internalSetter;
   late ListaRomaneioModel _model;
 
   ///Variáveis para Salvar e Modelar Paletes
-  late Future<List<palete>> PaletesFin;
+  late Future<List<Paletes>> paletesFin;
   late Future<List<int>> getPaletes;
 
-  late List<palete> Palete = [];
-  late List<int> PaleteSelecionadoint = [];
+  late List<Paletes> palete = [];
+  late List<int> paleteSelecionadoint = [];
 
   ///Variáveis para Salvar e Modelar pedidos
-  late Future<List<pedido>> PedidoResposta;
-  List<pedido> Pedidos = [];
-  List<pedido> PedidosSalvos = [];
+  late Future<List<Pedido>> pedidoResposta;
+  List<Pedido> pedidos = [];
+  List<Pedido> pedidosSalvos = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late final Banco bd;
@@ -64,9 +65,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   }
 
   void rodarBanco() async {
-    PaletesFin = bd.paleteFinalizado();
+    paletesFin = bd.paleteFinalizado();
     getPaletes = bd.selectRomaneio(romaneio);
-    PedidoResposta = bd.selectPalletRomaneio(getPaletes);
+    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
   }
 
   @override
@@ -101,9 +102,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
               await showCupertinoModalPopup(
                   barrierDismissible: false,
                   builder: (context2) {
-                    if (PaleteSelecionadoint.isNotEmpty) {
-                      if (PedidosSalvos.where(
-                          (element) => element.Status == 'Errado').isEmpty) {
+                    if (paleteSelecionadoint.isNotEmpty) {
+                      if (pedidosSalvos.where(
+                          (element) => element.status == 'Errado').isEmpty) {
                         return CupertinoAlertDialog(
                           title: Text(
                               'Você deseja finalizar o Romaneio $romaneio ?'),
@@ -246,8 +247,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                               FutureBuilder(
                                 future: getPaletes,
                                 builder: (context, snapshot) {
-                                  PaleteSelecionadoint = snapshot.data ?? [];
-                                  PaleteSelecionadoint.sort(
+                                  paleteSelecionadoint = snapshot.data ?? [];
+                                  paleteSelecionadoint.sort(
                                     (a, b) => a.compareTo(b),
                                   );
                                   if (snapshot.connectionState ==
@@ -275,7 +276,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                           alignment:
                                               const AlignmentDirectional(0, 0),
                                           child: Text(
-                                            PaleteSelecionadoint.join(','),
+                                            paleteSelecionadoint.join(','),
                                             textAlign: TextAlign.end,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
@@ -330,11 +331,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 setter) {
                                           internalSetter = setter;
                                           return FutureBuilder(
-                                            future: PaletesFin,
+                                            future: paletesFin,
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.done) {
-                                                Palete = snapshot.data ?? [];
+                                                palete = snapshot.data ?? [];
                                                 return Dialog(
                                                   backgroundColor: Colors.white,
                                                   child: Column(
@@ -546,11 +547,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                         scrollDirection:
                                                             Axis.vertical,
                                                         itemCount:
-                                                            Palete.length,
+                                                            palete.length,
                                                         itemBuilder:
                                                             (context, index) {
-                                                          if (PaleteSelecionadoint
-                                                              .contains(Palete[
+                                                          if (paleteSelecionadoint
+                                                              .contains(palete[
                                                                       index]
                                                                   .pallet)) {
                                                             return Padding(
@@ -603,18 +604,18 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   onTap:
                                                                       () async {
                                                                     setter(() {
-                                                                      PaleteSelecionadoint.remove(
-                                                                          Palete[index]
+                                                                      paleteSelecionadoint.remove(
+                                                                          palete[index]
                                                                               .pallet);
                                                                       bd.removePalete(
                                                                           romaneio,
-                                                                          PaleteSelecionadoint);
+                                                                          paleteSelecionadoint);
                                                                       getPaletes =
                                                                           bd.selectRomaneio(
                                                                               romaneio);
                                                                       setState(
                                                                           () {
-                                                                        PedidoResposta =
+                                                                        pedidoResposta =
                                                                             bd.selectPalletRomaneio(getPaletes);
                                                                       });
                                                                     });
@@ -653,7 +654,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].pallet}',
+                                                                              '${palete[index].pallet}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -671,7 +672,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].id_usur_inclusao}',
+                                                                              '${palete[index].idUsurInclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -689,7 +690,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].dt_inclusao}',
+                                                                              '${palete[index].dtInclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -707,7 +708,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].id_usur_fechamento}',
+                                                                              '${palete[index].idUsurFechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -725,7 +726,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].dt_fechamento}',
+                                                                              '${palete[index].dtFechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -743,7 +744,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].volumetria}',
+                                                                              '${palete[index].volumetria}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -797,23 +798,23 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                 child: InkWell(
                                                                   onTap: () {
                                                                     setter(() {
-                                                                      PaleteSelecionadoint.add(
-                                                                          Palete[index].pallet ??
+                                                                      paleteSelecionadoint.add(
+                                                                          palete[index].pallet ??
                                                                               0);
-                                                                      PaleteSelecionadoint
+                                                                      paleteSelecionadoint
                                                                           .sort(
                                                                         (a, b) =>
                                                                             a.compareTo(b),
                                                                       );
                                                                       bd.updatePalete(
                                                                           romaneio,
-                                                                          PaleteSelecionadoint);
+                                                                          paleteSelecionadoint);
                                                                       getPaletes =
                                                                           bd.selectRomaneio(
                                                                               romaneio);
                                                                       setState(
                                                                           () {
-                                                                        PedidoResposta =
+                                                                        pedidoResposta =
                                                                             bd.selectPalletRomaneio(getPaletes);
                                                                       });
                                                                     });
@@ -852,7 +853,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].pallet}',
+                                                                              '${palete[index].pallet}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -870,7 +871,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].id_usur_inclusao}',
+                                                                              '${palete[index].idUsurInclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -888,7 +889,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].dt_inclusao}',
+                                                                              '${palete[index].dtInclusao}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -906,7 +907,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].id_usur_fechamento}',
+                                                                              '${palete[index].idUsurFechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -924,7 +925,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].dt_fechamento}',
+                                                                              '${palete[index].dtFechamento}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -942,7 +943,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              '${Palete[index].volumetria}',
+                                                                              '${palete[index].volumetria}',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -1019,11 +1020,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                         setState(() {
                                           if (_model.choiceChipsValue ==
                                               'Todos') {
-                                            Pedidos = PedidosSalvos;
+                                            pedidos = pedidosSalvos;
                                           } else {
-                                            Pedidos = PedidosSalvos.where(
+                                            pedidos = pedidosSalvos.where(
                                                     (element) =>
-                                                        element.Status ==
+                                                        element.status ==
                                                         _model.choiceChipsValue)
                                                 .toList();
                                           }
@@ -1090,29 +1091,29 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       onChanged: (value) {
                                         _model.choiceChipsValue = 'Todos';
                                         setState(() {
-                                          if (PedidosSalvos.length <
-                                              Pedidos.length) {
-                                            PedidosSalvos = Pedidos;
+                                          if (pedidosSalvos.length <
+                                              pedidos.length) {
+                                            pedidosSalvos = pedidos;
                                           }
                                           if (value.isNotEmpty) {
                                             var x =
-                                                PedidosSalvos.where((element) {
+                                                pedidosSalvos.where((element) {
                                               var texto =
-                                                  element.Ped.toString();
+                                                  element.ped.toString();
                                               texto.startsWith(value);
                                               return texto.startsWith(value);
                                             });
                                             if (x.isNotEmpty) {
-                                              Pedidos = x.toList();
+                                              pedidos = x.toList();
                                             } else {
-                                              Pedidos = [];
-                                              Dica = 'Pedido não encontrado';
+                                              pedidos = [];
+                                              dica = 'Pedido não encontrado';
                                               corDica = Colors.red.shade400;
                                               corBorda = Colors.red.shade700;
                                             }
                                           } else {
-                                            Pedidos = PedidosSalvos;
-                                            Dica = 'Procure por um pedido...';
+                                            pedidos = pedidosSalvos;
+                                            dica = 'Procure por um pedido...';
                                             corDica = Colors.green.shade400;
                                             corBorda = Colors.green.shade700;
                                           }
@@ -1123,7 +1124,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       autofocus: false,
                                       obscureText: false,
                                       decoration: InputDecoration(
-                                        labelText: Dica,
+                                        labelText: dica,
                                         labelStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
                                             .override(
@@ -1278,16 +1279,16 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                             ),
                           ),
                           FutureBuilder(
-                            future: PedidoResposta,
+                            future: pedidoResposta,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
-                                if (PedidosSalvos != snapshot.data) {
-                                  Pedidos = snapshot.data ?? [];
-                                  PedidosSalvos = Pedidos;
+                                if (pedidosSalvos != snapshot.data) {
+                                  pedidos = snapshot.data ?? [];
+                                  pedidosSalvos = pedidos;
                                 }
                                 return ListView.builder(
-                                  itemCount: Pedidos.length,
+                                  itemCount: pedidos.length,
                                   padding: const EdgeInsets.fromLTRB(
                                     0,
                                     0,
@@ -1305,7 +1306,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     var corFundoStatus =
                                         FlutterFlowTheme.of(context).accent2;
                                     var corTextoStatus = Colors.black;
-                                    if (Pedidos[index].Status == 'Errado') {
+                                    if (pedidos[index].status == 'Errado') {
                                       corStatus = Colors.red.shade100;
                                       corBordaStatus = Colors.red;
                                       corFundoStatus = Colors.red.shade100;
@@ -1322,7 +1323,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ListaPedidoWidget(
-                                                      cont: Pedidos[index].Ped),
+                                                      cont: pedidos[index].ped),
                                             ));
                                       },
                                       child: Padding(
@@ -1346,7 +1347,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    '${Pedidos[index].Ped}',
+                                                    '${pedidos[index].ped}',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1374,7 +1375,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    Pedidos[index].Pallet,
+                                                    pedidos[index].palete,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1388,7 +1389,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    '${Pedidos[index].Cxs} / ${Pedidos[index].Vol}',
+                                                    '${pedidos[index].caixas} / ${pedidos[index].vol}',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -1421,7 +1422,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                 .fromSTEB(
                                                                 8, 4, 8, 4),
                                                         child: Text(
-                                                          Pedidos[index].Status,
+                                                          pedidos[index].status,
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodySmall

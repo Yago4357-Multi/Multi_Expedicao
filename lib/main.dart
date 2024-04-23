@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import '/Controls/Visualiza%C3%A7%C3%A3o.dart';
+import 'Controls/visualizacao.dart';
 import 'rotas.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+///Classe do meu applicativo
 class MyApp extends StatelessWidget {
+
+  ///Construtor do meu aplicativo
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: namedRoutes,
-      initialRoute: Visualizacao(),
+      initialRoute: visualizacao(),
     );
   }
 }

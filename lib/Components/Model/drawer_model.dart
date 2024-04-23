@@ -1,7 +1,9 @@
-import 'package:flutterflow_ui/flutterflow_ui.dart';
-import '../Widget/drawer_widget.dart' show DrawerWidget;
 import 'package:flutter/material.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 
+import '../Widget/drawer_widget.dart' show DrawerWidget;
+
+///Clase modelo para o Widget Drawer
 class DrawerModel extends FlutterFlowModel<DrawerWidget> {
   /// Initialization and disposal methods.
 
