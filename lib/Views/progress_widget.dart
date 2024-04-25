@@ -6,25 +6,26 @@ import '../Components/Model/progress_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
+import '../Models/usur.dart';
 import 'lista_romaneio_conf_widget.dart';
 
 ///Página inicial do Aplicativo
 class ProgressWidget extends StatefulWidget {
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Construtor da página inicial
-  const ProgressWidget(this.acess, {super.key});
+  const ProgressWidget(this.usur, {super.key});
 
   @override
-  State<ProgressWidget> createState() => _ProgressWidgetState(acess);
+  State<ProgressWidget> createState() => _ProgressWidgetState(this.usur);
 }
 
 class _ProgressWidgetState extends State<ProgressWidget>
     with TickerProviderStateMixin {
 
-  String acess;
+  final Usuario acess;
 
   _ProgressWidgetState(this.acess);
 
@@ -92,7 +93,6 @@ class _ProgressWidgetState extends State<ProgressWidget>
 
   @override
   Widget build(BuildContext context) {
-    print(acess);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -105,7 +105,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(acess: acess)
+            child: DrawerWidget(usur: acess)
           ),
         ),
         appBar: AppBar(

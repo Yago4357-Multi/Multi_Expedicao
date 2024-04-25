@@ -5,6 +5,7 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/escolha_bipagem_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../Models/usur.dart';
 import 'criar_palete_widget.dart';
 
 export '../Components/Model/escolha_bipagem_model.dart';
@@ -13,13 +14,13 @@ export '../Components/Model/escolha_bipagem_model.dart';
 class EscolhaBipagemWidget extends StatefulWidget {
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Construtor da página de escolha de bipagem
-  const EscolhaBipagemWidget(this.acess, {super.key});
+  const EscolhaBipagemWidget(this.usur, {super.key});
 
   @override
-  State<EscolhaBipagemWidget> createState() => _EscolhaBipagemWidgetState(acess);
+  State<EscolhaBipagemWidget> createState() => _EscolhaBipagemWidgetState(usur);
 }
 
 class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
@@ -29,9 +30,9 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String acess;
+  final Usuario usur;
 
-  _EscolhaBipagemWidgetState(this.acess);
+  _EscolhaBipagemWidgetState(this.usur);
 
   @override
   void initState() {
@@ -59,7 +60,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(acess: acess,),
+            child: DrawerWidget(usur: usur,),
           ),
         ),
         appBar: AppBar(
@@ -129,7 +130,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                 focusNode: _model.textFieldFocusNode,
                                 onFieldSubmitted: (value) {
                                   setState(() {
-                                    bd.paleteExiste(int.parse(value), context, acess);
+                                    bd.paleteExiste(int.parse(value), context, usur );
                                   });
                                 },
                                 autofocus: true,
@@ -236,7 +237,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     Navigator.pop(context);
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => CriarPaleteWidget(acess),));
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => CriarPaleteWidget(usur),));
                   },
                   text: 'Criar Novo Palete',
                   options: FFButtonOptions(

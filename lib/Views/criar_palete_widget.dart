@@ -9,6 +9,7 @@ import 'package:printing/printing.dart';
 import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../Models/usur.dart';
 import 'lista_romaneio_conf_widget.dart';
 
 export '../Components/Model/criar_palete_model.dart';
@@ -17,13 +18,13 @@ export '../Components/Model/criar_palete_model.dart';
 class CriarPaleteWidget extends StatefulWidget {
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Construtor da página de criação de novos Paletes
-  const CriarPaleteWidget(this.acess, {super.key});
+  const CriarPaleteWidget(this.usur, {super.key});
 
   @override
-  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(acess);
+  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur);
 }
 
 class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
@@ -34,9 +35,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String acess;
+  final Usuario usur;
 
-  _CriarPaleteWidgetState(this.acess);
+  _CriarPaleteWidgetState(this.usur);
 
   @override
   void initState() {
@@ -98,7 +99,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(acess: acess,),
+            child: DrawerWidget(usur: usur,),
           ),
         ),
         body: SafeArea(
@@ -177,7 +178,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                     padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 12),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        bd.createPalete();
+                        bd.createPalete(usur);
                         pdf.addPage(pw.Page(
                           pageFormat: PdfPageFormat.a4,
                           build: (context2) {
@@ -197,7 +198,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         await Printing.layoutPdf(onLayout: (format) => pdf.save());
                         if (context.mounted){
                         Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , acess),));
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur),));
                         }
                       },
                       text: 'Criar Palete e Imprimir Cód.',

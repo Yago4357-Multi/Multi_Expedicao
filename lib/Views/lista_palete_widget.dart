@@ -7,6 +7,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
+import '../Models/usur.dart';
 
 ///Classe para manter a listagem dos paletes
 class ListaPaleteWidget extends StatefulWidget {
@@ -14,21 +15,22 @@ class ListaPaleteWidget extends StatefulWidget {
   final int cont;
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Constutor para a página de listagem dos paletes
-  const ListaPaleteWidget(this.acess, {super.key, required this.cont});
+  const ListaPaleteWidget(this.usur, {super.key, required this.cont});
 
   @override
-  State<ListaPaleteWidget> createState() => _ListaPaleteWidgetState(cont, this.acess);
+  State<ListaPaleteWidget> createState() =>
+      _ListaPaleteWidgetState(cont, this.usur);
 }
 
 class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   ///Classe para puxar o palete inicial da página
   int cont;
-  String acess;
+  final Usuario usur;
 
-  _ListaPaleteWidgetState(this.cont,this.acess);
+  _ListaPaleteWidgetState(this.cont, this.usur);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -81,7 +83,9 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
         child: wrapWithModel(
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
-          child: DrawerWidget(acess: acess,),
+          child: DrawerWidget(
+            usur: usur,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -94,11 +98,31 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
         child: inicial
             ? IconButton(
                 color: Colors.white,
-                onPressed: () {
-                  if (palete.isNotEmpty){
-                  setState(() {
-                    inicial = false;
-                  });
+                onPressed: () async {
+                  if (palete.isNotEmpty) {
+                    setState(() {
+                      inicial = false;
+                    });
+                  } else {
+                    await showCupertinoModalPopup(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          title: const Text('Selecione um Palete'),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: const Text('Voltar'))
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
                 icon: const Icon(Icons.edit_outlined))
@@ -120,7 +144,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                 isDestructiveAction: true,
                                 onPressed: () async {
                                   if (pedidosExc.isNotEmpty) {
-                                    bd.excluiPedido(pedidosExc);
+                                    bd.excluiPedido(pedidosExc, usur);
                                     pedidosExc = [];
                                     getPed = bd.selectPedido(cont);
                                   }

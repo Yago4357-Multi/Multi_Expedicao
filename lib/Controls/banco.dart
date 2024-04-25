@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,8 @@ import 'package:postgres/postgres.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
+import '../Models/usur.dart';
+import '../Views/escolha_bipagem_widget.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
 import '../Views/progress_widget.dart';
 
@@ -35,7 +38,7 @@ class Banco {
   }
 
   ///Função para inserir dados no Banco
-  void insert(String cod, int pallet, BuildContext a) async {
+  void insert(String cod, int pallet, BuildContext a, Usuario usur) async {
     var codArrumado = cod.substring(14, 33);
     var ped = codArrumado.substring(0, 10);
     var vol = codArrumado.substring(17, 19);
@@ -50,7 +53,7 @@ class Banco {
         }
       }
       await conn.execute(
-          'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,1);');
+          'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -59,13 +62,13 @@ class Banco {
   }
 
   ///Função para criar novos Paletes
-  void createPalete() async {
+  void createPalete(Usuario usur) async {
     await conn.execute(
-        'insert into "Romaneio" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,1);');
+        'insert into "Romaneio" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,${usur.id});');
   }
 
   ///Função para verificar se o Palete já existe
-  void paleteExiste(int palete, BuildContext a,String acess) async {
+  void paleteExiste(int palete, BuildContext a,Usuario usur) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
@@ -142,7 +145,7 @@ class Banco {
       await Navigator.push(
           a,
           MaterialPageRoute(
-              builder: (context) => ListaRomaneioConfWidget(palete: teste,acess)));
+              builder: (context) => ListaRomaneioConfWidget(palete: teste, usur)));
     }
   }
 
@@ -253,15 +256,15 @@ class Banco {
   }
 
   ///Função para finalizar Paletes
-  void endPalete(int palete) async {
+  void endPalete(int palete, Usuario usur) async {
     await conn.execute(
-        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp, "ID_USUR_FECHAMENTO" = 1 where "ID" = $palete');
+        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp, "ID_USUR_FECHAMENTO" = ${usur.id} where "ID" = $palete');
   }
 
   ///Função para criar novos Romaneios
-  void createRomaneio() async {
+  void createRomaneio(Usuario usur) async {
     await conn.execute(
-        'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,1);');
+        'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,${usur.id});');
   }
 
   ///Função para buscar o último Romaneio do Banco
@@ -502,7 +505,7 @@ class Banco {
   }
 
   ///Função para excluir a caixa
-  void excluiPedido(List<Contagem> pedidos) async {
+  void excluiPedido(List<Contagem> pedidos, Usuario usur) async {
     late Result pedidosResponse;
     final conn2 = await Connection.open(
         Endpoint(
@@ -520,7 +523,7 @@ class Banco {
             'select * from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
         for (var element2 in pedidosResponse) {
           await conn2.execute(
-              "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,1);");
+              "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
           await conn2.execute(
               'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
         }
@@ -584,7 +587,7 @@ class Banco {
 
   ///Função para verificar login do Banco
   void auth(String login, String senha, BuildContext a) async {
-    String? acess;
+    Usuario? usur;
     late final Result pedidos;
     final conn2 = await Connection.open(
         Endpoint(
@@ -597,7 +600,7 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       pedidos = await conn2.execute(
-          "select \"SETOR\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
+          "select \"ID\", \"SETOR\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -605,12 +608,18 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[0] != null) {
-        acess = element[0] as String;
+        usur = Usuario(element[0] as int, element[1] as String);
       }
     }
-    if (acess != null) {
+    if (usur!.acess != null) {
       if (a.mounted){
-        await Navigator.push(a, MaterialPageRoute(builder: (context) => ProgressWidget(acess!),));
+        if (Platform.isAndroid) {
+          await Navigator.push(a,
+              MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur!),));
+        }else{
+          await Navigator.push(a,
+              MaterialPageRoute(builder: (context) => ProgressWidget(usur!),));
+        }
       }
     }else{
       if (a.mounted) {

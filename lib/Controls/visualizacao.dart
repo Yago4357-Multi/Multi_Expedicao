@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+
 
 ///Classe para descobrir o tipo de sistema que está acessando
 String visualizacao(){
-  if (kIsWeb){
-    return '/';
+  if (Platform.isAndroid){
+    return '/Login';
   }
   else{
-    return '/';
+    return '/Login';
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../Models/usur.dart';
 import 'lista_romaneio_widget.dart';
 
 export '../Components/Model/escolha_romaneio_model.dart';
@@ -12,13 +13,13 @@ export '../Components/Model/escolha_romaneio_model.dart';
 class EscolhaRomaneioWidget extends StatefulWidget {
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Construtor da página de escolha do Romaneio
-  const EscolhaRomaneioWidget(this.acess,{super.key});
+  const EscolhaRomaneioWidget(this.usur,{super.key});
 
   @override
-  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState(this.acess);
+  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState(this.usur);
 }
 
 class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
@@ -27,9 +28,9 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String acess;
+  final Usuario usur;
 
-  _EscolhaRomaneioWidgetState(this.acess);
+  _EscolhaRomaneioWidgetState(this.usur);
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(acess: acess,),
+            child: DrawerWidget(usur: usur,),
           ),
         ),
         appBar: AppBar(
@@ -104,7 +105,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     if (i != 0) {
                       if (context.mounted) {
                         Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, acess)));
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur)));
                       }
                     }
                   },
@@ -134,11 +135,11 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                 alignment: const AlignmentDirectional(0, 0),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    bd.createRomaneio();
+                    bd.createRomaneio(usur);
                     var i = await bd.getRomaneio(context) ?? 0;
                     if (context.mounted) {
                       Navigator.pop(context);
-                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, acess),));
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur),));
                     }
                   },
                   text: 'Criar Novo Romaneio',

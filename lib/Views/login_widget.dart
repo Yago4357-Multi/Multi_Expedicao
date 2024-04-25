@@ -130,7 +130,12 @@ class _LoginWidgetState extends State<LoginWidget>
                           length: 1,
                           child: Container(
                             width: double.infinity,
-                            height: 700,
+                            height:
+                            (responsiveVisibility(
+                            context: context,
+                            phone: false,
+                            tablet: false,
+                          )) ? 700 : 400,
                             constraints: const BoxConstraints(
                               maxWidth: 602,
                             ),
@@ -430,9 +435,6 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             0, 0, 0, 16),
                                                     child: FFButtonWidget(
                                                       onPressed: () async {
-                          
-                                                        print(_model.passwordTextController.text);
-                                                        print(_model.emailAddressTextController.text);
                                                         bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context);
                                                       },
                                                       text: 'Logar',

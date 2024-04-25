@@ -7,6 +7,7 @@ import '../Components/Model/lista_pedido_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
+import '../Models/usur.dart';
 
 ///Classe para manter a listagem dos pedidos
 class ListaPedidoWidget extends StatefulWidget {
@@ -15,20 +16,20 @@ class ListaPedidoWidget extends StatefulWidget {
   final int cont;
 
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Constutor para a página de listagem dos pedidos
-  const ListaPedidoWidget(this.acess, {super.key, required this.cont});
+  const ListaPedidoWidget(this.usur, {super.key, required this.cont});
 
   @override
-  State<ListaPedidoWidget> createState() => _ListaPedidoWidgetState(cont,this.acess);
+  State<ListaPedidoWidget> createState() => _ListaPedidoWidgetState(cont,this.usur);
 }
 
 class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   int cont;
-  String acess;
+  final Usuario usur;
 
-  _ListaPedidoWidgetState(this.cont,this.acess);
+  _ListaPedidoWidgetState(this.cont,this.usur);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -74,7 +75,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
         child: wrapWithModel(
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
-          child: DrawerWidget(acess: acess),
+          child: DrawerWidget(usur: usur),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -115,7 +116,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                       pedidosAlt = [];
                                     }
                                     if (pedidosExc.isNotEmpty) {
-                                      bd.excluiPedido(pedidosExc);
+                                      bd.excluiPedido(pedidosExc, usur);
                                       pedidosExc = [];
                                       getPed = bd.selectPedido(cont);
                                     }

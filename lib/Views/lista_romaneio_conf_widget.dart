@@ -9,32 +9,32 @@ import '../Components/Model/lista_romaneio_conf_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
+import '../Models/usur.dart';
 import 'lista_pedido_widget.dart';
 
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
 ///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
-
   ///Variável para definir permissões do usuário
-  final String acess;
+  final Usuario usur;
 
   ///Variável para definir o palete que está sendo bipado
   final int palete;
 
   ///Construtor da página
-  const ListaRomaneioConfWidget(this.acess, {super.key, required this.palete});
+  const ListaRomaneioConfWidget(this.usur, {super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
-      _ListaRomaneioConfWidgetState(palete,this.acess);
+      _ListaRomaneioConfWidgetState(palete, this.usur);
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   int palete;
-  String acess;
+  final Usuario usur;
 
-  _ListaRomaneioConfWidgetState(this.palete,this.acess);
+  _ListaRomaneioConfWidgetState(this.palete, this.usur);
 
   List<Contagem> pedidos = [];
   late ListaRomaneioConfModel _model;
@@ -53,7 +53,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
     rodarBanco();
   }
 
-  void rodarBanco() async{
+  void rodarBanco() async {
     teste = bd.selectPallet(palete);
   }
 
@@ -78,34 +78,53 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
           height: 50,
           child: FloatingActionButton(
             onPressed: () async {
-              await showCupertinoModalPopup(
-                  barrierDismissible: false,
-                  builder: (context2) {
-                    return CupertinoAlertDialog(
-                      title: Text('Você deseja finalizar o Palete $palete?'),
-                      content: const Text(
-                          'Essa ação bloqueará o Palete de alterações Futuras'),
-                      actions: <CupertinoDialogAction>[
-                        CupertinoDialogAction(
-                            isDefaultAction: true,
-                            isDestructiveAction: true,
-                            onPressed: () {
-                              bd.endPalete(palete);
-                              Navigator.popAndPushNamed(context, '/');
-                            },
-                            child: const Text(
-                              'Continuar',
-                            )),
-                        CupertinoDialogAction(
-                            isDefaultAction: true,
-                            onPressed: () {
-                              Navigator.pop(context2);
-                            },
-                            child: const Text('Voltar'))
-                      ],
-                    );
-                  },
-                  context: context);
+              if (pedidos.isEmpty) {
+                await showCupertinoModalPopup(
+                    barrierDismissible: false,
+                    builder: (context2) {
+                      return CupertinoAlertDialog(
+                        title: const Text('Sem pedidos no Palete'),
+                        actions: <CupertinoDialogAction>[
+                          CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.pop(context2);
+                              },
+                              child: const Text('Voltar'))
+                        ],
+                      );
+                    },
+                    context: context);
+              } else {
+                await showCupertinoModalPopup(
+                    barrierDismissible: false,
+                    builder: (context2) {
+                      return CupertinoAlertDialog(
+                        title: Text('Você deseja finalizar o Palete $palete?'),
+                        content: const Text(
+                            'Essa ação bloqueará o Palete de alterações Futuras'),
+                        actions: <CupertinoDialogAction>[
+                          CupertinoDialogAction(
+                              isDefaultAction: true,
+                              isDestructiveAction: true,
+                              onPressed: () {
+                                bd.endPalete(palete, usur);
+                                Navigator.popAndPushNamed(context, '/');
+                              },
+                              child: const Text(
+                                'Continuar',
+                              )),
+                          CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.pop(context2);
+                              },
+                              child: const Text('Voltar'))
+                        ],
+                      );
+                    },
+                    context: context);
+              }
             },
             backgroundColor: Colors.orange.shade400,
             elevation: 8,
@@ -124,7 +143,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(acess: acess,),
+            child: DrawerWidget(
+              usur: usur,
+            ),
           ),
         ),
         appBar: AppBar(
@@ -255,7 +276,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                               bd.insert(
                                                   _model.textController!.text,
                                                   palete,
-                                                  context);
+                                                  context,
+                                                  usur);
                                               teste = bd.selectPallet(palete);
                                               _model.textController.text = '';
                                             });
@@ -361,7 +383,16 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             Navigator.pop(context);
-                                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: pedidos[index].ped ?? 0, acess),));
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ListaPedidoWidget(
+                                                          cont: pedidos[index]
+                                                                  .ped ??
+                                                              0,
+                                                          usur),
+                                                ));
                                           },
                                           child: Padding(
                                             padding: const EdgeInsetsDirectional
