@@ -13,18 +13,22 @@ class ListaPaleteWidget extends StatefulWidget {
   ///Classe para puxar o palete inicial da página
   final int cont;
 
+  ///Variável para definir permissões do usuário
+  final String acess;
+
   ///Constutor para a página de listagem dos paletes
-  const ListaPaleteWidget({super.key, required this.cont});
+  const ListaPaleteWidget(this.acess, {super.key, required this.cont});
 
   @override
-  State<ListaPaleteWidget> createState() => _ListaPaleteWidgetState(cont);
+  State<ListaPaleteWidget> createState() => _ListaPaleteWidgetState(cont, this.acess);
 }
 
 class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   ///Classe para puxar o palete inicial da página
   int cont;
+  String acess;
 
-  _ListaPaleteWidgetState(this.cont);
+  _ListaPaleteWidgetState(this.cont,this.acess);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -77,7 +81,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
         child: wrapWithModel(
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
-          child: const DrawerWidget(),
+          child: DrawerWidget(acess: acess,),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -91,9 +95,11 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
             ? IconButton(
                 color: Colors.white,
                 onPressed: () {
+                  if (palete.isNotEmpty){
                   setState(() {
                     inicial = false;
                   });
+                  }
                 },
                 icon: const Icon(Icons.edit_outlined))
             : IconButton(
@@ -265,15 +271,15 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                       'Readex Pro',
                                                                   color: const Color(
                                                                       0xFF005200),
-                                                                  fontSize: 26,
+                                                                  fontSize: 30,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                 ),
-                                                        hintText: pedidos
+                                                        hintText: palete
                                                                 .isNotEmpty
-                                                            ? '${pedidos[0].palete}'
-                                                            : 'Palete não encontrado...',
+                                                            ? '${palete[0].pallet}'
+                                                            : 'Palete desconhecido',
                                                         enabledBorder:
                                                             OutlineInputBorder(
                                                           borderSide:
@@ -322,10 +328,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                               BorderRadius
                                                                   .circular(12),
                                                         ),
-                                                        contentPadding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                20, 0, 0, 0),
                                                       ),
                                                       onSubmitted:
                                                           (value) async {
@@ -337,7 +339,9 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           getPed =
                                                               bd.selectPallet(
                                                                   cont);
-                                                          getPalete = bd.paleteAll(cont, context);
+                                                          getPalete =
+                                                              bd.paleteAll(cont,
+                                                                  context);
                                                         });
                                                       },
                                                       controller:
@@ -405,7 +409,9 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          '${pedidos.length}',
+                                                          palete.isNotEmpty
+                                                              ? '${palete[0].volumetria}'
+                                                              : '0',
                                                           style: TextStyle(
                                                             fontSize: 40,
                                                             fontWeight:
@@ -415,6 +421,158 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           ),
                                                         )),
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Align(
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      0, 0),
+                                              child: Stack(
+                                                children: [
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  10, 20, 0, 0),
+                                                          child: Text(
+                                                            'Dt. Fechamento :',
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .headlineMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Outfit',
+                                                                  fontSize: 20,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  10, 20, 0, 0),
+                                                          child: Text(
+                                                            palete.isNotEmpty
+                                                                ? palete[0].dtFechamento !=
+                                                                        null
+                                                                    ? DateFormat(
+                                                                            'kk:mm   dd/MM/yyyy')
+                                                                        .format(
+                                                                            palete[0].dtFechamento!)
+                                                                    : 'Palete aberto'
+                                                                : 'Palete Aberto',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .headlineMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Outfit',
+                                                                  fontSize: 20,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  inicial == false
+                                                      ? palete.isNotEmpty
+                                                          ? palete[0].dtFechamento !=
+                                                                  null
+                                                              ? Positioned(
+                                                                  right: 5,
+                                                                  top: 20,
+                                                                  child:
+                                                                      SizedBox(
+                                                                    width: 100,
+                                                                    height: 35,
+                                                                    child:
+                                                                        FloatingActionButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        await showCupertinoModalPopup(
+                                                                          context:
+                                                                              context,
+                                                                          barrierDismissible:
+                                                                              false,
+                                                                          builder:
+                                                                              (context) {
+                                                                            return CupertinoAlertDialog(
+                                                                              title: const Text('Reabrir Palete?'),
+                                                                              content: const Text('Reabrir o palete fará com que os pedidos dentro dele possam ser alterados'),
+                                                                              actions: <CupertinoDialogAction>[
+                                                                                CupertinoDialogAction(
+                                                                                    isDefaultAction: true,
+                                                                                    isDestructiveAction: true,
+                                                                                    onPressed: () async {
+                                                                                      setState(() {
+                                                                                        bd.reabrirPalete(cont);
+                                                                                        getPalete = bd.paleteAll(cont, context);
+                                                                                        Navigator.pop(context);
+                                                                                      });
+                                                                                    },
+                                                                                    child: const Text('Continuar')),
+                                                                                CupertinoDialogAction(
+                                                                                    isDefaultAction: true,
+                                                                                    onPressed: () {
+                                                                                      setState(() {
+                                                                                        Navigator.pop(context);
+                                                                                      });
+                                                                                    },
+                                                                                    child: const Text('Voltar'))
+                                                                              ],
+                                                                            );
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                      backgroundColor: Colors
+                                                                          .orange
+                                                                          .shade400,
+                                                                      elevation:
+                                                                          8,
+                                                                      child:
+                                                                          const Text(
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        'Reabrir',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontWeight:
+                                                                              FontWeight.w900,
+                                                                          fontSize:
+                                                                              20,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ))
+                                                              : Container()
+                                                          : Container()
+                                                      : Container(),
                                                 ],
                                               ),
                                             ),
@@ -440,7 +598,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                               .fromSTEB(
                                                               10, 20, 0, 0),
                                                       child: Text(
-                                                        'Dt. Fechamento :',
+                                                        'Dt. Carregamento :',
                                                         textAlign:
                                                             TextAlign.start,
                                                         style:
@@ -457,16 +615,25 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                   ),
                                                   Align(
                                                     alignment:
-                                                        Alignment.topLeft,
+                                                        Alignment.topCenter,
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                               10, 20, 0, 0),
                                                       child: Text(
-                                                        '${palete.isNotEmpty ? palete[0].dtFechamento : 'Data'}',
+                                                        palete.isNotEmpty
+                                                            ? palete[0].dtCarregamento !=
+                                                                    null
+                                                                ? DateFormat(
+                                                                        'kk:mm   dd/MM/yyyy')
+                                                                    .format(palete[
+                                                                            0]
+                                                                        .dtCarregamento!)
+                                                                : 'Palete não carregado'
+                                                            : 'Palete não carregado',
                                                         textAlign:
-                                                            TextAlign.start,
+                                                            TextAlign.center,
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -484,17 +651,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                             ),
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              24, 4, 0, 0),
-                                      child: Text(
-                                        'Status : Pendente',
-                                        textAlign: TextAlign.start,
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelMedium,
                                       ),
                                     ),
                                     ListView.builder(
@@ -1050,9 +1206,10 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                         text:
                                                                             '${pedidos[index].ped}',
                                                                         style:
-                                                                            const TextStyle(
-                                                                          color:
-                                                                              Colors.green,
+                                                                            TextStyle(
+                                                                          color: Colors
+                                                                              .green
+                                                                              .shade700,
                                                                           fontWeight:
                                                                               FontWeight.w900,
                                                                           fontSize:

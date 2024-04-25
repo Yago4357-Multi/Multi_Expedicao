@@ -16,11 +16,14 @@ export '../Components/Model/criar_palete_model.dart';
 ///Página para a criação de novos Paletes
 class CriarPaleteWidget extends StatefulWidget {
 
+  ///Variável para definir permissões do usuário
+  final String acess;
+
   ///Construtor da página de criação de novos Paletes
-  const CriarPaleteWidget({super.key});
+  const CriarPaleteWidget(this.acess, {super.key});
 
   @override
-  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState();
+  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(acess);
 }
 
 class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
@@ -30,6 +33,10 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   late CriarPaleteModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String acess;
+
+  _CriarPaleteWidgetState(this.acess);
 
   @override
   void initState() {
@@ -91,7 +98,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: const DrawerWidget(),
+            child: DrawerWidget(acess: acess,),
           ),
         ),
         body: SafeArea(
@@ -190,7 +197,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         await Printing.layoutPdf(onLayout: (format) => pdf.save());
                         if (context.mounted){
                         Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i ),));
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , acess),));
                         }
                       },
                       text: 'Criar Palete e Imprimir Cód.',

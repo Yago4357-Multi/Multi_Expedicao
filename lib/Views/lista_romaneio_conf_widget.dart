@@ -6,30 +6,35 @@ import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/lista_romaneio_conf_model.dart';
 
+import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
-import '/components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
 
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
 ///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
+
+  ///Variável para definir permissões do usuário
+  final String acess;
+
   ///Variável para definir o palete que está sendo bipado
   final int palete;
 
   ///Construtor da página
-  const ListaRomaneioConfWidget({super.key, required this.palete});
+  const ListaRomaneioConfWidget(this.acess, {super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
-      _ListaRomaneioConfWidgetState(palete);
+      _ListaRomaneioConfWidgetState(palete,this.acess);
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   int palete;
+  String acess;
 
-  _ListaRomaneioConfWidgetState(this.palete);
+  _ListaRomaneioConfWidgetState(this.palete,this.acess);
 
   List<Contagem> pedidos = [];
   late ListaRomaneioConfModel _model;
@@ -119,7 +124,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: const DrawerWidget(),
+            child: DrawerWidget(acess: acess,),
           ),
         ),
         appBar: AppBar(
@@ -356,15 +361,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             Navigator.pop(context);
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ListaPedidoWidget(
-                                                          cont: pedidos[index]
-                                                                  .ped ??
-                                                              0),
-                                                ));
+                                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: pedidos[index].ped ?? 0, acess),));
                                           },
                                           child: Padding(
                                             padding: const EdgeInsetsDirectional

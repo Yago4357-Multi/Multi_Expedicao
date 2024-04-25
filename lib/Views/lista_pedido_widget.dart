@@ -14,17 +14,21 @@ class ListaPedidoWidget extends StatefulWidget {
   ///Classe para puxar o pedido inicial da página
   final int cont;
 
+  ///Variável para definir permissões do usuário
+  final String acess;
+
   ///Constutor para a página de listagem dos pedidos
-  const ListaPedidoWidget({super.key, required this.cont});
+  const ListaPedidoWidget(this.acess, {super.key, required this.cont});
 
   @override
-  State<ListaPedidoWidget> createState() => _ListaPedidoWidgetState(cont);
+  State<ListaPedidoWidget> createState() => _ListaPedidoWidgetState(cont,this.acess);
 }
 
 class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   int cont;
+  String acess;
 
-  _ListaPedidoWidgetState(this.cont);
+  _ListaPedidoWidgetState(this.cont,this.acess);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -70,7 +74,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
         child: wrapWithModel(
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
-          child: const DrawerWidget(),
+          child: DrawerWidget(acess: acess),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,

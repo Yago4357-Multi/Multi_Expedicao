@@ -2,23 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../Components/Model/home_page_model.dart';
+import '../Components/Model/progress_model.dart';
+import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
-import '/components/Widget/drawer_widget.dart';
+import 'lista_romaneio_conf_widget.dart';
 
 ///Página inicial do Aplicativo
-class HomePageWidget extends StatefulWidget {
+class ProgressWidget extends StatefulWidget {
+
+  ///Variável para definir permissões do usuário
+  final String acess;
 
   ///Construtor da página inicial
-  const HomePageWidget({super.key});
+  const ProgressWidget(this.acess, {super.key});
 
   @override
-  State<HomePageWidget> createState() => _HomePageWidgetState();
+  State<ProgressWidget> createState() => _ProgressWidgetState(acess);
 }
 
-class _HomePageWidgetState extends State<HomePageWidget>
+class _ProgressWidgetState extends State<ProgressWidget>
     with TickerProviderStateMixin {
+
+  String acess;
+
+  _ProgressWidgetState(this.acess);
+
   late HomePageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -83,6 +92,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
   @override
   Widget build(BuildContext context) {
+    print(acess);
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -95,7 +105,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: const DrawerWidget(),
+            child: DrawerWidget(acess: acess)
           ),
         ),
         appBar: AppBar(
@@ -389,8 +399,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                           if (Navigator.of(context).canPop()) {
                             Navigator.pop;
                           }
-                          await Navigator.popAndPushNamed(
-                              context, '/ListaRomaneioConf');
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: 0, acess),));
                         },
                         child: Container(
                           width: double.infinity,

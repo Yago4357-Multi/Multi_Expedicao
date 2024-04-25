@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '/Views/home_page_widget.dart' show HomePageWidget;
+import '/Views/progress_widget.dart' show ProgressWidget;
 import '/components/Widget/drawer_widget.dart';
 
 ///Modelo para a página inicial do app
-class HomePageModel extends FlutterFlowModel<HomePageWidget> {
+class HomePageModel extends FlutterFlowModel<ProgressWidget> {
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();

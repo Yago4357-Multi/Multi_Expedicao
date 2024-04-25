@@ -10,11 +10,15 @@ export '../Components/Model/escolha_romaneio_model.dart';
 
 ///Página para definir a tarefa escolhida para o Romaneio
 class EscolhaRomaneioWidget extends StatefulWidget {
+
+  ///Variável para definir permissões do usuário
+  final String acess;
+
   ///Construtor da página de escolha do Romaneio
-  const EscolhaRomaneioWidget({super.key});
+  const EscolhaRomaneioWidget(this.acess,{super.key});
 
   @override
-  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState();
+  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState(this.acess);
 }
 
 class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
@@ -22,6 +26,10 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
   final bd = Banco();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String acess;
+
+  _EscolhaRomaneioWidgetState(this.acess);
 
   @override
   void initState() {
@@ -48,7 +56,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: const DrawerWidget(),
+            child: DrawerWidget(acess: acess,),
           ),
         ),
         appBar: AppBar(
@@ -96,10 +104,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     if (i != 0) {
                       if (context.mounted) {
                         Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ListaRomaneioWidget(i)));
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, acess)));
                       }
                     }
                   },
@@ -133,10 +138,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     var i = await bd.getRomaneio(context) ?? 0;
                     if (context.mounted) {
                       Navigator.pop(context);
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ListaRomaneioWidget(i)));
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, acess),));
                     }
                   },
                   text: 'Criar Novo Romaneio',

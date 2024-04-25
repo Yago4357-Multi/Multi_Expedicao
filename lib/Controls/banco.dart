@@ -9,6 +9,7 @@ import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
+import '../Views/progress_widget.dart';
 
 ///Classe para manter funções do Banco
 class Banco {
@@ -64,7 +65,7 @@ class Banco {
   }
 
   ///Função para verificar se o Palete já existe
-  void paleteExiste(int palete, BuildContext a) async {
+  void paleteExiste(int palete, BuildContext a,String acess) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
@@ -141,7 +142,7 @@ class Banco {
       await Navigator.push(
           a,
           MaterialPageRoute(
-              builder: (context) => ListaRomaneioConfWidget(palete: teste)));
+              builder: (context) => ListaRomaneioConfWidget(palete: teste,acess)));
     }
   }
 
@@ -222,7 +223,7 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       pedidos = await conn2.execute(
-          'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is null and "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO" order by "ID";');
+          'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO","ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO", "ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO" order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -233,10 +234,19 @@ class Banco {
         teste.add(Paletes(element[0] as int?, element[1] as int?,
             element[2] as DateTime?, element[3] as int?));
       } else {
-        teste.add(Paletes(element[0] as int?, element[1] as int?,
-            element[2] as DateTime?, element[3] as int?,
-            idUsurFechamento: element[4] as int?,
-            dtFechamento: element[5] as DateTime?));
+        if (element[6] == null) {
+          teste.add(Paletes(element[0] as int?, element[1] as int?,
+              element[2] as DateTime?, element[3] as int?,
+              idUsurFechamento: element[4] as int?,
+              dtFechamento: element[5] as DateTime?));
+        } else {
+          teste.add(Paletes(element[0] as int?, element[1] as int?,
+              element[2] as DateTime?, element[3] as int?,
+              idUsurFechamento: element[4] as int?,
+              dtFechamento: element[5] as DateTime?,
+              idUsurCarregamento: element[6] as int?,
+              dtCarregamento: element[7] as DateTime?));
+        }
       }
     }
     return teste;
@@ -245,7 +255,7 @@ class Banco {
   ///Função para finalizar Paletes
   void endPalete(int palete) async {
     await conn.execute(
-        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $palete');
+        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp, "ID_USUR_FECHAMENTO" = 1 where "ID" = $palete');
   }
 
   ///Função para criar novos Romaneios
@@ -539,6 +549,12 @@ class Banco {
     }
   }
 
+  ///Função para reabrir o palete no Banco
+  void reabrirPalete(int palete) async {
+    await conn.execute(
+        'update "Palete" set "DATA_FECHAMENTO" = null, "ID_USUR_FECHAMENTO" = null where "ID" = $palete;');
+  }
+
   ///Função para puxar os paletes que estão no romaneio
   Future<List<int>> selectRomaneio(int romaneio) async {
     var teste = <int>[];
@@ -565,4 +581,58 @@ class Banco {
     }
     return teste;
   }
+
+  ///Função para verificar login do Banco
+  void auth(String login, String senha, BuildContext a) async {
+    String? acess;
+    late final Result pedidos;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable));
+    try {
+      pedidos = await conn2.execute(
+          "select \"SETOR\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      if (element[0] != null) {
+        acess = element[0] as String;
+      }
+    }
+    if (acess != null) {
+      if (a.mounted){
+        await Navigator.push(a, MaterialPageRoute(builder: (context) => ProgressWidget(acess!),));
+      }
+    }else{
+      if (a.mounted) {
+        await showCupertinoModalPopup(
+          context: a,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Usuário ou Senha inválidos',),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
 }
