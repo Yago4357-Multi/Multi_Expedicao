@@ -20,6 +20,6 @@ Map<String, Widget Function(BuildContext)> namedRoutes = {
   '/ListaPedido': (context) =>  ListaPedidoWidget(cont: 0, Usuario(0,'')),
   '/ListaRomaneioConf': (context) =>  ListaRomaneioConfWidget(palete: 0, Usuario(0,'')),
   '/EscolhaRomaneio': (context) =>  EscolhaBipagemWidget(Usuario(0,'')),
-  '/CriarPalete': (context) =>  CriarPaleteWidget(Usuario(0,'')),
+  '/CriarPalete': (context) =>  CriarPaleteWidget(Usuario(0,''),0),
   '/CriarRomaneio': (context) =>  EscolhaRomaneioWidget(Usuario(0,''))
 };
