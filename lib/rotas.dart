@@ -13,8 +13,8 @@ import 'Views/progress_widget.dart';
 
 ///Lista para facilitar a navegação entre janelas
 Map<String, Widget Function(BuildContext)> namedRoutes = {
-  '/': (context) => ProgressWidget(Usuario(0,'')),
-  '/Login': (context) => const LoginWidget(),
+  '/': (context) => const LoginWidget(),
+  '/Progress': (context) => ProgressWidget(Usuario(0,'')),
   '/ListaRomaneio': (context)=> ListaRomaneioWidget(0, Usuario(0,'')),
   '/ListaPalete': (context) =>  ListaPaleteWidget(cont: 0, Usuario(0,'')),
   '/ListaPedido': (context) =>  ListaPedidoWidget(cont: 0, Usuario(0,'')),

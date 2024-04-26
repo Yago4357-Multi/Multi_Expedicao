@@ -53,7 +53,6 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
   }
 
@@ -99,7 +98,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(usur: usur,),
+            child: DrawerWidget(usur: usur,context: context,),
           ),
         ),
         body: SafeArea(

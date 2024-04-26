@@ -60,7 +60,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(usur: usur,),
+            child: DrawerWidget(usur: usur,context: context,),
           ),
         ),
         appBar: AppBar(

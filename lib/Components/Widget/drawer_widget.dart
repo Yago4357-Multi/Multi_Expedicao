@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,11 +21,13 @@ class DrawerWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final BuildContext context;
+
   ///Construtor do Drawer
-  const DrawerWidget({required this.usur, super.key});
+  const DrawerWidget({required this.usur, required this.context, super.key});
 
   @override
-  State<DrawerWidget> createState() => _DrawerWidgetState(usur);
+  State<DrawerWidget> createState() => _DrawerWidgetState(usur, context);
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
@@ -33,12 +36,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   final Usuario usur;
 
+  final BuildContext context2;
+
   List<String> acessos = ['BI','Comercial','Logística'];
   List<String> acessosADM = ['BI'];
   List<String> acessosCol = ['Logística'];
   List<String> acessosPC = ['Comercial'];
 
-  _DrawerWidgetState(this.usur);
+  _DrawerWidgetState(this.usur, this.context2);
 
   @override
   void setState(VoidCallback callback) {
@@ -136,6 +141,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           child: MaterialButton(
                             onPressed: () async {
                               Navigator.pop(context);
+                              Navigator.pop(context2);
                               await Navigator.push(context, MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur),));
                             },
                             child: InkWell(
@@ -193,13 +199,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) {
                               var i = await bd.getRomaneio(context) ?? 0;
                               if (i != 0) {
-                                if (context.mounted) {
+                                if (context2.mounted && context.mounted) {
                                   Navigator.pop(context);
-                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur)));
+                                  Navigator.pop(context2);
+                                  await Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) =>
+                                          ListaRomaneioWidget(i, usur)));
                                 }
+
                               }
                             }else{
                               Navigator.pop(context);
+                              Navigator.pop(context2);
                               await Navigator.push(context, MaterialPageRoute(
                                 builder: (context) =>
                                     EscolhaRomaneioWidget(usur),));
@@ -235,7 +246,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       ),
                     ),
                   ),
-                  Padding(
+                  if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
@@ -253,6 +264,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
+                            Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: 0 , usur),));
                           },
                           child: InkWell(
@@ -284,7 +296,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                     child: AnimatedContainer(
@@ -303,6 +315,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
+                            Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur),));
                           },
                           child: InkWell(
@@ -353,6 +366,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         child: MaterialButton(
                           onPressed: () async {
                             Navigator.pop(context);
+                            Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressWidget(usur),));
                           },
                           child: InkWell(
@@ -392,7 +406,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         alignment: Alignment.centerRight,
                         child: InkWell(
                           onTap: () async {
-                            await Navigator.popAndPushNamed(context, '/Login');
+                            Navigator.pop(context);
+                            await Navigator.popAndPushNamed(context2, '/');
                           },
                           child: const Icon(
                             Icons.logout,

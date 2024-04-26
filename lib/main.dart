@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'Controls/visualizacao.dart';
 import 'rotas.dart';
 
 void main() {
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: namedRoutes,
-      initialRoute: visualizacao(),
+      initialRoute: '/',
     );
   }
 }

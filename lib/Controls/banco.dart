@@ -164,7 +164,7 @@ class Banco {
         settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
       pedidos =
-          await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+      await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -384,8 +384,8 @@ class Banco {
       if (paletes.isNotEmpty) {
         pedidos = await conn2.execute(
             'select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '
-            "', '"
-            ') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED";');
+                "', '"
+                ') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED";');
       }
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -589,17 +589,8 @@ class Banco {
   void auth(String login, String senha, BuildContext a) async {
     Usuario? usur;
     late final Result pedidos;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           "select \"ID\", \"SETOR\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -614,9 +605,11 @@ class Banco {
     if (usur!.acess != null) {
       if (a.mounted){
         if (Platform.isAndroid) {
+          Navigator.pop(a);
           await Navigator.push(a,
               MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur!),));
         }else{
+          Navigator.pop(a);
           await Navigator.push(a,
               MaterialPageRoute(builder: (context) => ProgressWidget(usur!),));
         }

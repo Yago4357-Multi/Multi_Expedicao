@@ -54,14 +54,14 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
 
   @override
   void initState() {
-    rodarBanco();
     super.initState();
+    bd = Banco();
+    rodarBanco();
     _model = createModel(context, ListaPaleteModel.new);
     _model.textController ??= TextEditingController();
   }
 
   void rodarBanco() async {
-    bd = Banco();
     getPed = bd.selectPallet(cont);
     getPalete = bd.paleteAll(cont, context);
   }
@@ -84,7 +84,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
           child: DrawerWidget(
-            usur: usur,
+            usur: usur,context: context,
           ),
         ),
       ),

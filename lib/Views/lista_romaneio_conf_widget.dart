@@ -11,6 +11,7 @@ import '../Controls/banco.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
 import 'lista_pedido_widget.dart';
+import 'progress_widget.dart';
 
 export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
@@ -107,9 +108,11 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                           CupertinoDialogAction(
                               isDefaultAction: true,
                               isDestructiveAction: true,
-                              onPressed: () {
+                              onPressed: () async {
                                 bd.endPalete(palete, usur);
-                                Navigator.popAndPushNamed(context, '/');
+                                Navigator.pop(context);
+                                await Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => ProgressWidget(usur)));
                               },
                               child: const Text(
                                 'Continuar',
@@ -144,7 +147,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
             child: DrawerWidget(
-              usur: usur,
+              usur: usur,context: context,
             ),
           ),
         ),
@@ -280,6 +283,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                   usur);
                                               teste = bd.selectPallet(palete);
                                               _model.textController.text = '';
+                                              _model.textFieldFocusNode?.requestFocus();
                                             });
                                           },
                                           autofocus: true,
