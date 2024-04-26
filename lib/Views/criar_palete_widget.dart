@@ -20,24 +20,30 @@ class CriarPaleteWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para guardar número do palete
+  final int palete;
+
   ///Construtor da página de criação de novos Paletes
-  const CriarPaleteWidget(this.usur, {super.key});
+  const CriarPaleteWidget(this.usur, this.palete, {super.key});
 
   @override
-  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur);
+  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur,palete);
 }
 
 class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   late final bd = Banco();
+
+  final Usuario usur;
+  final int palete;
+
+
   late Future<int> getPalete;
   final pdf = pw.Document();
   late CriarPaleteModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final Usuario usur;
-
-  _CriarPaleteWidgetState(this.usur);
+  _CriarPaleteWidgetState(this.usur,this.palete);
 
   @override
   void initState() {
@@ -107,7 +113,11 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
             future: getPalete,
             builder: (context, snapshot) {
               var i = 0;
-              i = snapshot.data ?? 0;
+              if (palete == 0 ) {
+                i = snapshot.data ?? 0;
+              }else{
+                i = palete;
+              }
               return Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

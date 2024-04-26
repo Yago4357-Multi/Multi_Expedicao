@@ -54,9 +54,25 @@ class Banco {
       }
       await conn.execute(
           'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
+    } on Exception{
+      if (a.mounted) {
+        await showCupertinoModalPopup(
+          context: a,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Caixa duplicada'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
       }
     }
   }
@@ -64,7 +80,7 @@ class Banco {
   ///Função para criar novos Paletes
   void createPalete(Usuario usur) async {
     await conn.execute(
-        'insert into "Romaneio" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,${usur.id});');
+        'insert into "Palete" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,${usur.id});');
   }
 
   ///Função para verificar se o Palete já existe
@@ -82,7 +98,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -147,6 +163,7 @@ class Banco {
           MaterialPageRoute(
               builder: (context) => ListaRomaneioConfWidget(palete: teste, usur)));
     }
+    await conn2.close();
   }
 
   ///Função para buscar o último Romaneio do Banco
@@ -161,7 +178,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
     try {
       pedidos =
       await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
@@ -173,6 +190,7 @@ class Banco {
     for (var element in pedidos) {
       teste = (element[0] ?? 0) as int;
     }
+    await conn2.close();
     return teste + 1;
   }
 
@@ -188,7 +206,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on 	"ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO" order by "ID";');
@@ -208,6 +226,7 @@ class Banco {
             dtFechamento: element[5] as DateTime?));
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -223,7 +242,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO","ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO", "ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO" order by "ID";');
@@ -252,6 +271,7 @@ class Banco {
         }
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -279,7 +299,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
@@ -313,6 +333,7 @@ class Banco {
     } else {
       return teste;
     }
+    await conn2.close();
     return 0;
   }
 
@@ -335,7 +356,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute('select * from "Bipagem";');
@@ -343,6 +364,7 @@ class Banco {
       if (kDebugMode) {
         print(e);
       }
+      await conn2.close();
     }
 
     for (var element in pedidos) {
@@ -379,7 +401,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn2.execute(
@@ -403,6 +425,7 @@ class Banco {
       teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status));
     }
+    await conn2.close();
     return teste;
   }
 
@@ -419,7 +442,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -451,6 +474,7 @@ class Banco {
         print(e);
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -467,7 +491,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -493,6 +517,7 @@ class Banco {
         }
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -515,7 +540,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     for (var element in pedidos) {
       try {
@@ -533,6 +558,7 @@ class Banco {
         }
       }
     }
+    await conn2.close();
   }
 
   ///Função para atualizar o romaneio do Palete
@@ -570,7 +596,7 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
@@ -582,6 +608,7 @@ class Banco {
     for (var element in pedidos) {
       teste.add(element[0] as int);
     }
+    await conn2.close();
     return teste;
   }
 

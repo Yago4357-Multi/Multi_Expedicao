@@ -237,7 +237,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     Navigator.pop(context);
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => CriarPaleteWidget(usur),));
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => CriarPaleteWidget(usur,0),));
                   },
                   text: 'Criar Novo Palete',
                   options: FFButtonOptions(
