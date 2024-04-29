@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/escolha_romaneio_model.dart';
@@ -101,13 +102,102 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                 child: FFButtonWidget(
                   text: 'Continuar Romaneio',
                   onPressed: () async {
-                    var i = await bd.getRomaneio(context) ?? 0;
-                    if (i != 0) {
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur)));
-                      }
-                    }
+
+                    return showModalBottomSheet(
+                      elevation: MediaQuery.of(context).viewInsets.bottom,
+                      useSafeArea: true,
+                      context: context, builder: (context) {
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            16, 12, 16, 12),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                showCursor: true,
+                                controller: _model.textController,
+                                focusNode: _model.textFieldFocusNode,
+                                onFieldSubmitted: (value) async {
+                                  bd.romaneioExiste(int.parse(value), context, usur);
+                                },
+                                autofocus: true,
+                                obscureText: false,
+                                decoration: InputDecoration(
+                                  labelText: 'Insira o Romaneio',
+                                  labelStyle: FlutterFlowTheme.of(
+                                      context)
+                                      .labelMedium
+                                      .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: FlutterFlowTheme.of(
+                                        context)
+                                        .secondaryText,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  alignLabelWithHint: false,
+                                  hintStyle:
+                                  FlutterFlowTheme.of(context)
+                                      .labelMedium,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color:
+                                      FlutterFlowTheme.of(context)
+                                          .alternate,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade500,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade100,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                  focusedErrorBorder:
+                                  OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.green.shade100,
+                                      width: 2,
+                                    ),
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                  ),
+                                ),
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium,
+                                keyboardType: const TextInputType
+                                    .numberWithOptions(),
+                                validator: _model
+                                    .textControllerValidator
+                                    .asValidator(context),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                      33),
+                                  FilteringTextInputFormatter
+                                      .digitsOnly,
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },);
+
                   },
                   options: FFButtonOptions(
                     width: 260,

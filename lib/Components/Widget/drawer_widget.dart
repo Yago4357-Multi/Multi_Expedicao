@@ -196,26 +196,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
                         child: MaterialButton(
                           onPressed: () async {
-                            if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) {
-                              var i = await bd.getRomaneio(context) ?? 0;
-                              if (i != 0) {
-                                if (context2.mounted && context.mounted) {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context2);
-                                  await Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) =>
-                                          ListaRomaneioWidget(i, usur)));
-                                }
-
-                              }
-                            }else{
-                              Navigator.pop(context);
-                              Navigator.pop(context2);
-                              await Navigator.push(context, MaterialPageRoute(
-                                builder: (context) =>
-                                    EscolhaRomaneioWidget(usur),));
-                            }
+                            Navigator.pop(context);
+                            Navigator.pop(context2);
+                            await Navigator.push(context, MaterialPageRoute(
+                              builder: (context) =>
+                                  EscolhaRomaneioWidget(usur),));
                           },
+
                           child: InkWell(
                             splashColor: Colors.transparent,
                             focusColor: Colors.transparent,

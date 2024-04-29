@@ -12,6 +12,7 @@ import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '../Views/escolha_bipagem_widget.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
+import '../Views/lista_romaneio_widget.dart';
 import '../Views/progress_widget.dart';
 
 ///Classe para manter funções do Banco
@@ -162,6 +163,86 @@ class Banco {
           a,
           MaterialPageRoute(
               builder: (context) => ListaRomaneioConfWidget(palete: teste, usur)));
+    }
+    await conn2.close();
+  }
+
+  ///Função para verificar se o Romaneio já existe
+  void romaneioExiste(int romaneio, BuildContext a,Usuario usur) async {
+    Object? teste2 = DateTime.timestamp();
+    var teste = 0;
+
+    ///Variável para manter a resposta do Banco
+    late final Result pedidos;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
+
+    try {
+      pedidos = await conn2.execute(
+          'select "ID","DATA_FECHAMENTO" from "Romaneio" where "ID" = $romaneio;');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      teste = (element[0] ?? 0) as int;
+      teste2 = element[1];
+    }
+    if (a.mounted) {
+      if (teste == 0) {
+        await showCupertinoModalPopup(
+          context: a,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Romaneio não encontrado'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+        return;
+      }
+      if (teste2 != null) {
+        await showCupertinoModalPopup(
+            barrierDismissible: false,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: const Text(
+                  'Romaneio finalizado\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                content: const Text(
+                    'Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                      isDefaultAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Voltar'))
+                ],
+              );
+            },
+            context: a);
+        return;
+      }
+      Navigator.pop(a);
+      await Navigator.push(a, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(romaneio, usur)));
     }
     await conn2.close();
   }
@@ -629,7 +710,7 @@ class Banco {
         usur = Usuario(element[0] as int, element[1] as String);
       }
     }
-    if (usur!.acess != null) {
+    if (usur?.acess != null) {
       if (a.mounted){
         if (Platform.isAndroid) {
           Navigator.pop(a);

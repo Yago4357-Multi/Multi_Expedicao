@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
@@ -204,7 +203,6 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                                 ));
                           },
                         ));
-                        await Printing.layoutPdf(onLayout: (format) => pdf.save());
                         if (context.mounted){
                         Navigator.pop(context);
                         await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur),));

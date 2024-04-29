@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../Components/Model/lista_romaneio.dart';
 import '../Controls/banco.dart';
@@ -9,6 +12,7 @@ import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '/Components/Widget/drawer_widget.dart';
 import 'lista_pedido_widget.dart';
+import 'progress_widget.dart';
 
 ///Página da listagem de Romaneio
 class ListaRomaneioWidget extends StatefulWidget {
@@ -29,6 +33,7 @@ class ListaRomaneioWidget extends StatefulWidget {
 class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   int romaneio;
   final Usuario usur;
+  late final pdf = pw.Document(title: 'Romaneio $romaneio');
 
   _ListaRomaneioWidgetState(this.romaneio, this.usur);
 
@@ -95,7 +100,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
           ),
         ),
       ),
-      floatingActionButton: (['BI', 'Comercial'].contains(usur))
+      floatingActionButton: (['BI', 'Comercial'].contains(usur.acess))
           ? SizedBox(
               width: 300,
               height: 60,
@@ -117,9 +122,719 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 CupertinoDialogAction(
                                     isDefaultAction: true,
                                     isDestructiveAction: true,
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      var vol = 0;
+                                      for (var ped in pedidos){
+                                        vol += ped.vol;
+                                      }
                                       bd.endRomaneio(romaneio);
-                                      Navigator.popAndPushNamed(context, '/Progress');
+                                      pdf.addPage(pw.MultiPage(
+                                          margin: const pw.EdgeInsets.all(20),
+                                          build: (context) {
+                                            return [pw.Padding(
+                                              padding: const pw.EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                              child: pw.Row(
+                                                mainAxisSize: pw.MainAxisSize.max,
+                                                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  pw.Column(
+                                                    mainAxisSize: pw.MainAxisSize.max,
+                                                    children: [
+                                                      pw.Text(
+                                                          'MULTILIST DISTRIBUIDORA DE COSMÉTICOS',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                      pw.Text(
+                                                          '07.759.795/001-06',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                      pw.Text(
+                                                          'Anfilóquio Nunes Pires, 4155',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                      pw.Text(
+                                                          'Bela Vista - (47) 3337-1992',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                      pw.Text(
+                                                          'GASPAR',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                      pw.Text(
+                                                          'DATA ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
+                                                          style: pw.TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: pw.FontWeight.bold,
+                                                          )
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  pw.Padding(
+                                                    padding: const pw.EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                                    child: pw.Container(
+                                                      width: 160,
+                                                      height: 20,
+                                                      decoration: pw.BoxDecoration(
+                                                        color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                        border: pw.Border.all(
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      child: pw.Row(
+                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          pw.Text(
+                                                              'ROMANEIO Nº',
+                                                              style: pw.TextStyle(
+                                                                fontSize: 11,
+                                                                fontWeight: pw.FontWeight.bold,
+                                                              )
+                                                          ),
+                                                          pw.SizedBox(
+                                                            height: 100,
+                                                            child: pw.VerticalDivider(
+                                                              thickness: 2,
+                                                              color: const PdfColor.fromInt(0xCC000000),
+                                                            ),
+                                                          ),
+                                                          pw.Text(
+                                                              '$romaneio',
+                                                              textAlign: pw.TextAlign.center,
+                                                              style: pw.TextStyle(
+                                                                fontSize: 11,
+                                                                fontWeight: pw.FontWeight.bold,
+                                                              )
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            pw.Container(
+                                              height: 20,
+                                              decoration: pw.BoxDecoration(
+                                                color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                border: pw.Border.all(
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: pw.Row(
+                                                mainAxisSize: pw.MainAxisSize.max,
+                                                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  pw.Expanded(
+                                                    flex: 1,
+                                                    child: pw.Text(
+                                                        'SEQ',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 4,
+                                                    child: pw.Text(
+                                                        'C.N.P.J.',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 12,
+                                                    child: pw.Text(
+                                                        'CLIENTE',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 4,
+                                                    child: pw.Text(
+                                                        'CIDADE',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 2,
+                                                    child: pw.Text(
+                                                        'PEDIDO',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 2,
+                                                    child: pw.Text(
+                                                        'NOTA',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 2,
+                                                    child: pw.Text(
+                                                        'VALOR',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 1,
+                                                    child: pw.Text(
+                                                        'VOL',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            pw.ListView.builder(
+                                              itemCount: pedidos.isNotEmpty ? pedidos.length : 0,
+                                              padding: pw.EdgeInsets.zero,
+                                              itemBuilder: (context, index) {
+                                                return pw.Container(
+                                                  height: 20,
+                                                  decoration: pw.BoxDecoration(
+                                                    color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                    border: pw.Border.all(
+                                                      width: 0.5,
+                                                    ),
+                                                  ),
+                                                  child: pw.Row(
+                                                    mainAxisSize: pw.MainAxisSize.max,
+                                                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                                                    children: [
+                                                      pw.Expanded(
+                                                        flex: 1,
+                                                        child: pw.Text(
+                                                            '${index + 1}',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 7,
+                                                              fontWeight: pw.FontWeight.bold,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 4,
+                                                        child: pw.Text(
+                                                            '11.111.111/1111-11',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize: 7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 12,
+                                                        child: pw.Text(
+                                                            'FARMACIA FARMACIA FARMACIA FARMACIA FARMACIA',
+                                                            style: const pw.TextStyle(
+                                                              fontSize: 7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 4,
+                                                        child: pw.Text(
+                                                            'CIDADE CIDADE',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize:7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text(
+                                                            '${pedidos[index].ped}',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize:7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text(
+                                                            'NOTA DE SAIDA',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize: 7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text(
+                                                            'VALOR DINHEIRO',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize: 7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 0.5,
+                                                        color: const PdfColor.fromInt(0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 1,
+                                                        child: pw.Text(
+                                                            '${pedidos[index].vol}',
+                                                            textAlign: pw.TextAlign.center,
+                                                            style: const pw.TextStyle(
+                                                              fontSize: 7,
+                                                            )
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            pw.Container(
+                                              height: 20,
+                                              decoration: pw.BoxDecoration(
+                                                color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                border: pw.Border.all(
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: pw.Row(
+                                                mainAxisSize: pw.MainAxisSize.max,
+                                                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  pw.Expanded(
+                                                    flex: 5,
+                                                    child: pw.Text(
+                                                        'TOTAL',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Spacer(flex: 22),
+                                                  pw.VerticalDivider(
+                                                    width: 0,
+                                                    thickness: 1,
+                                                    color: const PdfColor.fromInt(0xCC000000),
+                                                  ),
+                                                  pw.Expanded(
+                                                    flex: 1,
+                                                    child: pw.Text(
+                                                        '$vol',
+                                                        textAlign: pw.TextAlign.center,
+                                                        style: pw.TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight: pw.FontWeight.bold,
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            pw.Padding(
+                                              padding: const pw.EdgeInsets.fromLTRB(0, 10,0,0),
+                                              child: pw.Container(
+                                                decoration: const pw.BoxDecoration(
+                                                  color: PdfColor.fromInt(0xFFFFFFFF),
+                                                ),
+                                                child: pw.Column(
+                                                  mainAxisSize: pw.MainAxisSize.min,
+                                                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                                                  children: [
+                                                    pw.Container(
+                                                      height: 40,
+                                                      decoration: const pw.BoxDecoration(),
+                                                      child: pw.Row(
+                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          pw.Spacer(flex: 5),
+                                                          pw.Column(
+                                                            mainAxisSize: pw.MainAxisSize.max,
+                                                            children: [
+                                                              pw.Row(
+                                                                mainAxisSize: pw.MainAxisSize.max,
+                                                                children: [
+                                                                  pw.Container(
+                                                                    width: 174,
+                                                                    height: 20,
+                                                                    decoration: const pw.BoxDecoration(
+                                                                      color: PdfColor.fromInt(0xFFFFFFFF),
+                                                                    ),
+                                                                  ),
+                                                                  pw.Container(
+                                                                    width: 76,
+                                                                    height: 20,
+                                                                    decoration: pw.BoxDecoration(
+                                                                      border: pw.Border.all(
+                                                                        width: 1,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              pw.Container(
+                                                                width: 250,
+                                                                height: 20,
+                                                                decoration: pw.BoxDecoration(
+                                                                  color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                                  border: pw.Border.all(
+                                                                    width: 1,
+                                                                  ),
+                                                                ),
+                                                                child: pw.Row(
+                                                                  mainAxisSize: pw.MainAxisSize.max,
+                                                                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    pw.Expanded(
+                                                                      flex: 7,
+                                                                      child: pw.Container(
+                                                                        decoration: const pw.BoxDecoration(
+                                                                          color: PdfColor.fromInt(0xFFB0B0B0),
+                                                                        ),
+                                                                        child: pw.Align(
+                                                                          alignment: const pw.AlignmentDirectional(0, 0),
+                                                                          child: pw.Text(
+                                                                              'PALETES',
+                                                                              textAlign: pw.TextAlign.center,
+                                                                              style: pw.TextStyle(
+                                                                                fontSize: 11,
+                                                                                fontWeight: pw.FontWeight.bold,
+                                                                              )
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    pw.VerticalDivider(
+                                                                      width: 2,
+                                                                      thickness: 1,
+                                                                      color: const PdfColor.fromInt(0xCC000000),
+                                                                    ),
+                                                                    pw.Spacer(flex: 3),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          pw.Spacer(),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    pw.Padding(
+                                                      padding: const pw.EdgeInsetsDirectional.fromSTEB(10, 5, 10, 0),
+                                                      child: pw.Row(
+                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        children: [
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                'MOTORISTA: ',
+                                                                textAlign: pw.TextAlign.center,
+                                                                style: const pw.TextStyle(
+                                                                  fontSize: 9,
+                                                                )
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 3,
+                                                            child: pw.Container(
+                                                              width: 250,
+                                                              height: 20,
+                                                              decoration: const pw.BoxDecoration(
+                                                                  color:
+                                                                  PdfColor.fromInt(0xFFFFFFFF),
+                                                                  shape: pw.BoxShape.rectangle,
+                                                                  border: pw.Border(
+                                                                    bottom: pw.BorderSide(width: 1, color: PdfColors.black),
+                                                                  )
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          pw.Container(
+                                                            width: 40,
+                                                            height: 20,
+                                                            decoration: const pw.BoxDecoration(
+                                                              color: PdfColor.fromInt(0xFFFFFFFF),
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                'EXPEDIÇÃO:',
+                                                                textAlign: pw.TextAlign.center,
+                                                                style: const pw.TextStyle(
+                                                                  fontSize: 9,
+                                                                )
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 3,
+                                                            child: pw.Container(
+                                                              width: 250,
+                                                              height: 20,
+                                                              decoration: const pw.BoxDecoration(
+                                                                  color:
+                                                                  PdfColor.fromInt(0xFFFFFFFF),
+                                                                  shape: pw.BoxShape.rectangle,
+                                                                  border: pw.Border(
+                                                                    bottom: pw.BorderSide(width: 1, color: PdfColors.black),
+                                                                  )
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    pw.Padding(
+                                                      padding: const pw.EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
+                                                      child: pw.Row(
+                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        children: [
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                'MOTORISTA: ',
+                                                                textAlign: pw.TextAlign.center,
+                                                                style: const pw.TextStyle(
+                                                                  fontSize: 9,
+                                                                )
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 3,
+                                                            child: pw.Container(
+                                                              width: 250,
+                                                              height: 20,
+                                                              decoration: const pw.BoxDecoration(
+                                                                  color:
+                                                                  PdfColor.fromInt(0xFFFFFFFF),
+                                                                  shape: pw.BoxShape.rectangle,
+                                                                  border: pw.Border(
+                                                                    bottom: pw.BorderSide(width: 1, color: PdfColors.black),
+                                                                  )
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          pw.Container(
+                                                            width: 40,
+                                                            height: 20,
+                                                            decoration: const pw.BoxDecoration(
+                                                              color: PdfColor.fromInt(0xFFFFFFFF),
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                'EXPEDIÇÃO:',
+                                                                textAlign: pw.TextAlign.center,
+                                                                style: const pw.TextStyle(
+                                                                  fontSize: 9,
+                                                                )
+                                                            ),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 3,
+                                                            child: pw.Container(
+                                                              width: 250,
+                                                              height: 20,
+                                                              decoration: const pw.BoxDecoration(
+                                                                  color:
+                                                                  PdfColor.fromInt(0xFFFFFFFF),
+                                                                  shape: pw.BoxShape.rectangle,
+                                                                  border: pw.Border(
+                                                                    bottom: pw.BorderSide(width: 1, color: PdfColors.black),
+                                                                  )
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    pw.Container(
+                                                      height: 40,
+                                                      decoration: const pw.BoxDecoration(),
+                                                      child: pw.Row(
+                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          pw.Spacer(flex: 5),
+                                                          pw.Column(
+                                                            mainAxisSize: pw.MainAxisSize.max,
+                                                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                                                            children: [
+                                                              pw.Container(
+                                                                width: 250,
+                                                                height: 20,
+                                                                decoration: pw.BoxDecoration(
+                                                                  color: const PdfColor.fromInt(0xFFFFFFFF),
+                                                                  border: pw.Border.all(
+                                                                    width: 1,
+                                                                  ),
+                                                                ),
+                                                                child: pw.Row(
+                                                                  mainAxisSize: pw.MainAxisSize.max,
+                                                                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    pw.Expanded(
+                                                                      flex: 7,
+                                                                      child: pw.Container(
+                                                                        decoration: const pw.BoxDecoration(
+                                                                          color: PdfColor.fromInt(0xFFB0B0B0),
+                                                                        ),
+                                                                        child: pw.Align(
+                                                                          alignment: const pw.AlignmentDirectional(0, 0),
+                                                                          child: pw.Text(
+                                                                            'HORÁRIO COLETA',
+                                                                            textAlign: pw.TextAlign.center,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    pw.VerticalDivider(
+                                                                      width: 1,
+                                                                      thickness: 1,
+                                                                      color: const PdfColor.fromInt(0xCC000000),
+                                                                    ),
+                                                                    pw.Spacer(flex: 3),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          pw.Spacer(),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )];
+                                          }
+                                      ));
+                                      await Printing.layoutPdf(onLayout: (format) => pdf.save());
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressWidget(usur),));
+                                      }
                                     },
                                     child: const Text(
                                       'Continuar',
