@@ -12,7 +12,6 @@ import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '../Views/escolha_bipagem_widget.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
-import '../Views/lista_romaneio_widget.dart';
 import '../Views/progress_widget.dart';
 
 ///Classe para manter funções do Banco
@@ -164,6 +163,7 @@ class Banco {
           MaterialPageRoute(
               builder: (context) => ListaRomaneioConfWidget(palete: teste, usur)));
     }
+    await conn2.close();
     await conn2.close();
   }
 
