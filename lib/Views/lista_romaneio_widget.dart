@@ -75,8 +75,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
 
   void rodarBanco() async {
     paletesFin = bd.paleteFinalizado();
-      getPaletes = bd.selectRomaneio(romaneio);
-      pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+    getPaletes = bd.selectRomaneio(romaneio);
+    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
 
   }
 
@@ -401,7 +401,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       pw.Expanded(
                                                         flex: 4,
                                                         child: pw.Text(
-                                                            '11.111.111/1111-11',
+                                                            '',
                                                             textAlign: pw.TextAlign.center,
                                                             style: const pw.TextStyle(
                                                               fontSize: 7,
@@ -416,7 +416,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       pw.Expanded(
                                                         flex: 12,
                                                         child: pw.Text(
-                                                            'FARMACIA FARMACIA FARMACIA FARMACIA FARMACIA',
+                                                            '',
                                                             style: const pw.TextStyle(
                                                               fontSize: 7,
                                                             )
@@ -430,7 +430,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       pw.Expanded(
                                                         flex: 4,
                                                         child: pw.Text(
-                                                            'CIDADE CIDADE',
+                                                            '',
                                                             textAlign: pw.TextAlign.center,
                                                             style: const pw.TextStyle(
                                                               fontSize:7,
@@ -460,7 +460,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       pw.Expanded(
                                                         flex: 2,
                                                         child: pw.Text(
-                                                            'NOTA DE SAIDA',
+                                                            '',
                                                             textAlign: pw.TextAlign.center,
                                                             style: const pw.TextStyle(
                                                               fontSize: 7,
@@ -469,13 +469,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       ),
                                                       pw.VerticalDivider(
                                                         width: 0,
-                                                        thickness: 1,
+                                                        thickness: 0.5,
                                                         color: const PdfColor.fromInt(0xCC000000),
                                                       ),
                                                       pw.Expanded(
                                                         flex: 2,
                                                         child: pw.Text(
-                                                            'VALOR DINHEIRO',
+                                                            '',
                                                             textAlign: pw.TextAlign.center,
                                                             style: const pw.TextStyle(
                                                               fontSize: 7,

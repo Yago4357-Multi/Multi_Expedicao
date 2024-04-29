@@ -9,9 +9,11 @@ import 'package:postgres/postgres.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
+import '../Models/romaneio.dart';
 import '../Models/usur.dart';
 import '../Views/escolha_bipagem_widget.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
+import '../Views/lista_romaneio_widget.dart';
 import '../Views/progress_widget.dart';
 
 ///Classe para manter funções do Banco
@@ -311,6 +313,34 @@ class Banco {
     return teste;
   }
 
+  ///Função para verificar se o romaneio foi finalizado
+  Future<List<Romaneio>> romaneioFinalizado() async {
+    var teste = <Romaneio>[];
+    late final Result pedidos;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    try {
+      pedidos = await conn2.execute(
+          'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete"."DATA_CARREGAMENTO" is null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID";');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+        teste.add(Romaneio(element[0] as int?, element[1] as int?, element[2] as DateTime?));
+    }
+    await conn2.close();
+    return teste;
+  }
+
   ///Função para verificar se o palete foi finalizado
   Future<List<Paletes>> paleteAll(int palete, BuildContext a) async {
     var teste = <Paletes>[];
@@ -367,6 +397,8 @@ class Banco {
     await conn.execute(
         'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,${usur.id});');
   }
+
+
 
   ///Função para buscar o último Romaneio do Banco
   Future<int?> getRomaneio(BuildContext a) async {

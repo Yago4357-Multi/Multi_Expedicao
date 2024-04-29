@@ -7,9 +7,9 @@ import '../../Controls/banco.dart';
 import '../../Models/usur.dart';
 import '../../Views/escolha_bipagem_widget.dart';
 import '../../Views/escolha_romaneio_widget.dart';
+import '../../Views/lista_carregamento_widget.dart';
 import '../../Views/lista_palete_widget.dart';
 import '../../Views/lista_pedido_widget.dart';
-import '../../Views/lista_romaneio_widget.dart';
 import '../../Views/progress_widget.dart';
 import '../Model/drawer_model.dart';
 
@@ -120,6 +120,65 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       style: FlutterFlowTheme.of(context).labelMedium,
                     ),
                   ),
+                  if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        16, 0, 16, 0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme
+                            .of(context)
+                            .primaryBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: Padding(
+                        padding:
+                        const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            Navigator.pop(context2);
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaCarregamentoWidget(usur),));
+                          },
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.move_up_outlined,
+                                  color:
+                                  FlutterFlowTheme
+                                      .of(context)
+                                      .primaryText,
+                                  size: 24,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional
+                                      .fromSTEB(
+                                      12, 0, 0, 0),
+                                  child: Text(
+                                    'Carregamento',
+                                    style:
+                                    FlutterFlowTheme
+                                        .of(context)
+                                        .bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
                   if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           16, 0, 16, 0),

@@ -102,7 +102,6 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                 child: FFButtonWidget(
                   text: 'Continuar Romaneio',
                   onPressed: () async {
-
                     return showModalBottomSheet(
                       elevation: MediaQuery.of(context).viewInsets.bottom,
                       useSafeArea: true,
