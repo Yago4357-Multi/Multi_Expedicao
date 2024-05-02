@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
+import '../Models/carregamento.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
@@ -398,6 +399,44 @@ class Banco {
         'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,${usur.id});');
   }
 
+  void updateCarregamento(int palete, Usuario usur) async{
+    await conn.execute('update "Palete" set "DATA_CARREGAMENTO" = current_timestamp, "ID_USUR_CARREGAMENTO" = ${usur.id} where "ID" = $palete;');
+  }
+
+  ///Pegar palete baseado no Romaneio
+  Future<List<Carregamento>> getCarregamento(int romaneio) async{
+    late var carregamento = <Carregamento>[];
+    late final Result pedidos;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+
+    try {
+      pedidos = await conn2.execute('select "Palete"."ID", count("Bipagem"."PEDIDO"), "DATA_CARREGAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."ID" = $romaneio group by "Palete"."ID", "DATA_CARREGAMENTO" order by "Palete"."ID";');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      if (element[2] == null) {
+        carregamento.add(Carregamento(
+            element[0] as int?, element[1] as int?, 'Não Carregado'));
+      } else {
+        carregamento.add(Carregamento(
+            element[0] as int?, element[1] as int?, 'Carregado'));
+      }
+    }
+
+    await conn2.close();
+    return carregamento;
+  }
 
 
   ///Função para buscar o último Romaneio do Banco
