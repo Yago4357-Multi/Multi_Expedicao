@@ -30,6 +30,8 @@ class ExcelClass {
 
           teste[0].valor = double.parse(row[7]!.value.toString());
           teste[0].cnpj = row[1]!.value.toString();
+          teste[0].situacao = row[9]!.value.toString();
+          teste[0].nota = int.parse(row[6]!.value.toString());
            await bd.updatePedido(teste[0]);
 
         }else{

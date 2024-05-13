@@ -74,7 +74,6 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
 
   @override
   void dispose() {
-    _model.dispose();
 
     super.dispose();
   }

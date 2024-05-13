@@ -625,7 +625,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                               .fromSTEB(
                                                               0, 4, 0, 0),
                                                       child: Text(
-                                                        'Cliente : ??',
+                                                        'Cliente : ${pedidos[index].cliente}',
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -638,7 +638,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                               .fromSTEB(
                                                               0, 4, 0, 0),
                                                       child: Text(
-                                                        'Cidade : ??',
+                                                        'Cidade : ${pedidos[index].cidade}',
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -842,7 +842,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     .fromSTEB(
                                                                     0, 4, 0, 0),
                                                             child: Text(
-                                                              'Cliente : ??',
+                                                              'Cliente : ${pedidos[index].cliente}',
                                                               style: FlutterFlowTheme
                                                                       .of(context)
                                                                   .labelMedium,
@@ -854,7 +854,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     .fromSTEB(
                                                                     0, 4, 0, 0),
                                                             child: Text(
-                                                              'Cidade : ??',
+                                                              'Cidade : ${pedidos[index].cidade}',
                                                               style: FlutterFlowTheme
                                                                       .of(context)
                                                                   .labelMedium,
@@ -1117,7 +1117,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cliente : ??',
+                                                                'Cliente : ${pedidos[index].cliente}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
@@ -1132,7 +1132,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cidade : ??',
+                                                                'Cidade : ${pedidos[index].cidade}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
@@ -1398,7 +1398,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cliente : ??',
+                                                                'Cliente : ${pedidos[index].cliente}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
@@ -1413,7 +1413,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cidade : ??',
+                                                                'Cidade : ${pedidos[index].cidade}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
