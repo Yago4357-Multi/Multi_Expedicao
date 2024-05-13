@@ -5,6 +5,7 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import '../Components/Model/progress_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../Controls/excel.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
 import 'lista_romaneio_conf_widget.dart';
@@ -24,6 +25,8 @@ class ProgressWidget extends StatefulWidget {
 
 class _ProgressWidgetState extends State<ProgressWidget>
     with TickerProviderStateMixin {
+
+  final ExcelClass excel = ExcelClass();
 
   final Usuario acess;
 
@@ -93,6 +96,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
 
   @override
   Widget build(BuildContext context) {
+    excel.pickFile();
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)

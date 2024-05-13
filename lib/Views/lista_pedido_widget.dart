@@ -112,7 +112,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                 isDestructiveAction: true,
                                 onPressed: () {
                                   if (pedidosAlt.isNotEmpty) {
-                                    bd.updatePedido(pedidosAlt);
+                                    bd.updatePedidoBip(pedidosAlt);
                                     pedidosAlt = [];
                                     getPed = bd.selectPedido(cont);
                                   }

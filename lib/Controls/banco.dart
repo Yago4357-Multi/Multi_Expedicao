@@ -576,6 +576,7 @@ class Banco {
     return teste;
   }
 
+
   ///Função para buscar todas as bipagens dos paletes selecionados para a tela do Romaneio
   Future<List<Pedido>> selectPalletRomaneio(
       Future<List<int>> listaPaletes) async {
@@ -613,6 +614,37 @@ class Banco {
       } else {
         status = 'OK';
       }
+      teste.add(Pedido(element[0] as int, element[1] as String,
+          element[2] as int, element[3] as int, status));
+    }
+    await conn2.close();
+    return teste;
+  }
+
+  ///Função para buscar todas os Pedidos
+  Future<List<Pedido>> selectAllPedidos() async {
+    var teste = <Pedido>[];
+    late final Result pedidos;
+    var status = 'OK';
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    try {
+        pedidos = await conn2.execute(
+            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P full join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  group by P."NUMPED";');
+      } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
       teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status));
     }
@@ -716,7 +748,7 @@ class Banco {
   }
 
   ///Função para atualizar o palete da Caixa
-  void updatePedido(List<Contagem> pedidos) async {
+  void updatePedidoBip(List<Contagem> pedidos) async {
     for (var element in pedidos) {
       await conn.execute(
           'update "Bipagem" set "PALETE" = ${element.palete} where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
@@ -867,5 +899,14 @@ class Banco {
         );
       }
     }
+  }
+
+  Future<void> updatePedido(Pedido pedidos) async {
+    await conn.execute('update "Pedidos" set "ID_CLI" = (select "COD_CLI" from "Clientes" where "CNPJ" = \'${pedidos.cnpj}\'), "VLTOTAL" = ${pedidos.valor} where "NUMPED" = ${pedidos.ped}');
+  }
+
+  Future<void> insertPedido(Pedido pedidos) async {
+      await conn.execute(
+          'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "ID_CLI","VLTOTAL") values (${pedidos.ped},${pedidos.volfat},(select "COD_CLI" from "Clientes" where "CNPJ" = \'${pedidos.cnpj}\'),${pedidos.valor});');
   }
 }
