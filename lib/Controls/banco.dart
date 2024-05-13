@@ -42,29 +42,14 @@ class Banco {
 
   ///Função para inserir dados no Banco
   void insert(String cod, int pallet, BuildContext a, Usuario usur) async {
-    var codArrumado = cod.substring(14, 33);
-    var ped = codArrumado.substring(0, 10);
-    var vol = codArrumado.substring(17, 19);
-    var cx = codArrumado.substring(14, 16);
-    try {
-      try {
-        await conn.execute(
-            'insert into "Pedidos"("NUMPED","VOLUME_TOTAL") values ($ped,$vol) ON CONFLICT ("NUMPED") DO NOTHING;');
-      } on Exception catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      }
-      await conn.execute(
-          'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
-    } on Exception{
+    if (cod.length != 33) {
       if (a.mounted) {
         await showCupertinoModalPopup(
           context: a,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
-              title: const Text('Caixa duplicada'),
+              title: const Text('Código de caixa inválido'),
               actions: <CupertinoDialogAction>[
                 CupertinoDialogAction(
                     isDefaultAction: true,
@@ -77,6 +62,44 @@ class Banco {
           },
         );
       }
+    } else {
+      var codArrumado = cod.substring(14, 33);
+      var ped = codArrumado.substring(0, 10);
+      var vol = codArrumado.substring(17, 19);
+      var cx = codArrumado.substring(14, 16);
+
+      try {
+        try {
+          await conn.execute(
+              'insert into "Pedidos"("NUMPED","VOLUME_TOTAL") values ($ped,$vol) ON CONFLICT ("NUMPED") DO NOTHING;');
+        } on Exception catch (e) {
+          if (kDebugMode) {
+            print(e);
+          }
+        }
+        await conn.execute(
+            'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
+      } on Exception {
+        if (a.mounted) {
+          await showCupertinoModalPopup(
+            context: a,
+            barrierDismissible: false,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: const Text('Caixa duplicada'),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                      isDefaultAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Voltar'))
+                ],
+              );
+            },
+          );
+        }
+      }
     }
   }
 
@@ -87,7 +110,7 @@ class Banco {
   }
 
   ///Função para verificar se o Palete já existe
-  void paleteExiste(int palete, BuildContext a,Usuario usur) async {
+  void paleteExiste(int palete, BuildContext a, Usuario usur) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
@@ -101,7 +124,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -164,14 +188,14 @@ class Banco {
       await Navigator.push(
           a,
           MaterialPageRoute(
-              builder: (context) => ListaRomaneioConfWidget(palete: teste, usur)));
+              builder: (context) =>
+                  ListaRomaneioConfWidget(palete: teste, usur)));
     }
-    await conn2.close();
     await conn2.close();
   }
 
   ///Função para verificar se o Romaneio já existe
-  void romaneioExiste(int romaneio, BuildContext a,Usuario usur) async {
+  void romaneioExiste(int romaneio, BuildContext a, Usuario usur) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
@@ -185,7 +209,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -245,7 +270,10 @@ class Banco {
         return;
       }
       Navigator.pop(a);
-      await Navigator.push(a, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(romaneio, usur)));
+      await Navigator.push(
+          a,
+          MaterialPageRoute(
+              builder: (context) => ListaRomaneioWidget(romaneio, usur)));
     }
     await conn2.close();
   }
@@ -262,10 +290,11 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable,connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos =
-      await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+          await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -290,7 +319,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on 	"ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO" order by "ID";');
@@ -326,17 +356,19 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
-          'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete"."DATA_CARREGAMENTO" is null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID";');
+            'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join (select "Palete"."ID" from "Palete" left join "Romaneio" on "Romaneio"."ID" = "ID_ROMANEIO" where "Palete"."DATA_CARREGAMENTO" is null) as "Palete2" on "Palete2"."ID" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete2"."ID" is not null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID"');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
     for (var element in pedidos) {
-        teste.add(Romaneio(element[0] as int?, element[1] as int?, element[2] as DateTime?));
+      teste.add(Romaneio(
+          element[0] as int?, element[1] as int?, element[2] as DateTime?));
     }
     await conn2.close();
     return teste;
@@ -354,7 +386,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO","ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO", "ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO" order by "ID";');
@@ -399,12 +432,13 @@ class Banco {
         'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,${usur.id});');
   }
 
-  void updateCarregamento(int palete, Usuario usur) async{
-    await conn.execute('update "Palete" set "DATA_CARREGAMENTO" = current_timestamp, "ID_USUR_CARREGAMENTO" = ${usur.id} where "ID" = $palete;');
+  void updateCarregamento(int palete, Usuario usur) async {
+    await conn.execute(
+        'update "Palete" set "DATA_CARREGAMENTO" = current_timestamp, "ID_USUR_CARREGAMENTO" = ${usur.id} where "ID" = $palete;');
   }
 
   ///Pegar palete baseado no Romaneio
-  Future<List<Carregamento>> getCarregamento(int romaneio) async{
+  Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
     final conn2 = await Connection.open(
@@ -415,10 +449,12 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
-      pedidos = await conn2.execute('select "Palete"."ID", count("Bipagem"."PEDIDO"), "DATA_CARREGAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."ID" = $romaneio group by "Palete"."ID", "DATA_CARREGAMENTO" order by "Palete"."ID";');
+      pedidos = await conn2.execute(
+          'select "Palete"."ID", count("Bipagem"."PEDIDO"), "DATA_CARREGAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."ID" = $romaneio group by "Palete"."ID", "DATA_CARREGAMENTO" order by "Palete"."ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -429,15 +465,14 @@ class Banco {
         carregamento.add(Carregamento(
             element[0] as int?, element[1] as int?, 'Não Carregado'));
       } else {
-        carregamento.add(Carregamento(
-            element[0] as int?, element[1] as int?, 'Carregado'));
+        carregamento.add(
+            Carregamento(element[0] as int?, element[1] as int?, 'Carregado'));
       }
     }
 
     await conn2.close();
     return carregamento;
   }
-
 
   ///Função para buscar o último Romaneio do Banco
   Future<int?> getRomaneio(BuildContext a) async {
@@ -451,7 +486,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
@@ -508,7 +544,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute('select * from "Bipagem";');
@@ -535,6 +572,7 @@ class Banco {
         }
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -553,13 +591,14 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn2.execute(
             'select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '
-                "', '"
-                ') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED";');
+            "', '"
+            ') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED";');
       }
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -594,7 +633,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -643,7 +683,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
       pedidos = await conn2.execute(
@@ -670,6 +711,7 @@ class Banco {
       }
     }
     await conn2.close();
+    print('teste ${teste}');
     return teste;
   }
 
@@ -692,7 +734,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     for (var element in pedidos) {
       try {
@@ -710,6 +753,7 @@ class Banco {
         }
       }
     }
+    print('foi');
     await conn2.close();
   }
 
@@ -748,7 +792,8 @@ class Banco {
           password: '123456',
           port: 5432,
         ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
           'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
@@ -782,25 +827,33 @@ class Banco {
       }
     }
     if (usur?.acess != null) {
-      if (a.mounted){
+      if (a.mounted) {
         if (Platform.isAndroid) {
           Navigator.pop(a);
-          await Navigator.push(a,
-              MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur!),));
-        }else{
+          await Navigator.push(
+              a,
+              MaterialPageRoute(
+                builder: (context) => EscolhaBipagemWidget(usur!),
+              ));
+        } else {
           Navigator.pop(a);
-          await Navigator.push(a,
-              MaterialPageRoute(builder: (context) => ProgressWidget(usur!),));
+          await Navigator.push(
+              a,
+              MaterialPageRoute(
+                builder: (context) => ProgressWidget(usur!),
+              ));
         }
       }
-    }else{
+    } else {
       if (a.mounted) {
         await showCupertinoModalPopup(
           context: a,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
-              title: const Text('Usuário ou Senha inválidos',),
+              title: const Text(
+                'Usuário ou Senha inválidos',
+              ),
               actions: <CupertinoDialogAction>[
                 CupertinoDialogAction(
                     isDefaultAction: true,
@@ -815,5 +868,4 @@ class Banco {
       }
     }
   }
-
 }

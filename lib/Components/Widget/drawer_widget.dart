@@ -120,7 +120,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       style: FlutterFlowTheme.of(context).labelMedium,
                     ),
                   ),
-                  if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
+                 Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(
                         16, 0, 16, 0),
                     child: AnimatedContainer(
@@ -178,7 +178,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         ),
                       ),
                     ),
-                  )),
+                  ),
                   if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           16, 0, 16, 0),

@@ -110,19 +110,22 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
-                                onPressed: () async {
+                                onPressed: () {
                                   if (pedidosAlt.isNotEmpty) {
                                     bd.updatePedido(pedidosAlt);
                                     pedidosAlt = [];
+                                    getPed = bd.selectPedido(cont);
                                   }
                                   if (pedidosExc.isNotEmpty) {
                                     bd.excluiPedido(pedidosExc, usur);
+                                    if (pedidosExc.length == pedidos.length){
+                                      pedidos = [];
+                                    }
                                     pedidosExc = [];
                                     getPed = bd.selectPedido(cont);
                                   }
+                                  inicial = true;
                                   setState(() {
-                                    inicial = true;
-                                    getPed = bd.selectPedido(cont);
                                     Navigator.pop(context);
                                   });
                                 },
@@ -187,7 +190,9 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                     child: FutureBuilder(
                       future: getPed,
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
+                        print(snapshot.hasData);
+                        print(snapshot.data);
+                        if (snapshot.connectionState == ConnectionState.done) {
                           pedidos = snapshot.data ?? [];
                           return Column(
                             mainAxisSize: MainAxisSize.max,
