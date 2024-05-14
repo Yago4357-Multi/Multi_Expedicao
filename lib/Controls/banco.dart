@@ -13,9 +13,11 @@ import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
 import '../Views/escolha_bipagem_widget.dart';
+import '../Views/escolha_romaneio_widget.dart';
 import '../Views/lista_romaneio_conf_widget.dart';
 import '../Views/lista_romaneio_widget.dart';
 import '../Views/progress_widget.dart';
+import 'excel.dart';
 
 ///Classe para manter funções do Banco
 class Banco {
@@ -597,9 +599,7 @@ class Banco {
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn2.execute(
-            'select P."NUMPED", string_agg(distinct cast(B."PALETE" as varchar) , '
-                "', '"
-                ') as PALETES, count(B."PEDIDO") as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED";');
+            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", C."CIDADE", P."NF", P."VLTOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", C."CIDADE", P."NF", P."VLTOTAL";');
       }
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -615,7 +615,7 @@ class Banco {
         status = 'OK';
       }
       teste.add(Pedido(element[0] as int, element[1] as String,
-          element[2] as int, element[3] as int, status));
+          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
     }
     await conn2.close();
     return teste;
@@ -638,7 +638,7 @@ class Banco {
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
-          'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL" from "Pedidos" as P full join "Bipagem" as B on P."NUMPED" = B."PEDIDO"  group by P."NUMPED";');
+          'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", C."CIDADE", P."NF", P."VLTOTAL" from "Pedidos" as P full join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" group by P."NUMPED", C."CNPJ", C."CLIENTE", C."CIDADE", P."NF";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -646,7 +646,7 @@ class Banco {
     }
     for (var element in pedidos) {
       teste.add(Pedido(element[0] as int, element[1] as String,
-          element[2] as int, element[3] as int, status));
+          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
     }
     await conn2.close();
     return teste;
@@ -870,7 +870,7 @@ class Banco {
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => ProgressWidget(usur!),
+                builder: (context) => EscolhaRomaneioWidget(usur!),
               ));
         }
       }
@@ -900,16 +900,16 @@ class Banco {
   }
 
   Future<void> updatePedido(Pedido pedidos) async {
-    await conn.execute('update "Pedidos" set "ID_CLI" = (select "COD_CLI" from "Clientes" where "CNPJ" = \'${pedidos.cnpj}\'), "VLTOTAL" = ${pedidos.valor}, "STATUS" = \'${pedidos.situacao}\', "NF" = ${pedidos.nota} where "NUMPED" = ${pedidos.ped}');
+    await conn.execute('update "Pedidos" set "COND_VENDA" = ${pedidos.cod_venda}, "ID_CLI" = ${pedidos.cod_cli} , "STATUS" = \'${pedidos.situacao}\', "DATA_PEDIDO" = ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_PED" = ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_FATURAMENTO" = ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_NF" = ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "NF" = ${pedidos.nota} , "VLTOTAL" = ${pedidos.valor}, "VOLUME_NF" = ${pedidos.volfat} where "NUMPED" = ${pedidos.ped};');
   }
 
   Future<void> insertPedido(Pedido pedidos) async {
     await conn.execute(
-        'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "ID_CLI","VLTOTAL","STATUS") values (${pedidos.ped},${pedidos.volfat},(select "COD_CLI" from "Clientes" where "CNPJ" = \'${pedidos.cnpj}\'),${pedidos.valor},\'${pedidos.situacao})\');');
+        'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI","STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "DATA_CANC_PED", "DATA_CANC_NF", "VOLUME_NF") values (${pedidos.ped}, ${pedidos.vol}, ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.valor}, ${pedidos.cod_cli}, \'${pedidos.situacao}\', ${pedidos.nota}, ${pedidos.cod_venda}, ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.volfat}) ON CONFLICT DO NOTHING;');
   }
 
   ///Busca pedidos não bipados que foram faturados
-  Future<List<Pedido>> faturadosNBipados() async{
+  Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async{
     var teste = <Pedido>[];
     late Result volumeResponse;
     final conn2 = await Connection.open(
@@ -922,12 +922,13 @@ class Banco {
         ),
         settings: const ConnectionSettings(
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" where "Bipagem"."PEDIDO" is null and "STATUS" like \'Faturado\';');
+    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
     for (var element in volumeResponse) {
       if(element.isNotEmpty) {
         teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString()));
       }
     }
+    await conn2.close();
     return teste;
   }
 }

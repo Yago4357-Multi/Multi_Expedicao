@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'Controls/banco.dart';
 import 'Controls/excel.dart';
 import 'rotas.dart';
 
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var excel = ExcelClass();
-    excel.pickFile();
+    excel.pickPed();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

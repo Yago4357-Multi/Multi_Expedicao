@@ -96,7 +96,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
 
   @override
   Widget build(BuildContext context) {
-    excel.pickFile();
+    excel.pickPed();
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)

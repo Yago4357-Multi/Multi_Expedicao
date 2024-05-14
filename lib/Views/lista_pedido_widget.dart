@@ -118,7 +118,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                   }
                                   if (pedidosExc.isNotEmpty) {
                                     bd.excluiPedido(pedidosExc, usur);
-                                    if (pedidosExc.length == pedidos.length){
+                                    if (pedidosExc.length >= pedidos.length){
                                       pedidos = [];
                                     }
                                     pedidosExc = [];

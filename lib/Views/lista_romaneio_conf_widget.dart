@@ -504,7 +504,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       0,
                                                                       0),
                                                               child: Text(
-                                                                'Cidade : ${pedidos[index].caixa}',
+                                                                'Cidade : ${pedidos[index].cidade}',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .labelMedium,
