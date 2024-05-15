@@ -1,6 +1,10 @@
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../Components/Model/lista_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
@@ -8,7 +12,6 @@ import '../Controls/banco.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/usur.dart';
-import 'criar_palete_widget.dart';
 
 ///Classe para manter a listagem dos paletes
 class ListaPaleteWidget extends StatefulWidget {
@@ -30,6 +33,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   ///Classe para puxar o palete inicial da página
   int cont;
   final Usuario usur;
+
+  final pdf = pw.Document();
 
   _ListaPaleteWidgetState(this.cont, this.usur);
 
@@ -365,7 +370,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           ),
                                                           onSubmitted:
                                                               (value) async {
-                                                            setState(() {
                                                               cont = int.parse(
                                                                   value);
                                                               getPed = bd
@@ -375,7 +379,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                   bd.paleteAll(
                                                                       cont,
                                                                       context);
-                                                            });
+                                                              setState(() {});
                                                           },
                                                           controller: _model
                                                               .textController,
@@ -421,13 +425,23 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                               isDefaultAction: true,
                                                                               isDestructiveAction: true,
                                                                               onPressed: () async {
-                                                                                Navigator.pop(context);
-                                                                                print(_model.textController?.text ?? '0');
-                                                                                await Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(
-                                                                                      builder: (context) => CriarPaleteWidget(usur, int.parse(_model.textController?.text ?? '0')),
-                                                                                    ));
+                                                                                pdf.addPage(pw.Page(
+                                                                                  pageFormat: PdfPageFormat.a4,
+                                                                                  build: (context2) {
+                                                                                    return pw.BarcodeWidget(
+                                                                                        data: _model.textController?.text ?? '0',
+                                                                                        barcode: Barcode.code128(),
+                                                                                        width: 300,
+                                                                                        height: 200,
+                                                                                        color: PdfColors.black,
+                                                                                        drawText: true,
+                                                                                        textStyle: const pw.TextStyle(
+                                                                                          fontSize: 20,
+                                                                                          letterSpacing: 0,
+                                                                                        ));
+                                                                                  },
+                                                                                ));
+                                                                                await Printing.layoutPdf(onLayout: (format) => pdf.save());
                                                                               },
                                                                               child: const Text('Continuar')),
                                                                           CupertinoDialogAction(
@@ -610,7 +624,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                   inicial == false
                                                       ? palete.isNotEmpty
                                                           ? palete[0].dtFechamento !=
-                                                                  null
+                                                                  null && palete[0].dtCarregamento == null
                                                               ? Positioned(
                                                                   right: 5,
                                                                   top: 20,

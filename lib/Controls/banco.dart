@@ -16,8 +16,8 @@ import '../Models/romaneio.dart';
 import '../Models/usur.dart';
 import '../Views/escolha_bipagem_widget.dart';
 import '../Views/escolha_romaneio_widget.dart';
-import '../Views/lista_romaneio_conf_widget.dart';
-import '../Views/lista_romaneio_widget.dart';
+import '../Views/conferencia_widget.dart';
+import '../Views/romaneio_widget.dart';
 import '../Views/progress_widget.dart';
 import 'excel.dart';
 
@@ -25,6 +25,8 @@ import 'excel.dart';
 class Banco {
   ///Variável para guardar a conexão com o Banco
   late final Connection conn;
+
+  int i = 0;
 
   ///Construtor do Banco
   Banco() {
@@ -120,7 +122,7 @@ class Banco {
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -188,12 +190,14 @@ class Banco {
             context: a);
         return;
       }
-      Navigator.pop(a);
-      await Navigator.push(
-          a,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ListaRomaneioConfWidget(palete: teste, usur)));
+      if (a.mounted) {
+        Navigator.pop(a);
+        await Navigator.push(
+            a,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ListaRomaneioConfWidget(palete: teste, usur)));
+      }
     }
     await conn2.close();
   }
@@ -205,7 +209,7 @@ class Banco {
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -279,14 +283,14 @@ class Banco {
           MaterialPageRoute(
               builder: (context) => ListaRomaneioWidget(romaneio, usur)));
     }
-    await conn2.close();
+    await conn2.close();  
   }
 
   ///Função para buscar o último Romaneio do Banco
   Future<int> getPalete() async {
     var teste = 0;
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -307,7 +311,7 @@ class Banco {
     for (var element in pedidos) {
       teste = (element[0] ?? 0) as int;
     }
-    await conn2.close();
+    await conn2.close();  
     return teste + 1;
   }
 
@@ -315,7 +319,7 @@ class Banco {
   Future<List<Paletes>> paleteFinalizado() async {
     var teste = <Paletes>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -327,7 +331,7 @@ class Banco {
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
-          'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on 	"ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO" order by "ID";');
+          'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" as Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" as Fech on Fech."ID" = "ID_USUR_FECHAMENTO" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO" order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -335,16 +339,16 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[4] == null) {
-        teste.add(Paletes(element[0] as int?, element[1] as int?,
+        teste.add(Paletes(element[0] as int?, element[1] as String?,
             element[2] as DateTime?, element[3] as int?));
       } else {
-        teste.add(Paletes(element[0] as int?, element[1] as int?,
+        teste.add(Paletes(element[0] as int?, element[1] as String?,
             element[2] as DateTime?, element[3] as int?,
-            idUsurFechamento: element[4] as int?,
+            UsurFechamento: element[4] as String?,
             dtFechamento: element[5] as DateTime?));
       }
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -352,7 +356,7 @@ class Banco {
   Future<List<Romaneio>> romaneioFinalizado() async {
     var teste = <Romaneio>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -374,7 +378,7 @@ class Banco {
       teste.add(Romaneio(
           element[0] as int?, element[1] as int?, element[2] as DateTime?));
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -394,28 +398,29 @@ class Banco {
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
     try {
       pedidos = await conn2.execute(
-          'select "Palete"."ID","ID_USUR_CRIACAO","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),"ID_USUR_FECHAMENTO","Palete"."DATA_FECHAMENTO","ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Palete"."ID" = $palete group by "Palete"."ID", "ID_USUR_CRIACAO", "DATA_INCLUSAO", "ID_USUR_FECHAMENTO", "Palete"."DATA_FECHAMENTO", "ID_USUR_CARREGAMENTO","Palete"."DATA_CARREGAMENTO" order by "ID";');
+            'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" LEFT JOIN "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" where "Palete"."ID" = $palete group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO" order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
     for (var element in pedidos) {
+      print(element);
       if (element[4] == null) {
-        teste.add(Paletes(element[0] as int?, element[1] as int?,
+        teste.add(Paletes(element[0] as int?, element[1] as String?,
             element[2] as DateTime?, element[3] as int?));
       } else {
         if (element[6] == null) {
-          teste.add(Paletes(element[0] as int?, element[1] as int?,
+          teste.add(Paletes(element[0] as int?, element[1] as String?,
               element[2] as DateTime?, element[3] as int?,
-              idUsurFechamento: element[4] as int?,
+              UsurFechamento: element[4] as String?,
               dtFechamento: element[5] as DateTime?));
         } else {
-          teste.add(Paletes(element[0] as int?, element[1] as int?,
+          teste.add(Paletes(element[0] as int?, element[1] as String?,
               element[2] as DateTime?, element[3] as int?,
-              idUsurFechamento: element[4] as int?,
+              UsurFechamento: element[4] as String?,
               dtFechamento: element[5] as DateTime?,
-              idUsurCarregamento: element[6] as int?,
+              UsurCarregamento: element[6] as String?,
               dtCarregamento: element[7] as DateTime?));
         }
       }
@@ -445,7 +450,7 @@ class Banco {
   Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -474,7 +479,7 @@ class Banco {
       }
     }
 
-    await conn2.close();
+    await conn2.close();  
     return carregamento;
   }
 
@@ -482,7 +487,7 @@ class Banco {
   Future<int?> getRomaneio(BuildContext a) async {
     int? teste;
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -525,7 +530,7 @@ class Banco {
     } else {
       return teste;
     }
-    await conn2.close();
+    await conn2.close();  
     return 0;
   }
 
@@ -540,7 +545,7 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -557,7 +562,7 @@ class Banco {
       if (kDebugMode) {
         print(e);
       }
-      await conn2.close();
+      await conn2.close();  
     }
 
     for (var element in pedidos) {
@@ -576,7 +581,7 @@ class Banco {
         }
       }
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -588,7 +593,7 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -601,7 +606,7 @@ class Banco {
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn2.execute(
-            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL";');
+            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS";');
       }
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -611,15 +616,15 @@ class Banco {
     for (var element in pedidos) {
       if ((element[2] as int) < (element[3] as int) ||
           element[1].toString().replaceAll(RegExp(',| '), '').length >
-              paletes.length) {
+              paletes.length || (element[10] != 'F')) {
         status = 'Errado';
       } else {
         status = 'OK';
       }
       teste.add(Pedido(element[0] as int, element[1] as String,
-          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
+          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?, cod_cli: element[9] as int?, situacao: element[10] as String?));
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -628,7 +633,7 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -650,7 +655,7 @@ class Banco {
       teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -659,19 +664,10 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+
 
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select * from "Bipagem" where "PALETE" = $palete order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -681,7 +677,7 @@ class Banco {
     try {
       for (var element in pedidos) {
         try {
-          volumeResponse = await conn2.execute(
+          volumeResponse = await conn.execute(
               'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
@@ -700,7 +696,6 @@ class Banco {
         print(e);
       }
     }
-    await conn2.close();
     return teste;
   }
 
@@ -719,7 +714,6 @@ class Banco {
         ),
         settings: const ConnectionSettings(
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-
     try {
       pedidos = await conn2.execute(
           'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
@@ -731,11 +725,18 @@ class Banco {
     for (var element in pedidos) {
       try {
         volumeResponse = (await conn2.execute(
-            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "CIDADE" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" where "NUMPED" = ${element[1]};'));
+            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
-                element[4] as int?, (int.parse('${element2[0]}')), cliente: '${element2[2]}', cidade: '${element2[3]}'));
+                element[4] as int?, (int.parse('${element2[0]}')), cliente: '${element2[2]}', cidade: '${element2[3]}', status: switch(element2[4] ?? 'D'){
+              'F' => 'Faturado',
+                'C' => 'Cancelado',
+                'L' => 'Libearado',
+                'D' => 'Desconhecido',
+                  // TODO: Handle this case.
+                  Object() => throw UnimplementedError(),
+                }));
           }
         }
       } on Exception catch (e) {
@@ -758,35 +759,18 @@ class Banco {
 
   ///Função para excluir a caixa
   void excluiPedido(List<Contagem> pedidos, Usuario usur) async {
-    late Result pedidosResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-
     for (var element in pedidos) {
+      print(element);
       try {
-        pedidosResponse = await conn2.execute(
-            'select * from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
-        for (var element2 in pedidosResponse) {
-          await conn2.execute(
-              "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
-          await conn2.execute(
-              'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
-        }
+        await conn.execute(
+            'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
       } on Exception catch (e) {
         if (kDebugMode) {
           print(e);
         }
       }
     }
-    await conn2.close();
+    print('deletado');
   }
 
   ///Função para atualizar o romaneio do Palete
@@ -809,14 +793,14 @@ class Banco {
   ///Função para reabrir o palete no Banco
   void reabrirPalete(int palete) async {
     await conn.execute(
-        'update "Palete" set "DATA_FECHAMENTO" = null, "ID_USUR_FECHAMENTO" = null where "ID" = $palete;');
+        'update "Palete" set "DATA_FECHAMENTO" = null, "ID_USUR_FECHAMENTO" = null, "ID_ROMANEIO" = null where "ID" = $palete;');
   }
 
   ///Função para puxar os paletes que estão no romaneio
   Future<List<int>> selectRomaneio(int romaneio) async {
     var teste = <int>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -914,7 +898,7 @@ class Banco {
   Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async{
     var teste = <Pedido>[];
     late Result volumeResponse;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -924,20 +908,20 @@ class Banco {
         ),
         settings: const ConnectionSettings(
             sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
+    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
     for (var element in volumeResponse) {
       if(element.isNotEmpty) {
         teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString()));
       }
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
   Future<List<Cliente>> selectAllClientes() async {
     var teste = <Cliente>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -958,7 +942,7 @@ class Banco {
     for (var element in pedidos) {
       teste.add(Cliente(element[0] as int?, element[5] as int?, element[1] as String?, element[3] as String?, element[2] as String?, element[4] as String?));
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
 
@@ -977,7 +961,7 @@ class Banco {
   Future<List<Cidade>> selectAllCidades() async {
     var teste = <Cidade>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
+     final conn2 = await Connection.open(
         Endpoint(
           host: '192.168.1.183',
           database: 'Teste',
@@ -998,10 +982,10 @@ class Banco {
     for (var element in pedidos) {
       teste.add(Cidade(element[0] as int?, element[2] as int?, element[1] as String?, element[3] as String?));
     }
-    await conn2.close();
+    await conn2.close();  
     return teste;
   }
-  
+
   ///Atualizar base de Cidades
   Future<void> updateCidade(Cidade cidades) async {
     await conn.execute('update "Cidades" set "CIDADE" = \'${cidades.cidade?.replaceAll('\'','\'\'')}\', "CODIBGE" = ${cidades.cod_ibge}, "UF" = \'${cidades.uf}\' where "CODCIDADE" = ${cidades.cod_cidade};');
@@ -1012,5 +996,5 @@ class Banco {
     await conn.execute(
         'insert into "Cidades"("CODCIDADE", "CIDADE","CODIBGE", "UF") values (${cidades.cod_cidade}, \'${cidades.cidade?.replaceAll('\'','\'\'')}\', ${cidades.cod_ibge}, \'${cidades.uf}\') ON CONFLICT DO NOTHING;');
   }
-  
+
 }

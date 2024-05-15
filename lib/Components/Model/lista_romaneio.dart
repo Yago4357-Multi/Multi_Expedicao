@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../../Views/lista_romaneio_widget.dart';
+import '../../Views/romaneio_widget.dart';
 import 'drawer_model.dart';
 
 ///Modelo para a página de listagem do Romaneio

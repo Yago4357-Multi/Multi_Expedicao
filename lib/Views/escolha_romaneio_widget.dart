@@ -6,7 +6,7 @@ import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
-import 'lista_romaneio_widget.dart';
+import 'romaneio_widget.dart';
 
 export '../Components/Model/escolha_romaneio_model.dart';
 

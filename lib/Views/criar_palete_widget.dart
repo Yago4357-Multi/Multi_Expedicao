@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
-import 'lista_romaneio_conf_widget.dart';
+import 'conferencia_widget.dart';
 
 export '../Components/Model/criar_palete_model.dart';
 
@@ -193,7 +194,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                             return pw.BarcodeWidget(
                                 data: '$i',
                                 barcode: Barcode.code128(),
-                                width: 800,
+                                width: 300,
                                 height: 200,
                                 color: PdfColors.black,
                                 drawText: true,
@@ -203,6 +204,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                                 ));
                           },
                         ));
+                        await Printing.layoutPdf(onLayout: (format) => pdf.save());
                         if (context.mounted){
                         Navigator.pop(context);
                         await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur),));

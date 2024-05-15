@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../../Views/lista_romaneio_conf_widget.dart' show ListaRomaneioConfWidget;
+import '../../Views/conferencia_widget.dart' show ListaRomaneioConfWidget;
 import '../../components/Widget/drawer_widget.dart';
 
 ///Modelo para a página de Bipagem do aplicativo

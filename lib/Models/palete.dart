@@ -2,21 +2,23 @@
 class Paletes{
 
   ///Variáveis do Palete não finalizado
-  int? pallet, idUsurInclusao, volumetria;
+  int? pallet, volumetria;
   ///Variáveis de Data do Palete não finalizado
   DateTime? dtInclusao;
 
+  String? UsurInclusao;
+
   ///Variáveis adicionais do Palete finalizado
-  int? idUsurFechamento;
+  String? UsurFechamento;
   ///Variáveis de Data adicionais do Palete finalizado
   DateTime? dtFechamento;
 
   ///Variáveis de Data adicionais do Palete carregado
-  int? idUsurCarregamento;
+  String? UsurCarregamento;
   ///Variáveis de Data adicionais do Palete carregado
   DateTime? dtCarregamento;
 
   ///Construtor para criar um objeto Palete
-  Paletes(this.pallet, this.idUsurInclusao, this.dtInclusao, this.volumetria,{this.idUsurFechamento,
-       this.dtFechamento, this.idUsurCarregamento, this.dtCarregamento});
+  Paletes(this.pallet, this.UsurInclusao, this.dtInclusao, this.volumetria,{this.UsurFechamento,
+    this.dtFechamento, this.UsurCarregamento, this.dtCarregamento});
 }

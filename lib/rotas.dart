@@ -6,8 +6,8 @@ import 'Views/escolha_bipagem_widget.dart';
 import 'Views/escolha_romaneio_widget.dart';
 import 'Views/lista_palete_widget.dart';
 import 'Views/lista_pedido_widget.dart';
-import 'Views/lista_romaneio_conf_widget.dart';
-import 'Views/lista_romaneio_widget.dart';
+import 'Views/conferencia_widget.dart';
+import 'Views/romaneio_widget.dart';
 import 'Views/login_widget.dart';
 import 'Views/progress_widget.dart';
 

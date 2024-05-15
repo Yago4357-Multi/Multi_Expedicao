@@ -38,7 +38,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
 
   bool inicial = true;
   late ListaPedidoModel _model;
-  late final Banco bd;
+  late final Banco bd = Banco();
   late Future<List<Contagem>> getPed;
   late List<Contagem> pedidos = [];
   late List<Contagem> pedidosAlt = [];
@@ -54,7 +54,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   }
 
   void rodarBanco() async {
-    bd = Banco();
     getPed = bd.selectPedido(cont);
   }
 
@@ -110,24 +109,30 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (pedidosAlt.isNotEmpty) {
                                     bd.updatePedidoBip(pedidosAlt);
                                     pedidosAlt = [];
                                     getPed = bd.selectPedido(cont);
+                                    setState(() {
+                                      Navigator.pop(context);
+                                    });
                                   }
                                   if (pedidosExc.isNotEmpty) {
                                     bd.excluiPedido(pedidosExc, usur);
-                                    if (pedidosExc.length >= pedidos.length){
-                                      pedidos = [];
+                                    var pedidosSet = pedidos.toSet();
+                                    var pedidosSetExc = pedidosExc.toSet();
+                                    pedidos = pedidosSet.difference(pedidosSetExc).toList();
+                                    if (pedidos.isEmpty){
+                                        cont = 0;
                                     }
                                     pedidosExc = [];
                                     getPed = bd.selectPedido(cont);
+                                    setState(() {
+                                      Navigator.pop(context);
+                                    });
                                   }
                                   inicial = true;
-                                  setState(() {
-                                    Navigator.pop(context);
-                                  });
                                 },
                                 child: const Text('Continuar')),
                             CupertinoDialogAction(
@@ -190,8 +195,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                     child: FutureBuilder(
                       future: getPed,
                       builder: (context, snapshot) {
-                        print(snapshot.hasData);
-                        print(snapshot.data);
                         if (snapshot.connectionState == ConnectionState.done) {
                           pedidos = snapshot.data ?? [];
                           return Column(
@@ -322,7 +325,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                     getPed =
                                                         bd.selectPedido(cont);
                                                     setState(() {
-                                                      cont = int.parse(value);
+                                                      cont = int.parse(value == '' ? '0' : value);
                                                       _model.textController
                                                           .text = '';
                                                     });
@@ -526,7 +529,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     24, 4, 0, 0),
                                 child: Text(
-                                  'Status : Pendente',
+                                  'Status : ${pedidos[0].status ?? 'Desconhecido' }',
                                   textAlign: TextAlign.start,
                                   style:
                                       FlutterFlowTheme.of(context).labelMedium,

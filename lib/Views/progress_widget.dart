@@ -8,7 +8,7 @@ import '../Controls/banco.dart';
 import '../Controls/excel.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
-import 'lista_romaneio_conf_widget.dart';
+import 'conferencia_widget.dart';
 
 ///Página inicial do Aplicativo
 class ProgressWidget extends StatefulWidget {
