@@ -529,7 +529,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     24, 4, 0, 0),
                                 child: Text(
-                                  'Status : ${pedidos[0].status ?? 'Desconhecido' }',
+                                  'Status : ${pedidos.isNotEmpty ? pedidos[0].status ?? 'Desconhecido' : ''}',
                                   textAlign: TextAlign.start,
                                   style:
                                       FlutterFlowTheme.of(context).labelMedium,

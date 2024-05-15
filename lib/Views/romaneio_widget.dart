@@ -127,7 +127,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 for (var ped in pedidos){
                                   vol += ped.vol;
                                 }
-                                bd.endRomaneio(romaneio);
+                                bd.endRomaneio(romaneio, pedidos);
                                 pdf.addPage(pw.MultiPage(
                                     margin: const pw.EdgeInsets.all(20),
                                     build: (context) {

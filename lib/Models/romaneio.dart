@@ -7,6 +7,8 @@ class Romaneio{
   ///Variáveis inicias do Romaneio
   late DateTime? dtFechamento;
 
+
+
   ///Construtor para a classe do Romaneio
   Romaneio(this.romaneio, this.vol, this.dtFechamento);
 }

@@ -14,12 +14,10 @@ import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
+import '../Views/conferencia_widget.dart';
 import '../Views/escolha_bipagem_widget.dart';
 import '../Views/escolha_romaneio_widget.dart';
-import '../Views/conferencia_widget.dart';
 import '../Views/romaneio_widget.dart';
-import '../Views/progress_widget.dart';
-import 'excel.dart';
 
 ///Classe para manter funções do Banco
 class Banco {
@@ -84,7 +82,7 @@ class Banco {
           }
         }
         await conn.execute(
-            'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
+            'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp with timezone,$cx,$codArrumado,${usur.id});');
       } on Exception {
         if (a.mounted) {
           await showCupertinoModalPopup(
@@ -340,12 +338,12 @@ class Banco {
     for (var element in pedidos) {
       if (element[4] == null) {
         teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] as DateTime?, element[3] as int?));
+            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?));
       } else {
         teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] as DateTime?, element[3] as int?,
+            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?,
             UsurFechamento: element[4] as String?,
-            dtFechamento: element[5] as DateTime?));
+            dtFechamento: element[5] != '' && element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null));
       }
     }
     await conn2.close();  
@@ -376,7 +374,7 @@ class Banco {
     }
     for (var element in pedidos) {
       teste.add(Romaneio(
-          element[0] as int?, element[1] as int?, element[2] as DateTime?));
+          element[0] as int?, element[1] as int?, DateTime.parse('${element[2]}').toLocal()));
     }
     await conn2.close();  
     return teste;
@@ -405,23 +403,22 @@ class Banco {
       }
     }
     for (var element in pedidos) {
-      print(element);
       if (element[4] == null) {
         teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] as DateTime?, element[3] as int?));
+            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?));
       } else {
         if (element[6] == null) {
           teste.add(Paletes(element[0] as int?, element[1] as String?,
-              element[2] as DateTime?, element[3] as int?,
+              element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal(): null, element[3] as int?,
               UsurFechamento: element[4] as String?,
-              dtFechamento: element[5] as DateTime?));
+              dtFechamento:  element[5] != '' &&  element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null));
         } else {
           teste.add(Paletes(element[0] as int?, element[1] as String?,
-              element[2] as DateTime?, element[3] as int?,
+              element[2] != '' &&  element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?,
               UsurFechamento: element[4] as String?,
-              dtFechamento: element[5] as DateTime?,
+              dtFechamento: element[5] != '' && element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null,
               UsurCarregamento: element[6] as String?,
-              dtCarregamento: element[7] as DateTime?));
+              dtCarregamento: element[7] != '' && element[7] != null ? DateTime.parse('${element[7]}').toLocal() : null));
         }
       }
     }
@@ -535,7 +532,11 @@ class Banco {
   }
 
   ///Funlção para finalizar Romaneio
-  void endRomaneio(int romaneio) async {
+  void endRomaneio(int romaneio, List<Pedido> pedidos) async {
+    for (var i in pedidos){
+      await conn.execute(
+          'update "Pedidos" set "IDROMANEIO" = $romaneio where "NUMPED" = ${i.ped}');
+    }
     await conn.execute(
         'update "Romaneio" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $romaneio;');
   }
@@ -760,7 +761,6 @@ class Banco {
   ///Função para excluir a caixa
   void excluiPedido(List<Contagem> pedidos, Usuario usur) async {
     for (var element in pedidos) {
-      print(element);
       try {
         await conn.execute(
             'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
@@ -770,7 +770,6 @@ class Banco {
         }
       }
     }
-    print('deletado');
   }
 
   ///Função para atualizar o romaneio do Palete
@@ -997,4 +996,27 @@ class Banco {
         'insert into "Cidades"("CODCIDADE", "CIDADE","CODIBGE", "UF") values (${cidades.cod_cidade}, \'${cidades.cidade?.replaceAll('\'','\'\'')}\', ${cidades.cod_ibge}, \'${cidades.uf}\') ON CONFLICT DO NOTHING;');
   }
 
+  Future<List<Romaneio>> romaneiosFinalizados(DateTime dtIni, DateTime dtFim) async {
+    var teste = <Romaneio>[];
+    late Result volumeResponse;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    volumeResponse = await conn2.execute('select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
+    for (var element in volumeResponse) {
+      if(element.isNotEmpty) {
+        teste.add(Romaneio(element[0] as int, element[2] as int, element[1] != '' ? DateTime.parse('${element[1]}').toLocal() : null));
+      }
+    }
+    await conn2.close();
+    return teste;
+
+  }
 }

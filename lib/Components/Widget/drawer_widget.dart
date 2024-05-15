@@ -11,6 +11,7 @@ import '../../Views/lista_carregamento_widget.dart';
 import '../../Views/lista_faturados.dart';
 import '../../Views/lista_palete_widget.dart';
 import '../../Views/lista_pedido_widget.dart';
+import '../../Views/lista_romaneios.dart';
 import '../../Views/progress_widget.dart';
 import '../Model/drawer_model.dart';
 
@@ -440,6 +441,57 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                     'Paletes',
                                     style:
                                         FlutterFlowTheme.of(context).bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
+                  if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: Padding(
+                        padding:
+                        const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            Navigator.pop(context2);
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur),));
+                          },
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.history_edu,
+                                  color:
+                                  FlutterFlowTheme.of(context).primaryText,
+                                  size: 24,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      12, 0, 0, 0),
+                                  child: Text(
+                                    'Romaneios',
+                                    style:
+                                    FlutterFlowTheme.of(context).bodyMedium,
                                   ),
                                 ),
                               ],
