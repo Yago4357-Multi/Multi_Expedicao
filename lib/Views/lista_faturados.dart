@@ -270,7 +270,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                 ),
                               ),
                             SizedBox(
-                              width: 400,
+                              width: 300,
                               height: 300,
                               child: SfDateRangePicker(
                                 view: DateRangePickerView.year,
@@ -297,8 +297,8 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     fontWeight: FontWeight.bold,
                                   )
                                 ),
-
-                                allowViewNavigation: true,
+                                allowViewNavigation: false,
+                                showNavigationArrow: true,
                                 monthFormat: 'MM',
                                 rangeSelectionColor: Colors.green.shade100,
                                 backgroundColor: Colors.white,

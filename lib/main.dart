@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var excel = ExcelClass();
-    excel.pickPed();
+    excel.init();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
