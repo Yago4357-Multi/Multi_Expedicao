@@ -144,7 +144,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaCarregamentoWidget(usur),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaCarregamentoWidget(usur,bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -203,7 +203,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             onPressed: () async {
                               Navigator.pop(context);
                               Navigator.pop(context2);
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur),));
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur,bd),));
                             },
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -261,7 +261,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(
                               builder: (context) =>
-                                  EscolhaRomaneioWidget(usur),));
+                                  EscolhaRomaneioWidget(usur,bd),));
                           },
 
                           child: InkWell(
@@ -315,7 +315,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(
                               builder: (context) =>
-                                  ListaFaturadosWidget(usur),));
+                                  ListaFaturadosWidget(usur, bd),));
                           },
 
                           child: InkWell(
@@ -367,7 +367,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: 0 , usur),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: 0 , usur,bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -418,7 +418,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur,bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -469,7 +469,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur, bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,

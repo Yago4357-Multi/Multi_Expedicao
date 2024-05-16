@@ -8,27 +8,29 @@ import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '/Components/Widget/drawer_widget.dart';
-import 'lista_pedido_widget.dart';
 
 ///Página da listagem de Romaneio
 class ListaFaturadosWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Construtor da página
-  const ListaFaturadosWidget(this.usur, {super.key});
+  const ListaFaturadosWidget(this.usur, this.bd, {super.key});
 
   @override
   State<ListaFaturadosWidget> createState() =>
-      _ListaFaturadosWidget(usur);
+      _ListaFaturadosWidget(usur, bd);
 }
 
 class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   final Usuario usur;
+  final Banco bd;
 
   DateRangePickerController datas = DateRangePickerController();
 
-  _ListaFaturadosWidget(this.usur);
+  _ListaFaturadosWidget(this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -53,7 +55,6 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   List<Pedido> pedidosSalvos = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final Banco bd = Banco();
 
   @override
   void initState() {

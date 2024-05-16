@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Controls/banco.dart';
 import 'Controls/excel.dart';
 import 'rotas.dart';
 
@@ -13,8 +14,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    var excel = ExcelClass();
-    excel.init();
+    // var excel = ExcelClass();
+    // excel.init();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

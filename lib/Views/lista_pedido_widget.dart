@@ -17,19 +17,23 @@ class ListaPedidoWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Constutor para a página de listagem dos pedidos
-  const ListaPedidoWidget(this.usur, {super.key, required this.cont});
+  const ListaPedidoWidget(this.usur, this.bd, {super.key, required this.cont});
 
   @override
   State<ListaPedidoWidget> createState() =>
-      _ListaPedidoWidgetState(cont, usur);
+      _ListaPedidoWidgetState(cont, usur, bd);
 }
 
 class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   int cont;
   final Usuario usur;
 
-  _ListaPedidoWidgetState(this.cont, this.usur);
+  final Banco bd;
+
+  _ListaPedidoWidgetState(this.cont, this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -38,7 +42,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
 
   bool inicial = true;
   late ListaPedidoModel _model;
-  late final Banco bd = Banco();
   late Future<List<Contagem>> getPed;
   late List<Contagem> pedidos = [];
   late List<Contagem> pedidosAlt = [];

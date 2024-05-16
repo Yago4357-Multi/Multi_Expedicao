@@ -17,19 +17,23 @@ class ListaCarregamentoWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Construtor da página
-  const ListaCarregamentoWidget(this.usur, {super.key});
+  const ListaCarregamentoWidget(this.usur, this.bd, {super.key});
 
   @override
   State<ListaCarregamentoWidget> createState() =>
-      _ListaCarregamentoWidgetState(usur);
+      _ListaCarregamentoWidgetState(usur, bd);
 }
 
 class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
   final Usuario usur;
   late final pdf = pw.Document(title: 'Romaneio ');
 
-  _ListaCarregamentoWidgetState(this.usur);
+  final Banco bd;
+
+  _ListaCarregamentoWidgetState(this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -52,7 +56,6 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
   late List<Carregamento> carregamentoSalvo = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final Banco bd = Banco();
 
   @override
   void initState() {
@@ -934,7 +937,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                   MaterialPageRoute(
                                                                     builder: (context) =>
                                                                         ProgressWidget(
-                                                                            usur),
+                                                                            usur,bd),
                                                                   ));
                                                             },
                                                             child: const Text(

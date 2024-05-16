@@ -24,8 +24,6 @@ class Banco {
   ///Variável para guardar a conexão com o Banco
   late final Connection conn;
 
-  int i = 0;
-
   ///Construtor do Banco
   Banco() {
     init();
@@ -114,25 +112,15 @@ class Banco {
   }
 
   ///Função para verificar se o Palete já existe
-  void paleteExiste(int palete, BuildContext a, Usuario usur) async {
+  void paleteExiste(int palete, BuildContext a, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "ID","DATA_FECHAMENTO" from "Palete" where "ID" = $palete;');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -194,32 +182,23 @@ class Banco {
             a,
             MaterialPageRoute(
                 builder: (context) =>
-                    ListaRomaneioConfWidget(palete: teste, usur)));
+                    ListaRomaneioConfWidget(palete: teste, usur, bd)));
       }
     }
-    await conn2.close();
+    
   }
 
   ///Função para verificar se o Romaneio já existe
-  void romaneioExiste(int romaneio, BuildContext a, Usuario usur) async {
+  void romaneioExiste(int romaneio, BuildContext a, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
 
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "ID","DATA_FECHAMENTO" from "Romaneio" where "ID" = $romaneio;');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -279,28 +258,19 @@ class Banco {
       await Navigator.push(
           a,
           MaterialPageRoute(
-              builder: (context) => ListaRomaneioWidget(romaneio, usur)));
+              builder: (context) => ListaRomaneioWidget(romaneio, usur, bd)));
     }
-    await conn2.close();  
+    
   }
 
   ///Função para buscar o último Romaneio do Banco
   Future<int> getPalete() async {
     var teste = 0;
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
       pedidos =
-      await conn2.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+      await conn.execute('select COALESCE(MAX("ID"),0) from "Palete";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -309,7 +279,7 @@ class Banco {
     for (var element in pedidos) {
       teste = (element[0] ?? 0) as int;
     }
-    await conn2.close();  
+    
     return teste + 1;
   }
 
@@ -317,18 +287,9 @@ class Banco {
   Future<List<Paletes>> paleteFinalizado() async {
     var teste = <Paletes>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" as Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" as Fech on Fech."ID" = "ID_USUR_FECHAMENTO" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO" order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -346,7 +307,7 @@ class Banco {
             dtFechamento: element[5] != '' && element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null));
       }
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -354,18 +315,9 @@ class Banco {
   Future<List<Romaneio>> romaneioFinalizado() async {
     var teste = <Romaneio>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join (select "Palete"."ID" from "Palete" left join "Romaneio" on "Romaneio"."ID" = "ID_ROMANEIO" where "Palete"."DATA_CARREGAMENTO" is null) as "Palete2" on "Palete2"."ID" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete2"."ID" is not null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID"');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -376,7 +328,7 @@ class Banco {
       teste.add(Romaneio(
           element[0] as int?, element[1] as int?, DateTime.parse('${element[2]}').toLocal()));
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -384,19 +336,10 @@ class Banco {
   Future<List<Paletes>> paleteAll(int palete, BuildContext a) async {
     var teste = <Paletes>[];
     late final Result pedidos;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
-            'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" LEFT JOIN "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" where "Palete"."ID" = $palete group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO" order by "ID";');
+      pedidos = await conn.execute(
+          'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" LEFT JOIN "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" where "Palete"."ID" = $palete group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO" order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -422,7 +365,7 @@ class Banco {
         }
       }
     }
-    await conn2.close();
+    
     return teste;
   }
 
@@ -447,19 +390,10 @@ class Banco {
   Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
 
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "Palete"."ID", count("Bipagem"."PEDIDO"), "DATA_CARREGAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."ID" = $romaneio group by "Palete"."ID", "DATA_CARREGAMENTO" order by "Palete"."ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -476,7 +410,7 @@ class Banco {
       }
     }
 
-    await conn2.close();  
+    
     return carregamento;
   }
 
@@ -484,18 +418,9 @@ class Banco {
   Future<int?> getRomaneio(BuildContext a) async {
     int? teste;
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -527,7 +452,7 @@ class Banco {
     } else {
       return teste;
     }
-    await conn2.close();  
+    
     return 0;
   }
 
@@ -546,29 +471,20 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
 
     try {
-      pedidos = await conn2.execute('select * from "Bipagem";');
+      pedidos = await conn.execute('select * from "Bipagem";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
-      await conn2.close();  
+      
     }
 
     for (var element in pedidos) {
       try {
-        volumeResponse = (await conn2.execute(
+        volumeResponse = (await conn.execute(
             'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
@@ -582,7 +498,7 @@ class Banco {
         }
       }
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -594,19 +510,10 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
       if (paletes.isNotEmpty) {
-        pedidos = await conn2.execute(
+        pedidos = await conn.execute(
             'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS";');
       }
     } on Exception catch (e) {
@@ -625,7 +532,7 @@ class Banco {
       teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?, cod_cli: element[9] as int?, situacao: element[10] as String?));
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -634,18 +541,9 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL" from "Pedidos" as P full join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -656,7 +554,7 @@ class Banco {
       teste.add(Pedido(element[0] as int, element[1] as String,
           element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -665,19 +563,10 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
 
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select * from "Bipagem" where "PALETE" = $palete order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -687,7 +576,7 @@ class Banco {
     try {
       for (var element in pedidos) {
         try {
-          volumeResponse = await conn2.execute(
+          volumeResponse = await conn.execute(
               'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
@@ -706,7 +595,7 @@ class Banco {
         print(e);
       }
     }
-    await conn2.close();
+    
     return teste;
   }
 
@@ -715,18 +604,9 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -735,17 +615,16 @@ class Banco {
     }
     for (var element in pedidos) {
       try {
-        volumeResponse = (await conn2.execute(
+        volumeResponse = (await conn.execute(
             'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
                 element[4] as int?, (int.parse('${element2[0]}')), cliente: '${element2[2]}', cidade: '${element2[3]}', status: switch(element2[4] ?? 'D'){
-              'F' => 'Faturado',
-                'C' => 'Cancelado',
-                'L' => 'Libearado',
-                'D' => 'Desconhecido',
-                  // TODO: Handle this case.
+                  'F' => 'Faturado',
+                  'C' => 'Cancelado',
+                  'L' => 'Libearado',
+                  'D' => 'Desconhecido',
                   Object() => throw UnimplementedError(),
                 }));
           }
@@ -756,7 +635,7 @@ class Banco {
         }
       }
     }
-    await conn2.close();
+    
     return teste;
   }
 
@@ -809,18 +688,9 @@ class Banco {
   Future<List<int>> selectRomaneio(int romaneio) async {
     var teste = <int>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -830,12 +700,12 @@ class Banco {
     for (var element in pedidos) {
       teste.add(element[0] as int);
     }
-    await conn2.close();
+    
     return teste;
   }
 
   ///Função para verificar login do Banco
-  void auth(String login, String senha, BuildContext a) async {
+  void auth(String login, String senha, BuildContext a, Banco bd) async {
     Usuario? usur;
     late final Result pedidos;
     try {
@@ -858,14 +728,14 @@ class Banco {
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => EscolhaBipagemWidget(usur!),
+                builder: (context) => EscolhaBipagemWidget(usur!, bd),
               ));
         } else {
           Navigator.pop(a);
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => EscolhaRomaneioWidget(usur!),
+                builder: (context) => EscolhaRomaneioWidget(usur!, bd),
               ));
         }
       }
@@ -907,23 +777,14 @@ class Banco {
   Future<List<Pedido>> selectPedidosRomaneio(List<int> cods) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
+    
+    volumeResponse = await conn.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
     for (var element in volumeResponse) {
       if(element.isNotEmpty) {
         teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString(), romaneio: element[7] as int?, dt_fat: element[8] as DateTime?));
       }
     }
-    await conn2.close();
+    
     return teste;
   }
 
@@ -931,41 +792,24 @@ class Banco {
   Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
+    
+    volumeResponse = await conn.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
     for (var element in volumeResponse) {
       if(element.isNotEmpty) {
         teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString()));
       }
     }
-    await conn2.close();  
+    
     return teste;
   }
 
+  ///Função para selecionar todos os clientes do Banco
   Future<List<Cliente>> selectAllClientes() async {
     var teste = <Cliente>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select * from "Clientes"');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -975,7 +819,7 @@ class Banco {
     for (var element in pedidos) {
       teste.add(Cliente(element[0] as int?, element[5] as int?, element[1] as String?, element[3] as String?, element[2] as String?, element[4] as String?));
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -994,18 +838,9 @@ class Banco {
   Future<List<Cidade>> selectAllCidades() async {
     var teste = <Cidade>[];
     late final Result pedidos;
-     final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    
     try {
-      pedidos = await conn2.execute(
+      pedidos = await conn.execute(
           'select * from "Cidades"');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -1015,7 +850,7 @@ class Banco {
     for (var element in pedidos) {
       teste.add(Cidade(element[0] as int?, element[2] as int?, element[1] as String?, element[3] as String?));
     }
-    await conn2.close();  
+    
     return teste;
   }
 
@@ -1033,23 +868,14 @@ class Banco {
   Future<List<Romaneio>> romaneiosFinalizados(DateTime dtIni, DateTime dtFim) async {
     var teste = <Romaneio>[];
     late Result volumeResponse;
-    final conn2 = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(
-            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
-    volumeResponse = await conn2.execute('select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
+    
+    volumeResponse = await conn.execute('select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
     for (var element in volumeResponse) {
       if(element.isNotEmpty) {
         teste.add(Romaneio(element[0] as int, element[2] as int, element[1] != '' ? DateTime.parse('${element[1]}').toLocal() : null));
       }
     }
-    await conn2.close();
+    
     return teste;
 
   }

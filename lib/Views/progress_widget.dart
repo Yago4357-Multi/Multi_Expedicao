@@ -16,11 +16,13 @@ class ProgressWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Construtor da página inicial
-  const ProgressWidget(this.usur, {super.key});
+  const ProgressWidget(this.usur, this.bd, {super.key});
 
   @override
-  State<ProgressWidget> createState() => _ProgressWidgetState(this.usur);
+  State<ProgressWidget> createState() => _ProgressWidgetState(this.usur, this.bd);
 }
 
 class _ProgressWidgetState extends State<ProgressWidget>
@@ -30,7 +32,9 @@ class _ProgressWidgetState extends State<ProgressWidget>
 
   final Usuario acess;
 
-  _ProgressWidgetState(this.acess);
+  final Banco bd;
+
+  _ProgressWidgetState(this.acess, this.bd);
 
   late HomePageModel _model;
 
@@ -65,14 +69,12 @@ class _ProgressWidgetState extends State<ProgressWidget>
     ),
   };
 
-  late final Banco bd;
   late Future<List<Contagem>> getPed;
   late List<Contagem> pedidos;
 
   @override
   void initState() {
     super.initState();
-    bd = Banco();
     rodarBanco();
     _model = createModel(context, HomePageModel.new);
     setupAnimations(
@@ -96,7 +98,6 @@ class _ProgressWidgetState extends State<ProgressWidget>
 
   @override
   Widget build(BuildContext context) {
-    excel.pickPed();
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -403,7 +404,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
                           if (Navigator.of(context).canPop()) {
                             Navigator.pop;
                           }
-                          await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: 0, acess),));
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: 0, acess, bd),));
                         },
                         child: Container(
                           width: double.infinity,

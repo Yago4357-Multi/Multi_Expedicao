@@ -22,12 +22,14 @@ class ListaRomaneioWidget extends StatefulWidget {
   ///Variável para puxar o número do romaneio
   final int romaneio;
 
+  final Banco bd;
+
   ///Construtor da página
-  const ListaRomaneioWidget(this.romaneio, this.usur, {super.key});
+  const ListaRomaneioWidget(this.romaneio, this.usur, this.bd, {super.key});
 
   @override
   State<ListaRomaneioWidget> createState() =>
-      _ListaRomaneioWidgetState(romaneio, usur);
+      _ListaRomaneioWidgetState(romaneio, usur, bd);
 }
 
 class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
@@ -35,7 +37,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   final Usuario usur;
   late final pdf = pw.Document(title: 'Romaneio $romaneio');
 
-  _ListaRomaneioWidgetState(this.romaneio, this.usur);
+  final Banco bd;
+
+  _ListaRomaneioWidgetState(this.romaneio, this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -58,7 +62,6 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   List<Pedido> pedidosSalvos = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final Banco bd = Banco();
 
   @override
   void initState() {
@@ -836,7 +839,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 await Printing.layoutPdf(onLayout: (format) => pdf.save());
                                 if (context.mounted) {
                                   Navigator.pop(context);
-                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressWidget(usur),));
+                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressWidget(usur,bd),));
                                 }
                               },
                               child: const Text(
@@ -1922,7 +1925,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                   ),
                                 Expanded(
                                   child: Text(
-                                    'Paletes',
+                                    'Palete',
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
@@ -2026,7 +2029,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             builder: (context) =>
                                                 ListaPedidoWidget(
                                                     cont: pedidos[index].ped,
-                                                    usur),
+                                                    usur, bd),
                                           ));
                                     },
                                     child: Padding(
@@ -2115,9 +2118,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     'C' => 'Cancelado',
                                                     'L' => 'Liberado',
                                                     'D' => 'Desconhecido',
-                                                    // TODO: Handle this case.
                                                     String() => throw UnimplementedError(),
-                                                },
+                                                  },
                                                   style: FlutterFlowTheme.of(
                                                       context)
                                                       .bodyMedium

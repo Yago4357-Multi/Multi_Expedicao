@@ -21,12 +21,14 @@ class ListaPaleteWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Constutor para a página de listagem dos paletes
-  const ListaPaleteWidget(this.usur, {super.key, required this.cont});
+  const ListaPaleteWidget(this.usur, this.bd, {super.key, required this.cont});
 
   @override
   State<ListaPaleteWidget> createState() =>
-      _ListaPaleteWidgetState(cont, this.usur);
+      _ListaPaleteWidgetState(cont, this.usur, bd);
 }
 
 class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
@@ -36,7 +38,9 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
 
   final pdf = pw.Document();
 
-  _ListaPaleteWidgetState(this.cont, this.usur);
+  final Banco bd;
+
+  _ListaPaleteWidgetState(this.cont, this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -45,7 +49,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
 
   bool inicial = true;
   late ListaPaleteModel _model;
-  late final Banco bd;
 
   ///Variáveis para armazenar pedidos
   late Future<List<Contagem>> getPed;
@@ -61,7 +64,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   @override
   void initState() {
     super.initState();
-    bd = Banco();
     rodarBanco();
     _model = createModel(context, ListaPaleteModel.new);
     _model.textController ??= TextEditingController();

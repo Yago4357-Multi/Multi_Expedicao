@@ -23,15 +23,17 @@ class CriarPaleteWidget extends StatefulWidget {
   ///Variável para guardar número do palete
   final int palete;
 
+  final Banco bd;
+
   ///Construtor da página de criação de novos Paletes
-  const CriarPaleteWidget(this.usur, this.palete, {super.key});
+  const CriarPaleteWidget(this.usur, this.palete, this.bd, {super.key});
 
   @override
-  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur,palete);
+  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur,palete,bd);
 }
 
 class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
-  late final bd = Banco();
+  late Banco bd;
 
   final Usuario usur;
   final int palete;
@@ -43,7 +45,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  _CriarPaleteWidgetState(this.usur,this.palete);
+  _CriarPaleteWidgetState(this.usur,this.palete,this.bd);
 
   @override
   void initState() {
@@ -207,7 +209,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         await Printing.layoutPdf(onLayout: (format) => pdf.save());
                         if (context.mounted){
                         Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur),));
+                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur,bd),));
                         }
                       },
                       text: 'Criar Palete e Imprimir Cód.',

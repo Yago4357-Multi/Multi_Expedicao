@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -308,7 +306,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       onFieldSubmitted: (value) {
-                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context);
+                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context, bd);
                                                       },
                                                       controller: _model
                                                           .passwordTextController,
@@ -435,7 +433,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             0, 0, 0, 16),
                                                     child: FFButtonWidget(
                                                       onPressed: () async {
-                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context);
+                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context, bd);
                                                       },
                                                       text: 'Logar',
                                                       options: FFButtonOptions(
@@ -507,13 +505,6 @@ class _LoginWidgetState extends State<LoginWidget>
                     height: double.infinity,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).secondaryBackground,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        alignment: const AlignmentDirectional(0.2, 0),
-                        image: Image.file(
-                          File('assets/images/multilist.png'),
-                        ).image,
-                      ),
                       borderRadius: BorderRadius.circular(0),
                       shape: BoxShape.rectangle,
                     ),

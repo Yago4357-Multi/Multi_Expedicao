@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../Components/Model/lista_romaneios.dart';
@@ -17,19 +16,22 @@ class ListaRomaneiosWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Construtor da página
-  const ListaRomaneiosWidget(this.usur, {super.key});
+  const ListaRomaneiosWidget(this.usur, this.bd, {super.key});
 
   @override
-  State<ListaRomaneiosWidget> createState() => _ListaRomaneiosWidget(usur);
+  State<ListaRomaneiosWidget> createState() => _ListaRomaneiosWidget(usur, bd);
 }
 
 class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
   final Usuario usur;
+  final Banco bd;
 
   DateRangePickerController datas = DateRangePickerController();
 
-  _ListaRomaneiosWidget(this.usur);
+  _ListaRomaneiosWidget(this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -56,7 +58,6 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
   List<Pedido> pedidosSalvos = [];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final Banco bd = Banco();
 
   @override
   void initState() {

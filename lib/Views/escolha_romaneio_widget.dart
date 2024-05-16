@@ -16,22 +16,25 @@ class EscolhaRomaneioWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  final Banco bd;
+
   ///Construtor da página de escolha do Romaneio
-  const EscolhaRomaneioWidget(this.usur,{super.key});
+  const EscolhaRomaneioWidget(this.usur, this.bd,{super.key});
 
   @override
-  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState(this.usur);
+  State<EscolhaRomaneioWidget> createState() => _EscolhaRomaneioWidgetState(this.usur,this.bd);
 }
 
 class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
   late EscolhaRomaneioModel _model;
-  final bd = Banco();
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final Banco bd;
+
   final Usuario usur;
 
-  _EscolhaRomaneioWidgetState(this.usur);
+  _EscolhaRomaneioWidgetState(this.usur,this.bd);
 
   @override
   void initState() {
@@ -81,9 +84,9 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
           title: Text(
             'Criar Romaneio',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
+              fontFamily: 'Outfit',
+              color: FlutterFlowTheme.of(context).primaryBackground,
+            ),
           ),
           actions: const [],
           centerTitle: true,
@@ -120,7 +123,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                 controller: _model.textController,
                                 focusNode: _model.textFieldFocusNode,
                                 onFieldSubmitted: (value) async {
-                                  bd.romaneioExiste(int.parse(value), context, usur);
+                                  bd.romaneioExiste(int.parse(value), context, usur, bd);
                                 },
                                 autofocus: true,
                                 obscureText: false,
@@ -203,14 +206,14 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                     iconPadding:
-                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.green.shade700,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          fontSize: 20,
-                          letterSpacing: 0,
-                        ),
+                      fontFamily: 'Readex Pro',
+                      color: Colors.white,
+                      fontSize: 20,
+                      letterSpacing: 0,
+                    ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,
@@ -228,7 +231,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     var i = await bd.getRomaneio(context) ?? 0;
                     if (context.mounted) {
                       Navigator.pop(context);
-                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur),));
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(i, usur,bd),));
                     }
                   },
                   text: 'Criar Novo Romaneio',
@@ -237,14 +240,14 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
                     iconPadding:
-                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.orange.shade700,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          fontSize: 20,
-                          letterSpacing: 0,
-                        ),
+                      fontFamily: 'Readex Pro',
+                      color: Colors.white,
+                      fontSize: 20,
+                      letterSpacing: 0,
+                    ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,

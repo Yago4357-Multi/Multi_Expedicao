@@ -13,7 +13,6 @@ import '../Models/usur.dart';
 import 'lista_pedido_widget.dart';
 import 'progress_widget.dart';
 
-export 'package:romaneio_teste/Components/Model/lista_romaneio_conf_model.dart';
 
 ///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
@@ -23,19 +22,21 @@ class ListaRomaneioConfWidget extends StatefulWidget {
   ///Variável para definir o palete que está sendo bipado
   final int palete;
 
+  final Banco bd;
+
   ///Construtor da página
-  const ListaRomaneioConfWidget(this.usur, {super.key, required this.palete});
+  const ListaRomaneioConfWidget(this.usur, this.bd, {super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
-      _ListaRomaneioConfWidgetState(palete, this.usur);
+      _ListaRomaneioConfWidgetState(palete, usur, bd);
 }
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   int palete;
   final Usuario usur;
 
-  _ListaRomaneioConfWidgetState(this.palete, this.usur);
+  _ListaRomaneioConfWidgetState(this.palete, this.usur, this.bd);
 
   List<Contagem> pedidos = [];
   late ListaRomaneioConfModel _model;
@@ -46,7 +47,6 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   @override
   void initState() {
     super.initState();
-    bd = Banco();
     _model = createModel(context, ListaRomaneioConfModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
@@ -112,7 +112,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                 bd.endPalete(palete, usur);
                                 Navigator.pop(context);
                                 await Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => ProgressWidget(usur)));
+                                    builder: (context) => ProgressWidget(usur,bd)));
                               },
                               child: const Text(
                                 'Continuar',
@@ -395,7 +395,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                           cont: pedidos[index]
                                                                   .ped ??
                                                               0,
-                                                          usur),
+                                                          usur,bd),
                                                 ));
                                           },
                                           child: Padding(

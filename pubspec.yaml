@@ -1,4 +1,4 @@
-name: romaneio_teste
+name: Multi_Romaneio
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -77,6 +77,7 @@ flutter:
   uses-material-design: true
 
 assets :
+  - assets/Multilist_Logo.ico
   - assets/images/multilist.png
   # To add assets to your application, add an assets section, like this:
   # assets:
