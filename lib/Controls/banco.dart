@@ -665,10 +665,19 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
 
     try {
-      pedidos = await conn.execute(
+      pedidos = await conn2.execute(
           'select * from "Bipagem" where "PALETE" = $palete order by "ID";');
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -678,7 +687,7 @@ class Banco {
     try {
       for (var element in pedidos) {
         try {
-          volumeResponse = await conn.execute(
+          volumeResponse = await conn2.execute(
               'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
@@ -697,6 +706,7 @@ class Banco {
         print(e);
       }
     }
+    await conn2.close();
     return teste;
   }
 
@@ -893,8 +903,32 @@ class Banco {
         'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI","STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "DATA_CANC_PED", "DATA_CANC_NF", "VOLUME_NF") values (${pedidos.ped}, ${pedidos.vol}, ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.valor}, ${pedidos.cod_cli}, \'${pedidos.situacao}\', ${pedidos.nota}, ${pedidos.cod_venda}, ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.volfat}) ON CONFLICT DO NOTHING;');
   }
 
+  ///Busca pedidos do Banco por Roameneio
+  Future<List<Pedido>> selectPedidosRomaneio(List<int> cods) async {
+    var teste = <Pedido>[];
+    late Result volumeResponse;
+    final conn2 = await Connection.open(
+        Endpoint(
+          host: '192.168.1.183',
+          database: 'Teste',
+          username: 'BI',
+          password: '123456',
+          port: 5432,
+        ),
+        settings: const ConnectionSettings(
+            sslMode: SslMode.disable, connectTimeout: Duration(minutes: 2)));
+    volumeResponse = await conn2.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
+    for (var element in volumeResponse) {
+      if(element.isNotEmpty) {
+        teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString(), romaneio: element[7] as int?, dt_fat: element[8] as DateTime?));
+      }
+    }
+    await conn2.close();
+    return teste;
+  }
+
   ///Busca pedidos não bipados que foram faturados
-  Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async{
+  Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
      final conn2 = await Connection.open(
