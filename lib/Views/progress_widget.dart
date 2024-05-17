@@ -86,7 +86,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
   }
 
   void rodarBanco() async{
-    getPed = bd.selectAll();
+      getPed = bd.selectAll();
   }
 
   @override
@@ -110,7 +110,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(usur: acess, context: context,)
+            child: DrawerWidget(usur: acess, context: context,bd: bd,)
           ),
         ),
         appBar: AppBar(

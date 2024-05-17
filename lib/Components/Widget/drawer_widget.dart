@@ -25,16 +25,18 @@ class DrawerWidget extends StatefulWidget {
 
   final BuildContext context;
 
+  final Banco bd;
+
   ///Construtor do Drawer
-  const DrawerWidget({required this.usur, required this.context, super.key});
+  const DrawerWidget({required this.usur, required this.context, required this.bd, super.key});
 
   @override
-  State<DrawerWidget> createState() => _DrawerWidgetState(usur, context);
+  State<DrawerWidget> createState() => _DrawerWidgetState(usur, context, bd);
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   late DrawerModel _model;
-  final bd = Banco();
+  late final bd;
 
   final Usuario usur;
 
@@ -45,7 +47,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   List<String> acessosCol = ['Logística'];
   List<String> acessosPC = ['Comercial'];
 
-  _DrawerWidgetState(this.usur, this.context2);
+  _DrawerWidgetState(this.usur, this.context2, this.bd);
 
   @override
   void setState(VoidCallback callback) {
@@ -62,7 +64,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void dispose() {
     _model.maybeDispose();
-
     super.dispose();
   }
 
@@ -418,7 +419,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur,bd),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur, bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,

@@ -57,7 +57,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   }
 
   void rodarBanco() async {
-    getPed = bd.selectPedido(cont);
+      getPed = bd.selectPedido(cont);
   }
 
   @override
@@ -77,7 +77,11 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
         child: wrapWithModel(
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
-          child: DrawerWidget(usur: usur,context: context,),
+          child: DrawerWidget(
+            usur: usur,
+            context: context,
+            bd: bd,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -113,29 +117,33 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  if (pedidosAlt.isNotEmpty) {
-                                    bd.updatePedidoBip(pedidosAlt);
-                                    pedidosAlt = [];
-                                    getPed = bd.selectPedido(cont);
-                                    setState(() {
-                                      Navigator.pop(context);
-                                    });
-                                  }
-                                  if (pedidosExc.isNotEmpty) {
-                                    bd.excluiPedido(pedidosExc, usur);
-                                    var pedidosSet = pedidos.toSet();
-                                    var pedidosSetExc = pedidosExc.toSet();
-                                    pedidos = pedidosSet.difference(pedidosSetExc).toList();
-                                    if (pedidos.isEmpty){
-                                        cont = 0;
+                                  if (await bd.connected(context) == 1) {
+                                    if (pedidosAlt.isNotEmpty) {
+                                      bd.updatePedidoBip(pedidosAlt);
+                                      pedidosAlt = [];
+                                      getPed = bd.selectPedido(cont);
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
                                     }
-                                    pedidosExc = [];
-                                    getPed = bd.selectPedido(cont);
-                                    setState(() {
-                                      Navigator.pop(context);
-                                    });
+                                    if (pedidosExc.isNotEmpty) {
+                                      getPed = bd.excluiPedido(
+                                          pedidosExc, usur, cont);
+                                      var pedidosSet = pedidos.toSet();
+                                      var pedidosSetExc = pedidosExc.toSet();
+                                      pedidos = pedidosSet
+                                          .difference(pedidosSetExc)
+                                          .toList();
+                                      if (pedidos.isEmpty) {
+                                        cont = 0;
+                                      }
+                                      pedidosExc = [];
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                    inicial = true;
                                   }
-                                  inicial = true;
                                 },
                                 child: const Text('Continuar')),
                             CupertinoDialogAction(
@@ -325,13 +333,19 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             20, 0, 0, 0),
                                                   ),
                                                   onSubmitted: (value) async {
-                                                    getPed =
-                                                        bd.selectPedido(cont);
-                                                    setState(() {
-                                                      cont = int.parse(value == '' ? '0' : value);
-                                                      _model.textController
-                                                          .text = '';
-                                                    });
+                                                    if (await bd.connected(context) ==
+                                                        null) {
+                                                      getPed =
+                                                          bd.selectPedido(cont);
+                                                      setState(() {
+                                                        cont = int.parse(
+                                                            value == ''
+                                                                ? '0'
+                                                                : value);
+                                                        _model.textController
+                                                            .text = '';
+                                                      });
+                                                    }
                                                   },
                                                   controller:
                                                       _model.textController,
@@ -371,12 +385,12 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                         .fromSTEB(10, 20, 0, 0),
                                                 child: Text(
                                                   (responsiveVisibility(
-                                                      context: context,
-                                                      phone: false,
-                                                      tablet: false,
-                                                      desktop: true))
-                                                      ?
-                                                  'Nº Volumes :' : 'Progresso do Pedido',
+                                                          context: context,
+                                                          phone: false,
+                                                          tablet: false,
+                                                          desktop: true))
+                                                      ? 'Nº Volumes :'
+                                                      : 'Progresso do Pedido',
                                                   textAlign: TextAlign.start,
                                                   style: FlutterFlowTheme.of(
                                                           context)

@@ -22,24 +22,104 @@ import '../Views/romaneio_widget.dart';
 ///Classe para manter funções do Banco
 class Banco {
   ///Variável para guardar a conexão com o Banco
-  late final Connection conn;
+  late Connection conn;
 
   ///Construtor do Banco
-  Banco() {
-    init();
+  Banco(context) {
+    init(context);
+  }
+
+  Future<int> connected(context) async {
+    try {
+      if (conn.isOpen) {
+        return 1;
+      } else {
+        conn = await Connection.open(
+            Endpoint(
+              host: '192.168.1.183',
+              database: 'Teste',
+              username: 'BI',
+              password: '123456',
+              port: 5432,
+            ),
+            settings: const ConnectionSettings(sslMode: SslMode.disable));
+        if (conn.isOpen) {
+          return 1;
+        }
+        else {
+          await showCupertinoModalPopup(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: const Text('Sem conexão com o Servidor'),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                      isDefaultAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Voltar'))
+                ],
+              );
+            },
+          );
+          return 0;
+        }
+      }
+    } on SocketException catch(e){
+      await showCupertinoModalPopup(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: const Text('Sem conexão com a Internet'),
+            actions: <CupertinoDialogAction>[
+              CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Voltar'))
+            ],
+          );
+        },
+      );
+      return 0;
+    }
   }
 
   ///Função para iniciar o Banco de Dados
-  void init() async {
-    conn = await Connection.open(
-        Endpoint(
-          host: '192.168.1.183',
-          database: 'Teste',
-          username: 'BI',
-          password: '123456',
-          port: 5432,
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable));
+  void init(context) async {
+    try {
+      conn = await Connection.open(
+          Endpoint(
+            host: '192.168.1.183',
+            database: 'Teste',
+            username: 'BI',
+            password: '123456',
+            port: 5432,
+          ),
+          settings: const ConnectionSettings(sslMode: SslMode.disable));
+    } on SocketException {
+      await showCupertinoModalPopup(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: const Text('Sem conexão com o Servidor'),
+            actions: <CupertinoDialogAction>[
+              CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Voltar'))
+            ],
+          );
+        },
+      );
+    }
   }
 
   ///Função para inserir dados no Banco
@@ -185,17 +265,16 @@ class Banco {
                     ListaRomaneioConfWidget(palete: teste, usur, bd)));
       }
     }
-    
   }
 
   ///Função para verificar se o Romaneio já existe
-  void romaneioExiste(int romaneio, BuildContext a, Usuario usur, Banco bd) async {
+  void romaneioExiste(
+      int romaneio, BuildContext a, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
-    
 
     try {
       pedidos = await conn.execute(
@@ -260,14 +339,13 @@ class Banco {
           MaterialPageRoute(
               builder: (context) => ListaRomaneioWidget(romaneio, usur, bd)));
     }
-    
   }
 
   ///Função para buscar o último Romaneio do Banco
   Future<int> getPalete() async {
     var teste = 0;
     late final Result pedidos;
-    
+
     try {
       pedidos =
       await conn.execute('select COALESCE(MAX("ID"),0) from "Palete";');
@@ -279,7 +357,7 @@ class Banco {
     for (var element in pedidos) {
       teste = (element[0] ?? 0) as int;
     }
-    
+
     return teste + 1;
   }
 
@@ -287,7 +365,7 @@ class Banco {
   Future<List<Paletes>> paleteFinalizado() async {
     var teste = <Paletes>[];
     late final Result pedidos;
-    
+
     try {
       pedidos = await conn.execute(
           'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" as Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" as Fech on Fech."ID" = "ID_USUR_FECHAMENTO" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO" order by "ID";');
@@ -298,16 +376,28 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[4] == null) {
-        teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?));
+        teste.add(Paletes(
+            element[0] as int?,
+            element[1] as String?,
+            element[2] != '' && element[2] != null
+                ? DateTime.parse('${element[2]}').toLocal()
+                : null,
+            element[3] as int?));
       } else {
-        teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?,
+        teste.add(Paletes(
+            element[0] as int?,
+            element[1] as String?,
+            element[2] != '' && element[2] != null
+                ? DateTime.parse('${element[2]}').toLocal()
+                : null,
+            element[3] as int?,
             UsurFechamento: element[4] as String?,
-            dtFechamento: element[5] != '' && element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null));
+            dtFechamento: element[5] != '' && element[5] != null
+                ? DateTime.parse('${element[5]}').toLocal()
+                : null));
       }
     }
-    
+
     return teste;
   }
 
@@ -315,7 +405,7 @@ class Banco {
   Future<List<Romaneio>> romaneioFinalizado() async {
     var teste = <Romaneio>[];
     late final Result pedidos;
-    
+
     try {
       pedidos = await conn.execute(
           'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join (select "Palete"."ID" from "Palete" left join "Romaneio" on "Romaneio"."ID" = "ID_ROMANEIO" where "Palete"."DATA_CARREGAMENTO" is null) as "Palete2" on "Palete2"."ID" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete2"."ID" is not null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID"');
@@ -325,10 +415,10 @@ class Banco {
       }
     }
     for (var element in pedidos) {
-      teste.add(Romaneio(
-          element[0] as int?, element[1] as int?, DateTime.parse('${element[2]}').toLocal()));
+      teste.add(Romaneio(element[0] as int?, element[1] as int?,
+          DateTime.parse('${element[2]}').toLocal()));
     }
-    
+
     return teste;
   }
 
@@ -336,7 +426,7 @@ class Banco {
   Future<List<Paletes>> paleteAll(int palete, BuildContext a) async {
     var teste = <Paletes>[];
     late final Result pedidos;
-    
+
     try {
       pedidos = await conn.execute(
           'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" LEFT JOIN "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" where "Palete"."ID" = $palete group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO" order by "ID";');
@@ -347,25 +437,46 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[4] == null) {
-        teste.add(Paletes(element[0] as int?, element[1] as String?,
-            element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?));
+        teste.add(Paletes(
+            element[0] as int?,
+            element[1] as String?,
+            element[2] != '' && element[2] != null
+                ? DateTime.parse('${element[2]}').toLocal()
+                : null,
+            element[3] as int?));
       } else {
         if (element[6] == null) {
-          teste.add(Paletes(element[0] as int?, element[1] as String?,
-              element[2] != '' && element[2] != null ? DateTime.parse('${element[2]}').toLocal(): null, element[3] as int?,
+          teste.add(Paletes(
+              element[0] as int?,
+              element[1] as String?,
+              element[2] != '' && element[2] != null
+                  ? DateTime.parse('${element[2]}').toLocal()
+                  : null,
+              element[3] as int?,
               UsurFechamento: element[4] as String?,
-              dtFechamento:  element[5] != '' &&  element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null));
+              dtFechamento: element[5] != '' && element[5] != null
+                  ? DateTime.parse('${element[5]}').toLocal()
+                  : null));
         } else {
-          teste.add(Paletes(element[0] as int?, element[1] as String?,
-              element[2] != '' &&  element[2] != null ? DateTime.parse('${element[2]}').toLocal() : null, element[3] as int?,
+          teste.add(Paletes(
+              element[0] as int?,
+              element[1] as String?,
+              element[2] != '' && element[2] != null
+                  ? DateTime.parse('${element[2]}').toLocal()
+                  : null,
+              element[3] as int?,
               UsurFechamento: element[4] as String?,
-              dtFechamento: element[5] != '' && element[5] != null ? DateTime.parse('${element[5]}').toLocal() : null,
+              dtFechamento: element[5] != '' && element[5] != null
+                  ? DateTime.parse('${element[5]}').toLocal()
+                  : null,
               UsurCarregamento: element[6] as String?,
-              dtCarregamento: element[7] != '' && element[7] != null ? DateTime.parse('${element[7]}').toLocal() : null));
+              dtCarregamento: element[7] != '' && element[7] != null
+                  ? DateTime.parse('${element[7]}').toLocal()
+                  : null));
         }
       }
     }
-    
+
     return teste;
   }
 
@@ -390,7 +501,6 @@ class Banco {
   Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
-    
 
     try {
       pedidos = await conn.execute(
@@ -410,7 +520,6 @@ class Banco {
       }
     }
 
-    
     return carregamento;
   }
 
@@ -418,7 +527,7 @@ class Banco {
   Future<int?> getRomaneio(BuildContext a) async {
     int? teste;
     late final Result pedidos;
-    
+
     try {
       pedidos = await conn.execute(
           'select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
@@ -452,13 +561,13 @@ class Banco {
     } else {
       return teste;
     }
-    
+
     return 0;
   }
 
   ///Funlção para finalizar Romaneio
   void endRomaneio(int romaneio, List<Pedido> pedidos) async {
-    for (var i in pedidos){
+    for (var i in pedidos) {
       await conn.execute(
           'update "Pedidos" set "IDROMANEIO" = $romaneio where "NUMPED" = ${i.ped}');
     }
@@ -471,7 +580,6 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    
 
     try {
       pedidos = await conn.execute('select * from "Bipagem";');
@@ -479,7 +587,6 @@ class Banco {
       if (kDebugMode) {
         print(e);
       }
-      
     }
 
     for (var element in pedidos) {
@@ -498,10 +605,9 @@ class Banco {
         }
       }
     }
-    
+
     return teste;
   }
-
 
   ///Função para buscar todas as bipagens dos paletes selecionados para a tela do Romaneio
   Future<List<Pedido>> selectPalletRomaneio(
@@ -510,7 +616,7 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-    
+
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn.execute(
@@ -523,16 +629,25 @@ class Banco {
     }
     for (var element in pedidos) {
       if ((element[2] as int) < (element[3] as int) ||
-          element[1].toString().replaceAll(RegExp(',| '), '').length >
-              paletes.length || (element[10] != 'F')) {
+          !paletes.toString().contains(element[1]
+              .toString()
+              .replaceAll(RegExp(',| '), ', ')) ||
+          (element[10] != 'F')) {
         status = 'Errado';
       } else {
         status = 'OK';
       }
       teste.add(Pedido(element[0] as int, element[1] as String,
-          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?, cod_cli: element[9] as int?, situacao: element[10] as String?));
+          element[2] as int, element[3] as int, status,
+          cnpj: element[4] as String?,
+          cliente: element[5] as String?,
+          cidade: element[6] as String?,
+          nota: element[7] as int?,
+          valor: element[8] as double?,
+          cod_cli: element[9] as int?,
+          situacao: element[10] as String?));
     }
-    
+
     return teste;
   }
 
@@ -541,7 +656,7 @@ class Banco {
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'OK';
-    
+
     try {
       pedidos = await conn.execute(
           'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL" from "Pedidos" as P full join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF";');
@@ -552,9 +667,14 @@ class Banco {
     }
     for (var element in pedidos) {
       teste.add(Pedido(element[0] as int, element[1] as String,
-          element[2] as int, element[3] as int, status, cnpj: element[4] as String?, cliente: element[5] as String?, cidade: element[6] as String?, nota: element[7] as int?, valor: element[8] as double?));
+          element[2] as int, element[3] as int, status,
+          cnpj: element[4] as String?,
+          cliente: element[5] as String?,
+          cidade: element[6] as String?,
+          nota: element[7] as int?,
+          valor: element[8] as double?));
     }
-    
+
     return teste;
   }
 
@@ -563,7 +683,6 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    
 
     try {
       pedidos = await conn.execute(
@@ -577,11 +696,12 @@ class Banco {
       for (var element in pedidos) {
         try {
           volumeResponse = await conn.execute(
-              'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};');
+              'select "VOLUME_TOTAL", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" where "NUMPED" = ${element[1]} group by "VOLUME_TOTAL";');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
               teste.add(Contagem(element[1] as int?, element[5] as int?,
-                  element[4] as int?, (int.parse('${element2[0]}'))));
+                  element[4] as int?, (int.parse('${element2[0]}')),
+                  volBip: int.parse('${element2[1]}')));
             }
           }
         } on Exception catch (e) {
@@ -595,7 +715,7 @@ class Banco {
         print(e);
       }
     }
-    
+
     return teste;
   }
 
@@ -604,7 +724,7 @@ class Banco {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
-    
+
     try {
       pedidos = await conn.execute(
           'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
@@ -620,7 +740,10 @@ class Banco {
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
-                element[4] as int?, (int.parse('${element2[0]}')), cliente: '${element2[2]}', cidade: '${element2[3]}', status: switch(element2[4] ?? 'D'){
+                element[4] as int?, (int.parse('${element2[0]}')),
+                cliente: '${element2[2]}',
+                cidade: '${element2[3]}',
+                status: switch (element2[4] ?? 'D') {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
                   'L' => 'Libearado',
@@ -635,7 +758,7 @@ class Banco {
         }
       }
     }
-    
+
     return teste;
   }
 
@@ -648,17 +771,66 @@ class Banco {
   }
 
   ///Função para excluir a caixa
-  void excluiPedido(List<Contagem> pedidos, Usuario usur) async {
+  Future<List<Contagem>> excluiPedido(
+      List<Contagem> pedidos, Usuario usur, int cod) async {
+    late Result pedidosResponse;
+
     for (var element in pedidos) {
       try {
-        await conn.execute(
-            'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
+        pedidosResponse = await conn.execute(
+            'select * from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
+        for (var element2 in pedidosResponse) {
+          await conn.execute(
+              "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
+          await conn.execute(
+              'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
+        }
       } on Exception catch (e) {
         if (kDebugMode) {
           print(e);
         }
       }
     }
+
+    var teste = <Contagem>[];
+    late final Result pedidos2;
+    late Result volumeResponse;
+
+    try {
+      pedidos2 = await conn.execute(
+          'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos2) {
+      try {
+        volumeResponse = (await conn.execute(
+            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
+        for (var element2 in volumeResponse) {
+          if (element2[0] != null) {
+            teste.add(Contagem(element[1] as int?, element[5] as int?,
+                element[4] as int?, (int.parse('${element2[0]}')),
+                cliente: '${element2[2]}',
+                cidade: '${element2[3]}',
+                status: switch (element2[4] ?? 'D') {
+                  'F' => 'Faturado',
+                  'C' => 'Cancelado',
+                  'L' => 'Libearado',
+                  'D' => 'Desconhecido',
+                  Object() => throw UnimplementedError(),
+                }));
+          }
+        }
+      } on Exception catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
+
+    return teste;
   }
 
   ///Função para atualizar o romaneio do Palete
@@ -688,7 +860,7 @@ class Banco {
   Future<List<int>> selectRomaneio(int romaneio) async {
     var teste = <int>[];
     late final Result pedidos;
-    
+
     try {
       pedidos = await conn.execute(
           'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
@@ -700,7 +872,7 @@ class Banco {
     for (var element in pedidos) {
       teste.add(element[0] as int);
     }
-    
+
     return teste;
   }
 
@@ -765,7 +937,8 @@ class Banco {
   }
 
   Future<void> updatePedido(Pedido pedidos) async {
-    await conn.execute('update "Pedidos" set "COND_VENDA" = ${pedidos.cod_venda}, "ID_CLI" = ${pedidos.cod_cli} , "STATUS" = \'${pedidos.situacao}\', "DATA_PEDIDO" = ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_PED" = ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_FATURAMENTO" = ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_NF" = ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "NF" = ${pedidos.nota} , "VLTOTAL" = ${pedidos.valor}, "VOLUME_NF" = ${pedidos.volfat} where "NUMPED" = ${pedidos.ped};');
+    await conn.execute(
+        'update "Pedidos" set "COND_VENDA" = ${pedidos.cod_venda}, "ID_CLI" = ${pedidos.cod_cli} , "STATUS" = \'${pedidos.situacao}\', "DATA_PEDIDO" = ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_PED" = ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_FATURAMENTO" = ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_NF" = ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "NF" = ${pedidos.nota} , "VLTOTAL" = ${pedidos.valor}, "VOLUME_NF" = ${pedidos.volfat} where "NUMPED" = ${pedidos.ped};');
   }
 
   Future<void> insertPedido(Pedido pedidos) async {
@@ -777,106 +950,67 @@ class Banco {
   Future<List<Pedido>> selectPedidosRomaneio(List<int> cods) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
-    
-    volumeResponse = await conn.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
+
+    volumeResponse = await conn.execute(
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
     for (var element in volumeResponse) {
-      if(element.isNotEmpty) {
-        teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString(), romaneio: element[7] as int?, dt_fat: element[8] as DateTime?));
+      if (element.isNotEmpty) {
+        teste.add(Pedido(
+            element[0]! as int, '0', 0, element[1]! as int, 'Errado',
+            cod_cli: element[2]! as int,
+            cliente: element[3]!.toString(),
+            valor: element[4]! as double,
+            nota: element[5] as int,
+            cidade: element[6].toString(),
+            romaneio: element[7] as int?,
+            dt_fat: element[8] as DateTime?));
       }
     }
-    
+
     return teste;
   }
 
   ///Busca pedidos não bipados que foram faturados
-  Future<List<Pedido>> faturadosNBipados(DateTime dt_ini, DateTime dt_fim) async {
+  Future<List<Pedido>> faturadosNBipados(
+      DateTime dt_ini, DateTime dt_fim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
-    
-    volumeResponse = await conn.execute('select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
+
+    volumeResponse = await conn.execute(
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
     for (var element in volumeResponse) {
-      if(element.isNotEmpty) {
-        teste.add(Pedido(element[0]! as int, '0', 0, element[1]! as int, 'Errado', cod_cli: element[2]! as int, cliente: element[3]!.toString(), valor: element[4]! as double, nota: element[5] as int, cidade: element[6].toString()));
+      if (element.isNotEmpty) {
+        teste.add(Pedido(
+            element[0]! as int, '0', 0, element[1]! as int, 'Errado',
+            cod_cli: element[2]! as int,
+            cliente: element[3]!.toString(),
+            valor: element[4]! as double,
+            nota: element[5] as int,
+            cidade: element[6].toString()));
       }
     }
-    
+
     return teste;
   }
 
-  ///Função para selecionar todos os clientes do Banco
-  Future<List<Cliente>> selectAllClientes() async {
-    var teste = <Cliente>[];
-    late final Result pedidos;
-    
-    try {
-      pedidos = await conn.execute(
-          'select * from "Clientes"');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in pedidos) {
-      teste.add(Cliente(element[0] as int?, element[5] as int?, element[1] as String?, element[3] as String?, element[2] as String?, element[4] as String?));
-    }
-    
-    return teste;
-  }
-
-  ///Atualizar base de Clientes
-  Future<void> updateCliente(Cliente clientes) async {
-    await conn.execute('update "Clientes" set "CLIENTE" = \'${clientes.cliente?.replaceAll('\'','\'\'')}\', "CNPJ" = \'${clientes.cnpj}\', "NOME_FANTASIA" = \'${clientes.nome_fantasia?.replaceAll('\'','\'\'')}\', "TIPO_CLIENTE" = \'${clientes.tipo}\', "COD_CIDADE" = ${clientes.cod_cid} where "COD_CLI" = ${clientes.cod_cli};');
-  }
-
-  ///Inserir novos clientes baseado na Base de Clientes
-  Future<void> insertCliente(Cliente clientes) async {
-    await conn.execute(
-        'insert into "Clientes"("COD_CLI", "CLIENTE","CNPJ", "NOME_FANTASIA", "TIPO_CLIENTE", "COD_CIDADE") values (${clientes.cod_cli}, \'${clientes.cliente?.replaceAll('\'','\'\'')}\', \'${clientes.cnpj}\', \'${clientes.nome_fantasia?.replaceAll('\'','\'\'')}\',\'${clientes.tipo}\', ${clientes.cod_cid}) ON CONFLICT DO NOTHING;');
-  }
-
-  ///Busca todas as cidades do Banc
-  Future<List<Cidade>> selectAllCidades() async {
-    var teste = <Cidade>[];
-    late final Result pedidos;
-    
-    try {
-      pedidos = await conn.execute(
-          'select * from "Cidades"');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in pedidos) {
-      teste.add(Cidade(element[0] as int?, element[2] as int?, element[1] as String?, element[3] as String?));
-    }
-    
-    return teste;
-  }
-
-  ///Atualizar base de Cidades
-  Future<void> updateCidade(Cidade cidades) async {
-    await conn.execute('update "Cidades" set "CIDADE" = \'${cidades.cidade?.replaceAll('\'','\'\'')}\', "CODIBGE" = ${cidades.cod_ibge}, "UF" = \'${cidades.uf}\' where "CODCIDADE" = ${cidades.cod_cidade};');
-  }
-
-  ///Inserir novos clientes baseado na Base de Cidades
-  Future<void> insertCidade(Cidade cidades) async {
-    await conn.execute(
-        'insert into "Cidades"("CODCIDADE", "CIDADE","CODIBGE", "UF") values (${cidades.cod_cidade}, \'${cidades.cidade?.replaceAll('\'','\'\'')}\', ${cidades.cod_ibge}, \'${cidades.uf}\') ON CONFLICT DO NOTHING;');
-  }
-
-  Future<List<Romaneio>> romaneiosFinalizados(DateTime dtIni, DateTime dtFim) async {
+  Future<List<Romaneio>> romaneiosFinalizados(
+      DateTime dtIni, DateTime dtFim) async {
     var teste = <Romaneio>[];
     late Result volumeResponse;
-    
-    volumeResponse = await conn.execute('select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
+
+    volumeResponse = await conn.execute(
+        'select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
     for (var element in volumeResponse) {
-      if(element.isNotEmpty) {
-        teste.add(Romaneio(element[0] as int, element[2] as int, element[1] != '' ? DateTime.parse('${element[1]}').toLocal() : null));
+      if (element.isNotEmpty) {
+        teste.add(Romaneio(
+            element[0] as int,
+            element[2] as int,
+            element[1] != ''
+                ? DateTime.parse('${element[1]}').toLocal()
+                : null));
       }
     }
-    
-    return teste;
 
+    return teste;
   }
 }

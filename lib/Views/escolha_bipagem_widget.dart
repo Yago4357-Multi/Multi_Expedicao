@@ -12,7 +12,6 @@ export '../Components/Model/escolha_bipagem_model.dart';
 
 ///Página da escolha de bipagem
 class EscolhaBipagemWidget extends StatefulWidget {
-
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
@@ -22,11 +21,11 @@ class EscolhaBipagemWidget extends StatefulWidget {
   const EscolhaBipagemWidget(this.usur, this.bd, {super.key});
 
   @override
-  State<EscolhaBipagemWidget> createState() => _EscolhaBipagemWidgetState(usur, bd);
+  State<EscolhaBipagemWidget> createState() =>
+      _EscolhaBipagemWidgetState(usur, bd);
 }
 
 class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
-
   late EscolhaBipagemModel _model;
   final Banco bd;
 
@@ -52,8 +51,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-      _model.unfocusNode.canRequestFocus
+      onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -62,7 +60,11 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(usur: usur,context: context,),
+            child: DrawerWidget(
+              usur: usur,
+              context: context,
+              bd: bd,
+            ),
           ),
         ),
         appBar: AppBar(
@@ -84,24 +86,17 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
           ),
           title: Text(
             'Criar Palete',
-            style: FlutterFlowTheme
-                .of(context)
-                .headlineMedium
-                .override(
-              fontFamily: 'Outfit',
-              color: FlutterFlowTheme
-                  .of(context)
-                  .primaryBackground,
-            ),
+            style: FlutterFlowTheme.of(context).headlineMedium.override(
+                  fontFamily: 'Outfit',
+                  color: FlutterFlowTheme.of(context).primaryBackground,
+                ),
           ),
           actions: const [],
           centerTitle: true,
           elevation: 2,
         ),
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme
-            .of(context)
-            .primaryBackground,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
           child: Column(
@@ -116,115 +111,105 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                     return showModalBottomSheet(
                       elevation: MediaQuery.of(context).viewInsets.bottom,
                       useSafeArea: true,
-                      context: context, builder: (context) {
-                      return Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            16, 12, 16, 12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                showCursor: true,
-                                controller: _model.textController,
-                                focusNode: _model.textFieldFocusNode,
-                                onFieldSubmitted: (value) {
-                                  setState(() {
-                                    bd.paleteExiste(int.parse(value), context, usur , bd);
-                                  });
-                                },
-                                autofocus: true,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Insira o Palete',
-                                  labelStyle: FlutterFlowTheme.of(
-                                      context)
-                                      .labelMedium
-                                      .override(
-                                    fontFamily: 'Readex Pro',
-                                    color: FlutterFlowTheme.of(
-                                        context)
-                                        .secondaryText,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  alignLabelWithHint: false,
-                                  hintStyle:
-                                  FlutterFlowTheme.of(context)
-                                      .labelMedium,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color:
-                                      FlutterFlowTheme.of(context)
-                                          .alternate,
-                                      width: 2,
+                      context: context,
+                      builder: (context) {
+                        return Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              16, 12, 16, 12),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  showCursor: true,
+                                  controller: _model.textController,
+                                  focusNode: _model.textFieldFocusNode,
+                                  onFieldSubmitted: (value) async {
+                                    if (await bd.connected(context) == 1) {
+                                      setState(() {
+                                        bd.paleteExiste(int.parse(value),
+                                            context, usur, bd);
+                                      });
+                                    }
+                                  },
+                                  autofocus: true,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Insira o Palete',
+                                    labelStyle: FlutterFlowTheme.of(context)
+                                        .labelMedium
+                                        .override(
+                                          fontFamily: 'Readex Pro',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                    alignLabelWithHint: false,
+                                    hintStyle: FlutterFlowTheme.of(context)
+                                        .labelMedium,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.green.shade500,
-                                      width: 2,
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.green.shade500,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.green.shade100,
-                                      width: 2,
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.green.shade100,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                  ),
-                                  focusedErrorBorder:
-                                  OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.green.shade100,
-                                      width: 2,
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.green.shade100,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    borderRadius:
-                                    BorderRadius.circular(8),
                                   ),
+                                  style:
+                                      FlutterFlowTheme.of(context).bodyMedium,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(),
+                                  validator: _model.textControllerValidator
+                                      .asValidator(context),
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(33),
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
                                 ),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium,
-                                keyboardType: const TextInputType
-                                    .numberWithOptions(),
-                                validator: _model
-                                    .textControllerValidator
-                                    .asValidator(context),
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(
-                                      33),
-                                  FilteringTextInputFormatter
-                                      .digitsOnly,
-                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },);
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   },
                   options: FFButtonOptions(
                     width: 260,
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.green.shade700,
-                    textStyle: FlutterFlowTheme
-                        .of(context)
-                        .titleSmall
-                        .override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 0,
-                    ),
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 20,
+                          letterSpacing: 0,
+                        ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,
@@ -239,24 +224,26 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     Navigator.pop(context);
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => CriarPaleteWidget(usur,0,bd),));
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CriarPaleteWidget(usur, 0, bd),
+                        ));
                   },
                   text: 'Criar Novo Palete',
                   options: FFButtonOptions(
                     width: 300,
                     height: 60,
                     padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding:
+                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: Colors.orange.shade700,
-                    textStyle: FlutterFlowTheme
-                        .of(context)
-                        .titleSmall
-                        .override(
-                      fontFamily: 'Readex Pro',
-                      color: Colors.white,
-                      fontSize: 20,
-                      letterSpacing: 0,
-                    ),
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 20,
+                          letterSpacing: 0,
+                        ),
                     elevation: 3,
                     borderSide: const BorderSide(
                       color: Colors.transparent,

@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    // var excel = ExcelClass();
-    // excel.init();
+    var excel = ExcelClass();
+    excel.init();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

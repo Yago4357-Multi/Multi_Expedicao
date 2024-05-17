@@ -1,4 +1,3 @@
-
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -16,7 +15,6 @@ export '../Components/Model/criar_palete_model.dart';
 
 ///Página para a criação de novos Paletes
 class CriarPaleteWidget extends StatefulWidget {
-
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
@@ -29,7 +27,8 @@ class CriarPaleteWidget extends StatefulWidget {
   const CriarPaleteWidget(this.usur, this.palete, this.bd, {super.key});
 
   @override
-  State<CriarPaleteWidget> createState() => _CriarPaleteWidgetState(usur,palete,bd);
+  State<CriarPaleteWidget> createState() =>
+      _CriarPaleteWidgetState(usur, palete, bd);
 }
 
 class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
@@ -38,14 +37,13 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   final Usuario usur;
   final int palete;
 
-
   late Future<int> getPalete;
   final pdf = pw.Document();
   late CriarPaleteModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  _CriarPaleteWidgetState(this.usur,this.palete,this.bd);
+  _CriarPaleteWidgetState(this.usur, this.palete, this.bd);
 
   @override
   void initState() {
@@ -55,7 +53,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   }
 
   void rodarBanco() async {
-    getPalete = bd.getPalete();
+      getPalete = bd.getPalete();
   }
 
   @override
@@ -93,9 +91,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           title: Text(
             'Criar Palete',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-              fontFamily: 'Outfit',
-              color: FlutterFlowTheme.of(context).primaryBackground,
-            ),
+                  fontFamily: 'Outfit',
+                  color: FlutterFlowTheme.of(context).primaryBackground,
+                ),
           ),
           actions: const [],
           centerTitle: true,
@@ -106,7 +104,11 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: wrapWithModel(
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
-            child: DrawerWidget(usur: usur,context: context,),
+            child: DrawerWidget(
+              usur: usur,
+              context: context,
+              bd: bd,
+            ),
           ),
         ),
         body: SafeArea(
@@ -115,9 +117,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
             future: getPalete,
             builder: (context, snapshot) {
               var i = 0;
-              if (palete == 0 ) {
+              if (palete == 0) {
                 i = snapshot.data ?? 0;
-              }else{
+              } else {
                 i = palete;
               }
               return Column(
@@ -127,7 +129,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                   Align(
                     alignment: const AlignmentDirectional(-1, 0),
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
@@ -139,22 +142,22 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
-                                fontFamily: 'Outfit',
-                                letterSpacing: 0,
-                              ),
+                                    fontFamily: 'Outfit',
+                                    letterSpacing: 0,
+                                  ),
                             ),
                             Padding(
-                              padding:
-                              const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0, 4, 0, 0),
                               child: Text(
                                 'Criar novo Palete para bipagem',
                                 textAlign: TextAlign.start,
                                 style: FlutterFlowTheme.of(context)
                                     .labelLarge
                                     .override(
-                                  fontFamily: 'Readex Pro',
-                                  letterSpacing: 0,
-                                ),
+                                      fontFamily: 'Readex Pro',
+                                      letterSpacing: 0,
+                                    ),
                               ),
                             ),
                           ],
@@ -178,38 +181,47 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         ),
                         drawText: true,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Readex Pro',
-                          fontSize: 20,
-                          letterSpacing: 0,
-                        ),
+                              fontFamily: 'Readex Pro',
+                              fontSize: 20,
+                              letterSpacing: 0,
+                            ),
                       ),
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 12),
+                    padding:
+                        const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 12),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        bd.createPalete(usur);
-                        pdf.addPage(pw.Page(
-                          pageFormat: PdfPageFormat.a4,
-                          build: (context2) {
-                            return pw.BarcodeWidget(
-                                data: '$i',
-                                barcode: Barcode.code128(),
-                                width: 300,
-                                height: 200,
-                                color: PdfColors.black,
-                                drawText: true,
-                                textStyle: const pw.TextStyle(
-                                  fontSize: 20,
-                                  letterSpacing: 0,
+                        if (await bd.connected(context) == 1) {
+                          bd.createPalete(usur);
+                          pdf.addPage(pw.Page(
+                            pageFormat: PdfPageFormat.a4,
+                            build: (context2) {
+                              return pw.BarcodeWidget(
+                                  data: '$i',
+                                  barcode: Barcode.code128(),
+                                  width: 300,
+                                  height: 200,
+                                  color: PdfColors.black,
+                                  drawText: true,
+                                  textStyle: const pw.TextStyle(
+                                    fontSize: 20,
+                                    letterSpacing: 0,
+                                  ));
+                            },
+                          ));
+                          await Printing.layoutPdf(
+                              onLayout: (format) => pdf.save());
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ListaRomaneioConfWidget(
+                                      palete: i, usur, bd),
                                 ));
-                          },
-                        ));
-                        await Printing.layoutPdf(onLayout: (format) => pdf.save());
-                        if (context.mounted){
-                        Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: i , usur,bd),));
+                          }
                         }
                       },
                       text: 'Criar Palete e Imprimir Cód.',
@@ -222,13 +234,14 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                         height: 54,
                         padding: const EdgeInsets.all(0),
                         iconPadding:
-                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                         color: Colors.green.shade700,
-                        textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          letterSpacing: 0,
-                        ),
+                        textStyle:
+                            FlutterFlowTheme.of(context).titleSmall.override(
+                                  fontFamily: 'Readex Pro',
+                                  color: Colors.white,
+                                  letterSpacing: 0,
+                                ),
                         elevation: 4,
                         borderSide: const BorderSide(
                           color: Colors.transparent,

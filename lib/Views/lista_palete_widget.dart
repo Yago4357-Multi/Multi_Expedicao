@@ -70,8 +70,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   }
 
   void rodarBanco() async {
-    getPed = bd.selectPallet(cont);
-    getPalete = bd.paleteAll(cont, context);
+      getPed = bd.selectPallet(cont);
+      getPalete = bd.paleteAll(cont, context);
   }
 
   @override
@@ -94,6 +94,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
           child: DrawerWidget(
             usur: usur,
             context: context,
+            bd: bd,
           ),
         ),
       ),
@@ -152,16 +153,17 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  if (pedidosExc.isNotEmpty) {
-                                    bd.excluiPedido(pedidosExc, usur);
-                                    pedidosExc = [];
-                                    getPed = bd.selectPedido(cont);
+                                  if (await bd.connected(context) == 1) {
+                                    if (pedidosExc.isNotEmpty) {
+                                      getPed = bd.excluiPedido(
+                                          pedidosExc, usur, cont);
+                                      pedidosExc = [];
+                                    }
+                                    setState(() {
+                                      inicial = true;
+                                      Navigator.pop(context);
+                                    });
                                   }
-                                  setState(() {
-                                    inicial = true;
-                                    getPed = bd.selectPedido(cont);
-                                    Navigator.pop(context);
-                                  });
                                 },
                                 child: const Text('Continuar')),
                             CupertinoDialogAction(
@@ -372,6 +374,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           ),
                                                           onSubmitted:
                                                               (value) async {
+                                                            if (await bd.connected(context) == 1) {
                                                               cont = int.parse(
                                                                   value);
                                                               getPed = bd
@@ -382,6 +385,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                       cont,
                                                                       context);
                                                               setState(() {});
+                                                            }
                                                           },
                                                           controller: _model
                                                               .textController,
@@ -626,7 +630,10 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                   inicial == false
                                                       ? palete.isNotEmpty
                                                           ? palete[0].dtFechamento !=
-                                                                  null && palete[0].dtCarregamento == null
+                                                                      null &&
+                                                                  palete[0]
+                                                                          .dtCarregamento ==
+                                                                      null
                                                               ? Positioned(
                                                                   right: 5,
                                                                   top: 20,
@@ -653,11 +660,13 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                     isDefaultAction: true,
                                                                                     isDestructiveAction: true,
                                                                                     onPressed: () async {
-                                                                                      setState(() {
-                                                                                        bd.reabrirPalete(cont);
-                                                                                        getPalete = bd.paleteAll(cont, context);
-                                                                                        Navigator.pop(context);
-                                                                                      });
+                                                                                      if (await bd.connected(context) == 1) {
+                                                                                        setState(() {
+                                                                                          bd.reabrirPalete(cont);
+                                                                                          getPalete = bd.paleteAll(cont, context);
+                                                                                          Navigator.pop(context);
+                                                                                        });
+                                                                                      }
                                                                                     },
                                                                                     child: const Text('Continuar')),
                                                                                 CupertinoDialogAction(

@@ -77,10 +77,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
   }
 
   void rodarBanco() async {
-    paletesFin = bd.paleteFinalizado();
-    getPaletes = bd.selectRomaneio(romaneio);
-    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
-
+      paletesFin = bd.paleteFinalizado();
+      getPaletes = bd.selectRomaneio(romaneio);
+      pedidoResposta = bd.selectPalletRomaneio(getPaletes);
   }
 
   @override
@@ -99,810 +98,1101 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
           model: _model.drawerModel,
           updateCallback: () => setState(() {}),
           child: DrawerWidget(
-            usur: usur,context: context,
+            usur: usur,
+            context: context,
+            bd: bd,
           ),
         ),
       ),
       floatingActionButton: (['BI', 'Comercial'].contains(usur.acess))
           ? SizedBox(
-        width: 300,
-        height: 60,
-        child: FloatingActionButton(
-          onPressed: () async {
-            await showCupertinoModalPopup(
-                barrierDismissible: false,
-                builder: (context2) {
-                  if (paleteSelecionadoint.isNotEmpty) {
-                    if (pedidosSalvos
-                        .where((element) => element.status == 'Errado')
-                        .isEmpty) {
-                      return CupertinoAlertDialog(
-                        title: Text(
-                            'Você deseja finalizar o Romaneio $romaneio ?'),
-                        content: const Text(
-                            'Essa ação bloqueará o Romaneio de alterações Futuras'),
-                        actions: <CupertinoDialogAction>[
-                          CupertinoDialogAction(
-                              isDefaultAction: true,
-                              isDestructiveAction: true,
-                              onPressed: () async {
-                                var vol = 0;
-                                for (var ped in pedidos){
-                                  vol += ped.vol;
-                                }
-                                bd.endRomaneio(romaneio, pedidos);
-                                pdf.addPage(pw.MultiPage(
-                                    margin: const pw.EdgeInsets.all(20),
-                                    build: (context) {
-                                      return [pw.Padding(
-                                        padding: const pw.EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                        child: pw.Row(
-                                          mainAxisSize: pw.MainAxisSize.max,
-                                          mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            pw.Column(
-                                              mainAxisSize: pw.MainAxisSize.max,
-                                              children: [
-                                                pw.Text(
-                                                    'MULTILIST DISTRIBUIDORA DE COSMÉTICOS',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                                pw.Text(
-                                                    '07.759.795/001-06',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                                pw.Text(
-                                                    'Anfilóquio Nunes Pires, 4155',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                                pw.Text(
-                                                    'Bela Vista - (47) 3337-1992',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                                pw.Text(
-                                                    'GASPAR',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                                pw.Text(
-                                                    'DATA ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
-                                                    style: pw.TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ],
-                                            ),
-                                            pw.Padding(
-                                              padding: const pw.EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                              child: pw.Container(
-                                                width: 160,
-                                                height: 20,
-                                                decoration: pw.BoxDecoration(
-                                                  color: const PdfColor.fromInt(0xFFFFFFFF),
-                                                  border: pw.Border.all(
-                                                    width: 2,
-                                                  ),
-                                                ),
-                                                child: pw.Row(
-                                                  mainAxisSize: pw.MainAxisSize.max,
-                                                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                                  children: [
-                                                    pw.Text(
-                                                        'ROMANEIO Nº',
-                                                        style: pw.TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight: pw.FontWeight.bold,
-                                                        )
-                                                    ),
-                                                    pw.SizedBox(
-                                                      height: 100,
-                                                      child: pw.VerticalDivider(
-                                                        thickness: 2,
-                                                        color: const PdfColor.fromInt(0xCC000000),
-                                                      ),
-                                                    ),
-                                                    pw.Text(
-                                                        '$romaneio',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: pw.TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight: pw.FontWeight.bold,
-                                                        )
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                        pw.Container(
-                                          height: 20,
-                                          decoration: pw.BoxDecoration(
-                                            color: const PdfColor.fromInt(0xFFFFFFFF),
-                                            border: pw.Border.all(
-                                              width: 1,
-                                            ),
-                                          ),
-                                          child: pw.Row(
-                                            mainAxisSize: pw.MainAxisSize.max,
-                                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              pw.Expanded(
-                                                flex: 1,
-                                                child: pw.Text(
-                                                    'SEQ',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 4,
-                                                child: pw.Text(
-                                                    'C.N.P.J.',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 12,
-                                                child: pw.Text(
-                                                    'CLIENTE',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 4,
-                                                child: pw.Text(
-                                                    'CIDADE',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 2,
-                                                child: pw.Text(
-                                                    'PEDIDO',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 2,
-                                                child: pw.Text(
-                                                    'NOTA',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 2,
-                                                child: pw.Text(
-                                                    'VALOR',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 1,
-                                                child: pw.Text(
-                                                    'VOL',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        pw.ListView.builder(
-                                          itemCount: pedidos.isNotEmpty ? pedidos.length : 0,
-                                          padding: pw.EdgeInsets.zero,
-                                          itemBuilder: (context, index) {
-                                            return pw.Container(
-                                              height: 20,
-                                              decoration: pw.BoxDecoration(
-                                                color: const PdfColor.fromInt(0xFFFFFFFF),
-                                                border: pw.Border.all(
-                                                  width: 0.5,
-                                                ),
-                                              ),
-                                              child: pw.Row(
-                                                mainAxisSize: pw.MainAxisSize.max,
-                                                mainAxisAlignment: pw.MainAxisAlignment.start,
-                                                children: [
-                                                  pw.Expanded(
-                                                    flex: 1,
-                                                    child: pw.Text(
-                                                        '${index + 1}',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: pw.TextStyle(
-                                                          fontSize: 7,
-                                                          fontWeight: pw.FontWeight.bold,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 4,
-                                                    child: pw.Text(
-                                                        pedidos[index].cnpj ?? '',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize: 7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 12,
-                                                    child: pw.Padding(
-                                                      padding: const pw.EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                                      child: pw.Text(
-                                                          pedidos[index].cliente ?? '',
-                                                          style: const pw.TextStyle(
-                                                            fontSize: 7,
-                                                          )
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 4,
-                                                    child: pw.Text(
-                                                        pedidos[index].cidade ?? '',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize:7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 2,
-                                                    child: pw.Text(
-                                                        '${pedidos[index].ped}',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize:7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 2,
-                                                    child: pw.Text(
-                                                        '${pedidos[index].nota ?? ''}',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize: 7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 2,
-                                                    child: pw.Text(
-                                                        '${pedidos[index].valor ?? ''}',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize: 7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                  pw.VerticalDivider(
-                                                    width: 0,
-                                                    thickness: 0.5,
-                                                    color: const PdfColor.fromInt(0xCC000000),
-                                                  ),
-                                                  pw.Expanded(
-                                                    flex: 1,
-                                                    child: pw.Text(
-                                                        '${pedidos[index].vol}',
-                                                        textAlign: pw.TextAlign.center,
-                                                        style: const pw.TextStyle(
-                                                          fontSize: 7,
-                                                        )
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        pw.Container(
-                                          height: 20,
-                                          decoration: pw.BoxDecoration(
-                                            color: const PdfColor.fromInt(0xFFFFFFFF),
-                                            border: pw.Border.all(
-                                              width: 1,
-                                            ),
-                                          ),
-                                          child: pw.Row(
-                                            mainAxisSize: pw.MainAxisSize.max,
-                                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              pw.Expanded(
-                                                flex: 5,
-                                                child: pw.Text(
-                                                    'TOTAL',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Spacer(flex: 22),
-                                              pw.VerticalDivider(
-                                                width: 0,
-                                                thickness: 1,
-                                                color: const PdfColor.fromInt(0xCC000000),
-                                              ),
-                                              pw.Expanded(
-                                                flex: 1,
-                                                child: pw.Text(
-                                                    '$vol',
-                                                    textAlign: pw.TextAlign.center,
-                                                    style: pw.TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight: pw.FontWeight.bold,
-                                                    )
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        pw.Padding(
-                                          padding: const pw.EdgeInsets.fromLTRB(0, 10,0,0),
-                                          child: pw.Container(
-                                            decoration: const pw.BoxDecoration(
-                                              color: PdfColor.fromInt(0xFFFFFFFF),
-                                            ),
-                                            child: pw.Column(
-                                              mainAxisSize: pw.MainAxisSize.min,
-                                              mainAxisAlignment: pw.MainAxisAlignment.start,
-                                              children: [
-                                                pw.Container(
-                                                  height: 40,
-                                                  decoration: const pw.BoxDecoration(),
+              width: 300,
+              height: 60,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  await showCupertinoModalPopup(
+                      barrierDismissible: false,
+                      builder: (context2) {
+                        if (paleteSelecionadoint.isNotEmpty) {
+                          if (pedidosSalvos
+                              .where((element) => element.status == 'Errado')
+                              .isEmpty) {
+                            return CupertinoAlertDialog(
+                              title: Text(
+                                  'Você deseja finalizar o Romaneio $romaneio ?'),
+                              content: const Text(
+                                  'Essa ação bloqueará o Romaneio de alterações Futuras'),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    isDestructiveAction: true,
+                                    onPressed: () async {
+                                      if (await bd.connected(context) == 1) {
+                                        var vol = 0;
+                                        for (var ped in pedidos) {
+                                          vol += ped.vol;
+                                        }
+                                        bd.endRomaneio(romaneio, pedidos);
+                                        pdf.addPage(pw.MultiPage(
+                                            margin: const pw.EdgeInsets.all(20),
+                                            build: (context) {
+                                              return [
+                                                pw.Padding(
+                                                  padding: const pw
+                                                      .EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 20),
                                                   child: pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.max,
-                                                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                                                    mainAxisSize:
+                                                        pw.MainAxisSize.max,
+                                                    mainAxisAlignment: pw
+                                                        .MainAxisAlignment
+                                                        .spaceEvenly,
                                                     children: [
-                                                      pw.Spacer(flex: 5),
                                                       pw.Column(
-                                                        mainAxisSize: pw.MainAxisSize.max,
+                                                        mainAxisSize:
+                                                            pw.MainAxisSize.max,
                                                         children: [
-                                                          pw.Row(
-                                                            mainAxisSize: pw.MainAxisSize.max,
+                                                          pw.Text(
+                                                              'MULTILIST DISTRIBUIDORA DE COSMÉTICOS',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                          pw.Text(
+                                                              '07.759.795/001-06',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                          pw.Text(
+                                                              'Anfilóquio Nunes Pires, 4155',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                          pw.Text(
+                                                              'Bela Vista - (47) 3337-1992',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                          pw.Text('GASPAR',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                          pw.Text(
+                                                              'DATA ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
+                                                              style:
+                                                                  pw.TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: pw
+                                                                    .FontWeight
+                                                                    .bold,
+                                                              )),
+                                                        ],
+                                                      ),
+                                                      pw.Padding(
+                                                        padding: const pw
+                                                            .EdgeInsets.fromLTRB(
+                                                            20, 0, 0, 0),
+                                                        child: pw.Container(
+                                                          width: 160,
+                                                          height: 20,
+                                                          decoration:
+                                                              pw.BoxDecoration(
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xFFFFFFFF),
+                                                            border:
+                                                                pw.Border.all(
+                                                              width: 2,
+                                                            ),
+                                                          ),
+                                                          child: pw.Row(
+                                                            mainAxisSize: pw
+                                                                .MainAxisSize
+                                                                .max,
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .spaceEvenly,
                                                             children: [
-                                                              pw.Container(
-                                                                width: 174,
-                                                                height: 20,
-                                                                decoration: const pw.BoxDecoration(
-                                                                  color: PdfColor.fromInt(0xFFFFFFFF),
+                                                              pw.Text(
+                                                                  'ROMANEIO Nº',
+                                                                  style: pw
+                                                                      .TextStyle(
+                                                                    fontSize:
+                                                                        11,
+                                                                    fontWeight: pw
+                                                                        .FontWeight
+                                                                        .bold,
+                                                                  )),
+                                                              pw.SizedBox(
+                                                                height: 100,
+                                                                child: pw
+                                                                    .VerticalDivider(
+                                                                  thickness: 2,
+                                                                  color: const PdfColor
+                                                                      .fromInt(
+                                                                      0xCC000000),
+                                                                ),
+                                                              ),
+                                                              pw.Text(
+                                                                  '$romaneio',
+                                                                  textAlign: pw
+                                                                      .TextAlign
+                                                                      .center,
+                                                                  style: pw
+                                                                      .TextStyle(
+                                                                    fontSize:
+                                                                        11,
+                                                                    fontWeight: pw
+                                                                        .FontWeight
+                                                                        .bold,
+                                                                  )),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                pw.Container(
+                                                  height: 20,
+                                                  decoration: pw.BoxDecoration(
+                                                    color:
+                                                        const PdfColor.fromInt(
+                                                            0xFFFFFFFF),
+                                                    border: pw.Border.all(
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: pw.Row(
+                                                    mainAxisSize:
+                                                        pw.MainAxisSize.max,
+                                                    mainAxisAlignment: pw
+                                                        .MainAxisAlignment
+                                                        .spaceEvenly,
+                                                    children: [
+                                                      pw.Expanded(
+                                                        flex: 1,
+                                                        child: pw.Text('SEQ',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 4,
+                                                        child: pw.Text(
+                                                            'C.N.P.J.',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 12,
+                                                        child: pw.Text(
+                                                            'CLIENTE',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 4,
+                                                        child: pw.Text('CIDADE',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text('PEDIDO',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text('NOTA',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 2,
+                                                        child: pw.Text('VALOR',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 1,
+                                                        child: pw.Text('VOL',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 8,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                pw.ListView.builder(
+                                                  itemCount: pedidos.isNotEmpty
+                                                      ? pedidos.length
+                                                      : 0,
+                                                  padding: pw.EdgeInsets.zero,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return pw.Container(
+                                                      height: 20,
+                                                      decoration:
+                                                          pw.BoxDecoration(
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xFFFFFFFF),
+                                                        border: pw.Border.all(
+                                                          width: 0.5,
+                                                        ),
+                                                      ),
+                                                      child: pw.Row(
+                                                        mainAxisSize:
+                                                            pw.MainAxisSize.max,
+                                                        mainAxisAlignment: pw
+                                                            .MainAxisAlignment
+                                                            .start,
+                                                        children: [
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                '${index + 1}',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                  fontWeight: pw
+                                                                      .FontWeight
+                                                                      .bold,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 4,
+                                                            child: pw.Text(
+                                                                pedidos[index]
+                                                                        .cnpj ??
+                                                                    '',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 12,
+                                                            child: pw.Padding(
+                                                              padding: const pw
+                                                                  .EdgeInsets.fromLTRB(
+                                                                  10, 0, 0, 0),
+                                                              child: pw.Text(
+                                                                  pedidos[index]
+                                                                          .cliente ??
+                                                                      '',
+                                                                  style: const pw
+                                                                      .TextStyle(
+                                                                    fontSize: 7,
+                                                                  )),
+                                                            ),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 4,
+                                                            child: pw.Text(
+                                                                pedidos[index]
+                                                                        .cidade ??
+                                                                    '',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 2,
+                                                            child: pw.Text(
+                                                                '${pedidos[index].ped}',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 2,
+                                                            child: pw.Text(
+                                                                '${pedidos[index].nota ?? ''}',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 2,
+                                                            child: pw.Text(
+                                                                '${pedidos[index].valor ?? ''}',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                          pw.VerticalDivider(
+                                                            width: 0,
+                                                            thickness: 0.5,
+                                                            color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xCC000000),
+                                                          ),
+                                                          pw.Expanded(
+                                                            flex: 1,
+                                                            child: pw.Text(
+                                                                '${pedidos[index].vol}',
+                                                                textAlign: pw
+                                                                    .TextAlign
+                                                                    .center,
+                                                                style: const pw
+                                                                    .TextStyle(
+                                                                  fontSize: 7,
+                                                                )),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                                pw.Container(
+                                                  height: 20,
+                                                  decoration: pw.BoxDecoration(
+                                                    color:
+                                                        const PdfColor.fromInt(
+                                                            0xFFFFFFFF),
+                                                    border: pw.Border.all(
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: pw.Row(
+                                                    mainAxisSize:
+                                                        pw.MainAxisSize.max,
+                                                    mainAxisAlignment: pw
+                                                        .MainAxisAlignment
+                                                        .spaceEvenly,
+                                                    children: [
+                                                      pw.Expanded(
+                                                        flex: 5,
+                                                        child: pw.Text('TOTAL',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 11,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Spacer(flex: 22),
+                                                      pw.VerticalDivider(
+                                                        width: 0,
+                                                        thickness: 1,
+                                                        color: const PdfColor
+                                                            .fromInt(
+                                                            0xCC000000),
+                                                      ),
+                                                      pw.Expanded(
+                                                        flex: 1,
+                                                        child: pw.Text('$vol',
+                                                            textAlign: pw
+                                                                .TextAlign
+                                                                .center,
+                                                            style: pw.TextStyle(
+                                                              fontSize: 11,
+                                                              fontWeight: pw
+                                                                  .FontWeight
+                                                                  .bold,
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                pw.Padding(
+                                                  padding: const pw
+                                                      .EdgeInsets.fromLTRB(
+                                                      0, 10, 0, 0),
+                                                  child: pw.Container(
+                                                    decoration:
+                                                        const pw.BoxDecoration(
+                                                      color: PdfColor.fromInt(
+                                                          0xFFFFFFFF),
+                                                    ),
+                                                    child: pw.Column(
+                                                      mainAxisSize:
+                                                          pw.MainAxisSize.min,
+                                                      mainAxisAlignment: pw
+                                                          .MainAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        pw.Container(
+                                                          height: 40,
+                                                          decoration: const pw
+                                                              .BoxDecoration(),
+                                                          child: pw.Row(
+                                                            mainAxisSize: pw
+                                                                .MainAxisSize
+                                                                .max,
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .spaceEvenly,
+                                                            children: [
+                                                              pw.Spacer(
+                                                                  flex: 5),
+                                                              pw.Column(
+                                                                mainAxisSize: pw
+                                                                    .MainAxisSize
+                                                                    .max,
+                                                                children: [
+                                                                  pw.Row(
+                                                                    mainAxisSize: pw
+                                                                        .MainAxisSize
+                                                                        .max,
+                                                                    children: [
+                                                                      pw.Container(
+                                                                        width:
+                                                                            174,
+                                                                        height:
+                                                                            20,
+                                                                        decoration:
+                                                                            const pw.BoxDecoration(
+                                                                          color:
+                                                                              PdfColor.fromInt(0xFFFFFFFF),
+                                                                        ),
+                                                                      ),
+                                                                      pw.Container(
+                                                                        width:
+                                                                            76,
+                                                                        height:
+                                                                            20,
+                                                                        decoration:
+                                                                            pw.BoxDecoration(
+                                                                          border:
+                                                                              pw.Border.all(
+                                                                            width:
+                                                                                1,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  pw.Container(
+                                                                    width: 250,
+                                                                    height: 20,
+                                                                    decoration:
+                                                                        pw.BoxDecoration(
+                                                                      color: const PdfColor
+                                                                          .fromInt(
+                                                                          0xFFFFFFFF),
+                                                                      border: pw
+                                                                              .Border
+                                                                          .all(
+                                                                        width:
+                                                                            1,
+                                                                      ),
+                                                                    ),
+                                                                    child:
+                                                                        pw.Row(
+                                                                      mainAxisSize: pw
+                                                                          .MainAxisSize
+                                                                          .max,
+                                                                      crossAxisAlignment: pw
+                                                                          .CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        pw.Expanded(
+                                                                          flex:
+                                                                              7,
+                                                                          child:
+                                                                              pw.Container(
+                                                                            decoration:
+                                                                                const pw.BoxDecoration(
+                                                                              color: PdfColor.fromInt(0xFFB0B0B0),
+                                                                            ),
+                                                                            child:
+                                                                                pw.Align(
+                                                                              alignment: const pw.AlignmentDirectional(0, 0),
+                                                                              child: pw.Text('PALETES',
+                                                                                  textAlign: pw.TextAlign.center,
+                                                                                  style: pw.TextStyle(
+                                                                                    fontSize: 11,
+                                                                                    fontWeight: pw.FontWeight.bold,
+                                                                                  )),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        pw.VerticalDivider(
+                                                                          width:
+                                                                              2,
+                                                                          thickness:
+                                                                              1,
+                                                                          color: const PdfColor
+                                                                              .fromInt(
+                                                                              0xCC000000),
+                                                                        ),
+                                                                        pw.Spacer(
+                                                                            flex:
+                                                                                3),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              pw.Spacer(),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        pw.Padding(
+                                                          padding: const pw
+                                                              .EdgeInsetsDirectional.fromSTEB(
+                                                              10, 5, 10, 0),
+                                                          child: pw.Row(
+                                                            mainAxisSize: pw
+                                                                .MainAxisSize
+                                                                .max,
+                                                            children: [
+                                                              pw.Expanded(
+                                                                flex: 1,
+                                                                child: pw.Text(
+                                                                    'MOTORISTA: ',
+                                                                    textAlign: pw
+                                                                        .TextAlign
+                                                                        .center,
+                                                                    style: const pw
+                                                                        .TextStyle(
+                                                                      fontSize:
+                                                                          9,
+                                                                    )),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw
+                                                                    .Container(
+                                                                  width: 250,
+                                                                  height: 20,
+                                                                  decoration: const pw
+                                                                      .BoxDecoration(
+                                                                      color: PdfColor
+                                                                          .fromInt(
+                                                                              0xFFFFFFFF),
+                                                                      shape: pw
+                                                                          .BoxShape
+                                                                          .rectangle,
+                                                                      border: pw
+                                                                          .Border(
+                                                                        bottom: pw.BorderSide(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                PdfColors.black),
+                                                                      )),
                                                                 ),
                                                               ),
                                                               pw.Container(
-                                                                width: 76,
+                                                                width: 40,
                                                                 height: 20,
-                                                                decoration: pw.BoxDecoration(
-                                                                  border: pw.Border.all(
-                                                                    width: 1,
-                                                                  ),
+                                                                decoration: const pw
+                                                                    .BoxDecoration(
+                                                                  color: PdfColor
+                                                                      .fromInt(
+                                                                          0xFFFFFFFF),
+                                                                ),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 1,
+                                                                child: pw.Text(
+                                                                    'EXPEDIÇÃO:',
+                                                                    textAlign: pw
+                                                                        .TextAlign
+                                                                        .center,
+                                                                    style: const pw
+                                                                        .TextStyle(
+                                                                      fontSize:
+                                                                          9,
+                                                                    )),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw
+                                                                    .Container(
+                                                                  width: 250,
+                                                                  height: 20,
+                                                                  decoration: const pw
+                                                                      .BoxDecoration(
+                                                                      color: PdfColor
+                                                                          .fromInt(
+                                                                              0xFFFFFFFF),
+                                                                      shape: pw
+                                                                          .BoxShape
+                                                                          .rectangle,
+                                                                      border: pw
+                                                                          .Border(
+                                                                        bottom: pw.BorderSide(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                PdfColors.black),
+                                                                      )),
                                                                 ),
                                                               ),
                                                             ],
                                                           ),
-                                                          pw.Container(
-                                                            width: 250,
-                                                            height: 20,
-                                                            decoration: pw.BoxDecoration(
-                                                              color: const PdfColor.fromInt(0xFFFFFFFF),
-                                                              border: pw.Border.all(
-                                                                width: 1,
+                                                        ),
+                                                        pw.Padding(
+                                                          padding: const pw
+                                                              .EdgeInsetsDirectional.fromSTEB(
+                                                              10, 10, 10, 0),
+                                                          child: pw.Row(
+                                                            mainAxisSize: pw
+                                                                .MainAxisSize
+                                                                .max,
+                                                            children: [
+                                                              pw.Expanded(
+                                                                flex: 1,
+                                                                child: pw.Text(
+                                                                    'MOTORISTA: ',
+                                                                    textAlign: pw
+                                                                        .TextAlign
+                                                                        .center,
+                                                                    style: const pw
+                                                                        .TextStyle(
+                                                                      fontSize:
+                                                                          9,
+                                                                    )),
                                                               ),
-                                                            ),
-                                                            child: pw.Row(
-                                                              mainAxisSize: pw.MainAxisSize.max,
-                                                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                                              children: [
-                                                                pw.Expanded(
-                                                                  flex: 7,
-                                                                  child: pw.Container(
-                                                                    decoration: const pw.BoxDecoration(
-                                                                      color: PdfColor.fromInt(0xFFB0B0B0),
-                                                                    ),
-                                                                    child: pw.Align(
-                                                                      alignment: const pw.AlignmentDirectional(0, 0),
-                                                                      child: pw.Text(
-                                                                          'PALETES',
-                                                                          textAlign: pw.TextAlign.center,
-                                                                          style: pw.TextStyle(
-                                                                            fontSize: 11,
-                                                                            fontWeight: pw.FontWeight.bold,
-                                                                          )
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw
+                                                                    .Container(
+                                                                  width: 250,
+                                                                  height: 20,
+                                                                  decoration: const pw
+                                                                      .BoxDecoration(
+                                                                      color: PdfColor
+                                                                          .fromInt(
+                                                                              0xFFFFFFFF),
+                                                                      shape: pw
+                                                                          .BoxShape
+                                                                          .rectangle,
+                                                                      border: pw
+                                                                          .Border(
+                                                                        bottom: pw.BorderSide(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                PdfColors.black),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              pw.Container(
+                                                                width: 40,
+                                                                height: 20,
+                                                                decoration: const pw
+                                                                    .BoxDecoration(
+                                                                  color: PdfColor
+                                                                      .fromInt(
+                                                                          0xFFFFFFFF),
+                                                                ),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 1,
+                                                                child: pw.Text(
+                                                                    'EXPEDIÇÃO:',
+                                                                    textAlign: pw
+                                                                        .TextAlign
+                                                                        .center,
+                                                                    style: const pw
+                                                                        .TextStyle(
+                                                                      fontSize:
+                                                                          9,
+                                                                    )),
+                                                              ),
+                                                              pw.Expanded(
+                                                                flex: 3,
+                                                                child: pw
+                                                                    .Container(
+                                                                  width: 250,
+                                                                  height: 20,
+                                                                  decoration: const pw
+                                                                      .BoxDecoration(
+                                                                      color: PdfColor
+                                                                          .fromInt(
+                                                                              0xFFFFFFFF),
+                                                                      shape: pw
+                                                                          .BoxShape
+                                                                          .rectangle,
+                                                                      border: pw
+                                                                          .Border(
+                                                                        bottom: pw.BorderSide(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                PdfColors.black),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        pw.Container(
+                                                          height: 40,
+                                                          decoration: const pw
+                                                              .BoxDecoration(),
+                                                          child: pw.Row(
+                                                            mainAxisSize: pw
+                                                                .MainAxisSize
+                                                                .max,
+                                                            mainAxisAlignment: pw
+                                                                .MainAxisAlignment
+                                                                .spaceEvenly,
+                                                            children: [
+                                                              pw.Spacer(
+                                                                  flex: 5),
+                                                              pw.Column(
+                                                                mainAxisSize: pw
+                                                                    .MainAxisSize
+                                                                    .max,
+                                                                mainAxisAlignment:
+                                                                    pw.MainAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  pw.Container(
+                                                                    width: 250,
+                                                                    height: 20,
+                                                                    decoration:
+                                                                        pw.BoxDecoration(
+                                                                      color: const PdfColor
+                                                                          .fromInt(
+                                                                          0xFFFFFFFF),
+                                                                      border: pw
+                                                                              .Border
+                                                                          .all(
+                                                                        width:
+                                                                            1,
                                                                       ),
                                                                     ),
+                                                                    child:
+                                                                        pw.Row(
+                                                                      mainAxisSize: pw
+                                                                          .MainAxisSize
+                                                                          .max,
+                                                                      crossAxisAlignment: pw
+                                                                          .CrossAxisAlignment
+                                                                          .center,
+                                                                      children: [
+                                                                        pw.Expanded(
+                                                                          flex:
+                                                                              7,
+                                                                          child:
+                                                                              pw.Container(
+                                                                            decoration:
+                                                                                const pw.BoxDecoration(
+                                                                              color: PdfColor.fromInt(0xFFB0B0B0),
+                                                                            ),
+                                                                            child:
+                                                                                pw.Align(
+                                                                              alignment: const pw.AlignmentDirectional(0, 0),
+                                                                              child: pw.Text(
+                                                                                'HORÁRIO COLETA',
+                                                                                textAlign: pw.TextAlign.center,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        pw.VerticalDivider(
+                                                                          width:
+                                                                              1,
+                                                                          thickness:
+                                                                              1,
+                                                                          color: const PdfColor
+                                                                              .fromInt(
+                                                                              0xCC000000),
+                                                                        ),
+                                                                        pw.Spacer(
+                                                                            flex:
+                                                                                3),
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                pw.VerticalDivider(
-                                                                  width: 2,
-                                                                  thickness: 1,
-                                                                  color: const PdfColor.fromInt(0xCC000000),
-                                                                ),
-                                                                pw.Spacer(flex: 3),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      pw.Spacer(),
-                                                    ],
-                                                  ),
-                                                ),
-                                                pw.Padding(
-                                                  padding: const pw.EdgeInsetsDirectional.fromSTEB(10, 5, 10, 0),
-                                                  child: pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.max,
-                                                    children: [
-                                                      pw.Expanded(
-                                                        flex: 1,
-                                                        child: pw.Text(
-                                                            'MOTORISTA: ',
-                                                            textAlign: pw.TextAlign.center,
-                                                            style: const pw.TextStyle(
-                                                              fontSize: 9,
-                                                            )
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 3,
-                                                        child: pw.Container(
-                                                          width: 250,
-                                                          height: 20,
-                                                          decoration: const pw.BoxDecoration(
-                                                              color:
-                                                              PdfColor.fromInt(0xFFFFFFFF),
-                                                              shape: pw.BoxShape.rectangle,
-                                                              border: pw.Border(
-                                                                bottom: pw.BorderSide(width: 1, color: PdfColors.black),
-                                                              )
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      pw.Container(
-                                                        width: 40,
-                                                        height: 20,
-                                                        decoration: const pw.BoxDecoration(
-                                                          color: PdfColor.fromInt(0xFFFFFFFF),
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 1,
-                                                        child: pw.Text(
-                                                            'EXPEDIÇÃO:',
-                                                            textAlign: pw.TextAlign.center,
-                                                            style: const pw.TextStyle(
-                                                              fontSize: 9,
-                                                            )
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 3,
-                                                        child: pw.Container(
-                                                          width: 250,
-                                                          height: 20,
-                                                          decoration: const pw.BoxDecoration(
-                                                              color:
-                                                              PdfColor.fromInt(0xFFFFFFFF),
-                                                              shape: pw.BoxShape.rectangle,
-                                                              border: pw.Border(
-                                                                bottom: pw.BorderSide(width: 1, color: PdfColors.black),
-                                                              )
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                pw.Padding(
-                                                  padding: const pw.EdgeInsetsDirectional.fromSTEB(10, 10, 10, 0),
-                                                  child: pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.max,
-                                                    children: [
-                                                      pw.Expanded(
-                                                        flex: 1,
-                                                        child: pw.Text(
-                                                            'MOTORISTA: ',
-                                                            textAlign: pw.TextAlign.center,
-                                                            style: const pw.TextStyle(
-                                                              fontSize: 9,
-                                                            )
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 3,
-                                                        child: pw.Container(
-                                                          width: 250,
-                                                          height: 20,
-                                                          decoration: const pw.BoxDecoration(
-                                                              color:
-                                                              PdfColor.fromInt(0xFFFFFFFF),
-                                                              shape: pw.BoxShape.rectangle,
-                                                              border: pw.Border(
-                                                                bottom: pw.BorderSide(width: 1, color: PdfColors.black),
-                                                              )
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      pw.Container(
-                                                        width: 40,
-                                                        height: 20,
-                                                        decoration: const pw.BoxDecoration(
-                                                          color: PdfColor.fromInt(0xFFFFFFFF),
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 1,
-                                                        child: pw.Text(
-                                                            'EXPEDIÇÃO:',
-                                                            textAlign: pw.TextAlign.center,
-                                                            style: const pw.TextStyle(
-                                                              fontSize: 9,
-                                                            )
-                                                        ),
-                                                      ),
-                                                      pw.Expanded(
-                                                        flex: 3,
-                                                        child: pw.Container(
-                                                          width: 250,
-                                                          height: 20,
-                                                          decoration: const pw.BoxDecoration(
-                                                              color:
-                                                              PdfColor.fromInt(0xFFFFFFFF),
-                                                              shape: pw.BoxShape.rectangle,
-                                                              border: pw.Border(
-                                                                bottom: pw.BorderSide(width: 1, color: PdfColors.black),
-                                                              )
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                pw.Container(
-                                                  height: 40,
-                                                  decoration: const pw.BoxDecoration(),
-                                                  child: pw.Row(
-                                                    mainAxisSize: pw.MainAxisSize.max,
-                                                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      pw.Spacer(flex: 5),
-                                                      pw.Column(
-                                                        mainAxisSize: pw.MainAxisSize.max,
-                                                        mainAxisAlignment: pw.MainAxisAlignment.end,
-                                                        children: [
-                                                          pw.Container(
-                                                            width: 250,
-                                                            height: 20,
-                                                            decoration: pw.BoxDecoration(
-                                                              color: const PdfColor.fromInt(0xFFFFFFFF),
-                                                              border: pw.Border.all(
-                                                                width: 1,
+                                                                ],
                                                               ),
-                                                            ),
-                                                            child: pw.Row(
-                                                              mainAxisSize: pw.MainAxisSize.max,
-                                                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                                                              children: [
-                                                                pw.Expanded(
-                                                                  flex: 7,
-                                                                  child: pw.Container(
-                                                                    decoration: const pw.BoxDecoration(
-                                                                      color: PdfColor.fromInt(0xFFB0B0B0),
-                                                                    ),
-                                                                    child: pw.Align(
-                                                                      alignment: const pw.AlignmentDirectional(0, 0),
-                                                                      child: pw.Text(
-                                                                        'HORÁRIO COLETA',
-                                                                        textAlign: pw.TextAlign.center,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                pw.VerticalDivider(
-                                                                  width: 1,
-                                                                  thickness: 1,
-                                                                  color: const PdfColor.fromInt(0xCC000000),
-                                                                ),
-                                                                pw.Spacer(flex: 3),
-                                                              ],
-                                                            ),
+                                                              pw.Spacer(),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                      pw.Spacer(),
-                                                    ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )];
-                                    }
-                                ));
-                                await Printing.layoutPdf(onLayout: (format) => pdf.save());
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressWidget(usur,bd),));
-                                }
-                              },
-                              child: const Text(
-                                'Continuar',
-                              )),
-                          CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () {
-                                Navigator.pop(context2);
-                              },
-                              child: const Text('Voltar'))
-                        ],
-                      );
-                    } else {
-                      return CupertinoAlertDialog(
-                        title: const Text('O Romaneio possui problemas'),
-                        content: const Text(
-                            'Corrija os erros no Romaneio antes de tentar finaliza-lo'),
-                        actions: <CupertinoDialogAction>[
-                          CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () {
-                                // bd.endRomaneio(romaneio);
-                                Navigator.pop(context2);
-                              },
-                              child: const Text(
-                                'Voltar',
-                              )),
-                        ],
-                      );
-                    }
-                  } else {
-                    return CupertinoAlertDialog(
-                      title: const Text('Romaneio sem Paletes'),
-                      content: const Text(
-                          'Você deve selecionar pelo menos 1 palete para finalizar o Romaneio'),
-                      actions: <CupertinoDialogAction>[
-                        CupertinoDialogAction(
-                            isDefaultAction: true,
-                            onPressed: () {
-                              Navigator.pop(context2, '/Progress');
-                            },
-                            child: const Text(
-                              'Voltar',
-                            )),
-                      ],
-                    );
-                  }
+                                                )
+                                              ];
+                                            }));
+                                        await Printing.layoutPdf(
+                                            onLayout: (format) => pdf.save());
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProgressWidget(usur, bd),
+                                              ));
+                                        }
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Continuar',
+                                    )),
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      Navigator.pop(context2);
+                                    },
+                                    child: const Text('Voltar'))
+                              ],
+                            );
+                          } else {
+                            return CupertinoAlertDialog(
+                              title: const Text('O Romaneio possui problemas'),
+                              content: const Text(
+                                  'Corrija os erros no Romaneio antes de tentar finaliza-lo'),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      Navigator.pop(context2);
+                                    },
+                                    child: const Text(
+                                      'Voltar',
+                                    )),
+                              ],
+                            );
+                          }
+                        } else {
+                          return CupertinoAlertDialog(
+                            title: const Text('Romaneio sem Paletes'),
+                            content: const Text(
+                                'Você deve selecionar pelo menos 1 palete para finalizar o Romaneio'),
+                            actions: <CupertinoDialogAction>[
+                              CupertinoDialogAction(
+                                  isDefaultAction: true,
+                                  onPressed: () {
+                                    Navigator.pop(context2, '/Progress');
+                                  },
+                                  child: const Text(
+                                    'Voltar',
+                                  )),
+                            ],
+                          );
+                        }
+                      },
+                      context: context);
                 },
-                context: context);
-          },
-          backgroundColor: Colors.orange.shade400,
-          elevation: 8,
-          child: const Text(
-            'Finalizar Romaneio',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              fontSize: 20,
-            ),
-          ),
-        ),
-      )
+                backgroundColor: Colors.orange.shade400,
+                elevation: 8,
+                child: const Text(
+                  'Finalizar Romaneio',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            )
           : Container(),
       appBar: AppBar(
         backgroundColor: const Color(0xFF007000),
@@ -954,8 +1244,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                             context: context,
                             phone: false,
                             tablet: false,
-                            desktop: true
-                        ))
+                            desktop: true))
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -968,13 +1257,14 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .headlineMedium
                                         .override(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 30,
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Outfit',
+                                          fontSize: 30,
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 0),
                                     child: FFButtonWidget(
                                       text: '+ Palete',
                                       onPressed: () async {
@@ -985,88 +1275,88 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             return StatefulBuilder(
                                               builder: (context,
                                                   void Function(void Function())
-                                                  setter) {
+                                                      setter) {
                                                 internalSetter = setter;
                                                 return FutureBuilder(
                                                   future: paletesFin,
                                                   builder: (context, snapshot) {
                                                     if (snapshot
-                                                        .connectionState ==
+                                                            .connectionState ==
                                                         ConnectionState.done) {
                                                       palete =
                                                           snapshot.data ?? [];
                                                       return Dialog(
                                                         backgroundColor:
-                                                        Colors.white,
+                                                            Colors.white,
                                                         child: Column(
                                                           mainAxisSize:
-                                                          MainAxisSize.max,
+                                                              MainAxisSize.max,
                                                           children: [
                                                             Container(
                                                               height: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .height *
+                                                                          context)
+                                                                      .size
+                                                                      .height *
                                                                   0.1,
                                                               width:
-                                                              MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .width,
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
                                                               decoration: const BoxDecoration(
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
-                                                                  BorderRadiusDirectional.vertical(
-                                                                      top: Radius.circular(
-                                                                          20))),
+                                                                      BorderRadiusDirectional.vertical(
+                                                                          top: Radius.circular(
+                                                                              20))),
                                                               child: Align(
                                                                 alignment:
-                                                                Alignment
-                                                                    .center,
+                                                                    Alignment
+                                                                        .center,
                                                                 child: Text(
                                                                   'Paletes Finalizados',
                                                                   textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                                      TextAlign
+                                                                          .center,
                                                                   style: FlutterFlowTheme.of(
-                                                                      context)
+                                                                          context)
                                                                       .headlineMedium
                                                                       .override(
-                                                                    fontFamily:
-                                                                    'Outfit',
-                                                                  ),
+                                                                        fontFamily:
+                                                                            'Outfit',
+                                                                      ),
                                                                 ),
                                                               ),
                                                             ),
                                                             Container(
                                                               padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
+                                                                  const EdgeInsets
+                                                                      .all(10),
                                                               width: double
                                                                   .infinity,
                                                               decoration:
-                                                              BoxDecoration(
+                                                                  BoxDecoration(
                                                                 color: FlutterFlowTheme.of(
-                                                                    context)
+                                                                        context)
                                                                     .primaryBackground,
                                                                 boxShadow: const [
                                                                   BoxShadow(
                                                                     blurRadius:
-                                                                    0,
+                                                                        0,
                                                                     color: Color(
                                                                         0xFFE0E3E7),
                                                                     offset:
-                                                                    Offset(
+                                                                        Offset(
                                                                       0.0,
                                                                       1,
                                                                     ),
                                                                   )
                                                                 ],
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    0),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            0),
                                                                 shape: BoxShape
                                                                     .rectangle,
                                                               ),
@@ -1075,113 +1365,113 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     .infinity,
                                                                 height: 40,
                                                                 decoration:
-                                                                BoxDecoration(
+                                                                    BoxDecoration(
                                                                   color: FlutterFlowTheme.of(
-                                                                      context)
+                                                                          context)
                                                                       .primaryBackground,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      12),
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12),
                                                                 ),
                                                                 alignment:
-                                                                const AlignmentDirectional(
-                                                                    -1, 0),
+                                                                    const AlignmentDirectional(
+                                                                        -1, 0),
                                                                 child: Padding(
                                                                   padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      16,
-                                                                      0,
-                                                                      0,
-                                                                      0),
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          16,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                                   child: Row(
                                                                     mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
+                                                                        MainAxisSize
+                                                                            .max,
                                                                     mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
                                                                     crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Palete',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Bipagem',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Data da Bipagem',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Usuário de Fechamento',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Data de Fechamento',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         child:
-                                                                        Text(
+                                                                            Text(
                                                                           'Volumetria',
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .labelSmall
                                                                               .override(
-                                                                            fontFamily: 'Readex Pro',
-                                                                            letterSpacing: 0,
-                                                                            fontSize: 20,
-                                                                          ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                         ),
                                                                       ),
                                                                     ],
@@ -1192,87 +1482,87 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             ListView.builder(
                                                               shrinkWrap: true,
                                                               padding:
-                                                              EdgeInsets
-                                                                  .zero,
+                                                                  EdgeInsets
+                                                                      .zero,
                                                               scrollDirection:
-                                                              Axis.vertical,
+                                                                  Axis.vertical,
                                                               itemCount:
-                                                              palete.length,
+                                                                  palete.length,
                                                               itemBuilder:
                                                                   (context,
-                                                                  index) {
+                                                                      index) {
                                                                 if (paleteSelecionadoint
                                                                     .contains(palete[
-                                                                index]
-                                                                    .pallet)) {
+                                                                            index]
+                                                                        .pallet)) {
                                                                   return Padding(
                                                                     padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        1),
+                                                                        const EdgeInsetsDirectional
+                                                                            .fromSTEB(
+                                                                            0,
+                                                                            0,
+                                                                            0,
+                                                                            1),
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       width: double
                                                                           .infinity,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         color: Colors
                                                                             .yellow
                                                                             .shade50,
                                                                         boxShadow: const [
                                                                           BoxShadow(
                                                                             blurRadius:
-                                                                            0,
+                                                                                0,
                                                                             color:
-                                                                            Color(0xFFE0E3E7),
+                                                                                Color(0xFFE0E3E7),
                                                                             offset:
-                                                                            Offset(
+                                                                                Offset(
                                                                               0.0,
                                                                               1,
                                                                             ),
                                                                           )
                                                                         ],
                                                                         borderRadius:
-                                                                        BorderRadius.circular(0),
+                                                                            BorderRadius.circular(0),
                                                                         shape: BoxShape
                                                                             .rectangle,
                                                                       ),
                                                                       child:
-                                                                      InkWell(
+                                                                          InkWell(
                                                                         splashColor:
-                                                                        Colors.transparent,
+                                                                            Colors.transparent,
                                                                         focusColor:
-                                                                        Colors.transparent,
+                                                                            Colors.transparent,
                                                                         hoverColor:
-                                                                        Colors.transparent,
+                                                                            Colors.transparent,
                                                                         highlightColor:
-                                                                        Colors.transparent,
+                                                                            Colors.transparent,
                                                                         onTap:
                                                                             () async {
-                                                                          setter(
-                                                                                  () {
-                                                                                paleteSelecionadoint.remove(palete[index].pallet);
-                                                                                bd.removePalete(romaneio,
-                                                                                    paleteSelecionadoint);
-                                                                                getPaletes =
-                                                                                    bd.selectRomaneio(romaneio);
-                                                                                setState(() {
-                                                                                  pedidoResposta = bd.selectPalletRomaneio(getPaletes);
-                                                                                });
+                                                                          if (await bd.connected(context) ==
+                                                                              1) {
+                                                                            setter(() {
+                                                                              paleteSelecionadoint.remove(palete[index].pallet);
+                                                                              bd.removePalete(romaneio, paleteSelecionadoint);
+                                                                              getPaletes = bd.selectRomaneio(romaneio);
+                                                                              setState(() {
+                                                                                pedidoResposta = (bd.selectPalletRomaneio(getPaletes));
                                                                               });
+                                                                            });
+                                                                          }
                                                                         },
                                                                         child:
-                                                                        Padding(
+                                                                            Padding(
                                                                           padding: const EdgeInsets
                                                                               .all(
                                                                               8),
                                                                           child:
-                                                                          Row(
+                                                                              Row(
                                                                             mainAxisSize:
-                                                                            MainAxisSize.max,
+                                                                                MainAxisSize.max,
                                                                             children: [
                                                                               Container(
                                                                                 width: 4,
@@ -1288,9 +1578,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].pallet}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1300,9 +1590,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].UsurInclusao}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1310,12 +1600,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 child: Padding(
                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                   child: Text(
-                                                                                    DateFormat(
-                                                                                        'kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
+                                                                                    DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1325,9 +1614,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].UsurFechamento}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1335,12 +1624,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 child: Padding(
                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                   child: Text(
-                                                                                    DateFormat(
-                                                                                        'kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
+                                                                                    DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1350,9 +1638,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].volumetria}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1365,67 +1653,66 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                 } else {
                                                                   return Padding(
                                                                     padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        0,
-                                                                        0,
-                                                                        0,
-                                                                        1),
+                                                                        const EdgeInsetsDirectional
+                                                                            .fromSTEB(
+                                                                            0,
+                                                                            0,
+                                                                            0,
+                                                                            1),
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       width: double
                                                                           .infinity,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         color: FlutterFlowTheme.of(context)
                                                                             .primaryBackground,
                                                                         boxShadow: const [
                                                                           BoxShadow(
                                                                             blurRadius:
-                                                                            0,
+                                                                                0,
                                                                             color:
-                                                                            Color(0xFFE0E3E7),
+                                                                                Color(0xFFE0E3E7),
                                                                             offset:
-                                                                            Offset(
+                                                                                Offset(
                                                                               0.0,
                                                                               1,
                                                                             ),
                                                                           )
                                                                         ],
                                                                         borderRadius:
-                                                                        BorderRadius.circular(0),
+                                                                            BorderRadius.circular(0),
                                                                         shape: BoxShape
                                                                             .rectangle,
                                                                       ),
                                                                       child:
-                                                                      InkWell(
+                                                                          InkWell(
                                                                         onTap:
-                                                                            () {
-                                                                          setter(
-                                                                                  () {
-                                                                                paleteSelecionadoint.add(palete[index].pallet ??
-                                                                                    0);
-                                                                                paleteSelecionadoint.sort(
-                                                                                      (a, b) => a.compareTo(b),
-                                                                                );
-                                                                                bd.updatePalete(romaneio,
-                                                                                    paleteSelecionadoint);
-                                                                                getPaletes =
-                                                                                    bd.selectRomaneio(romaneio);
-                                                                                setState(() {
-                                                                                  pedidoResposta = bd.selectPalletRomaneio(getPaletes);
-                                                                                });
+                                                                            () async {
+                                                                          if (await bd.connected(context) ==
+                                                                              1) {
+                                                                            setter(() {
+                                                                              paleteSelecionadoint.add(palete[index].pallet ?? 0);
+                                                                              paleteSelecionadoint.sort(
+                                                                                (a, b) => a.compareTo(b),
+                                                                              );
+                                                                              bd.updatePalete(romaneio, paleteSelecionadoint);
+                                                                              getPaletes = bd.selectRomaneio(romaneio);
+                                                                              setState(() {
+                                                                                pedidoResposta = bd.selectPalletRomaneio(getPaletes);
                                                                               });
+                                                                            });
+                                                                          }
                                                                         },
                                                                         child:
-                                                                        Padding(
+                                                                            Padding(
                                                                           padding: const EdgeInsets
                                                                               .all(
                                                                               8),
                                                                           child:
-                                                                          Row(
+                                                                              Row(
                                                                             mainAxisSize:
-                                                                            MainAxisSize.max,
+                                                                                MainAxisSize.max,
                                                                             children: [
                                                                               Container(
                                                                                 width: 4,
@@ -1441,9 +1728,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].pallet}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1453,9 +1740,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].UsurInclusao}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1463,12 +1750,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 child: Padding(
                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                   child: Text(
-                                                                                    DateFormat(
-                                                                                        'kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
+                                                                                    DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1478,9 +1764,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].UsurFechamento}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1488,12 +1774,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                 child: Padding(
                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                   child: Text(
-                                                                                    DateFormat(
-                                                                                        'kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
+                                                                                    DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1503,9 +1788,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   child: Text(
                                                                                     '${palete[index].volumetria}',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                    ),
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1541,10 +1826,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
-                                          fontFamily: 'Readex Pro',
-                                          color: Colors.white,
-                                          letterSpacing: 0,
-                                        ),
+                                              fontFamily: 'Readex Pro',
+                                              color: Colors.white,
+                                              letterSpacing: 0,
+                                            ),
                                         elevation: 3,
                                         borderSide: const BorderSide(
                                           color: Colors.transparent,
@@ -1561,14 +1846,14 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 builder: (context, snapshot) {
                                   paleteSelecionadoint = snapshot.data ?? [];
                                   paleteSelecionadoint.sort(
-                                        (a, b) => a.compareTo(b),
+                                    (a, b) => a.compareTo(b),
                                   );
                                   if (snapshot.connectionState ==
                                       ConnectionState.done) {
                                     return Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.end,
+                                          CrossAxisAlignment.end,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsetsDirectional
@@ -1578,25 +1863,25 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 18,
-                                              letterSpacing: 0,
-                                            ),
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 18,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
                                         ),
                                         Align(
                                           alignment:
-                                          const AlignmentDirectional(0, 0),
+                                              const AlignmentDirectional(0, 0),
                                           child: Text(
                                             paleteSelecionadoint.join(','),
                                             textAlign: TextAlign.end,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 40,
-                                              letterSpacing: 0,
-                                            ),
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 40,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -1624,25 +1909,24 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 style: FlutterFlowTheme.of(context)
                                     .headlineMedium
                                     .override(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 30,
-                                  letterSpacing: 0,
-                                ),
+                                      fontFamily: 'Outfit',
+                                      fontSize: 30,
+                                      letterSpacing: 0,
+                                    ),
                               ),
-
                               FutureBuilder(
                                 future: getPaletes,
                                 builder: (context, snapshot) {
                                   paleteSelecionadoint = snapshot.data ?? [];
                                   paleteSelecionadoint.sort(
-                                        (a, b) => a.compareTo(b),
+                                    (a, b) => a.compareTo(b),
                                   );
                                   if (snapshot.connectionState ==
                                       ConnectionState.done) {
                                     return Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsetsDirectional
@@ -1652,25 +1936,25 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             style: FlutterFlowTheme.of(context)
                                                 .labelMedium
                                                 .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 18,
-                                              letterSpacing: 0,
-                                            ),
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 18,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
                                         ),
                                         Align(
                                           alignment:
-                                          const AlignmentDirectional(0, 0),
+                                              const AlignmentDirectional(0, 0),
                                           child: Text(
                                             paleteSelecionadoint.join(','),
                                             textAlign: TextAlign.end,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
-                                              fontFamily: 'Readex Pro',
-                                              fontSize: 40,
-                                              letterSpacing: 0,
-                                            ),
+                                                  fontFamily: 'Readex Pro',
+                                                  fontSize: 40,
+                                                  letterSpacing: 0,
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -1714,8 +1998,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       } else {
                                         pedidos = pedidosSalvos
                                             .where((element) =>
-                                        element.status ==
-                                            _model.choiceChipsValue)
+                                                element.status ==
+                                                _model.choiceChipsValue)
                                             .toList();
                                       }
                                     });
@@ -1725,38 +2009,38 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     textStyle: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      color:
-                                      FlutterFlowTheme.of(context).info,
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          color:
+                                              FlutterFlowTheme.of(context).info,
+                                          letterSpacing: 0,
+                                        ),
                                     iconColor:
-                                    FlutterFlowTheme.of(context).info,
+                                        FlutterFlowTheme.of(context).info,
                                     iconSize: 18,
                                     elevation: 2,
                                     borderColor:
-                                    FlutterFlowTheme.of(context).accent1,
+                                        FlutterFlowTheme.of(context).accent1,
                                     borderWidth: 1,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   unselectedChipStyle: ChipStyle(
                                     backgroundColor:
-                                    FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
+                                        FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
                                     textStyle: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          letterSpacing: 0,
+                                        ),
                                     iconColor: FlutterFlowTheme.of(context)
                                         .secondaryText,
                                     iconSize: 18,
                                     elevation: 0,
                                     borderColor:
-                                    FlutterFlowTheme.of(context).alternate,
+                                        FlutterFlowTheme.of(context).alternate,
                                     borderWidth: 1,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -1765,7 +2049,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                   multiselect: false,
                                   alignment: WrapAlignment.start,
                                   controller:
-                                  _model.choiceChipsValueController!),
+                                      _model.choiceChipsValueController!),
                             ),
                             if (responsiveVisibility(
                               context: context,
@@ -1787,7 +2071,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                           pedidosSalvos = pedidos;
                                         }
                                         if (value.isNotEmpty) {
-                                          var x = pedidosSalvos.where((element) {
+                                          var x =
+                                              pedidosSalvos.where((element) {
                                             var texto = element.ped.toString();
                                             texto.startsWith(value);
                                             return texto.startsWith(value);
@@ -1817,15 +2102,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                       hintStyle: FlutterFlowTheme.of(context)
                                           .labelMedium
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: corBorda,
@@ -1842,23 +2127,23 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                          color:
-                                          FlutterFlowTheme.of(context).error,
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
                                           width: 2,
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                          color:
-                                          FlutterFlowTheme.of(context).error,
+                                          color: FlutterFlowTheme.of(context)
+                                              .error,
                                           width: 2,
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       contentPadding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          20, 0, 0, 0),
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              20, 0, 0, 0),
                                       suffixIcon: Icon(
                                         Icons.search_rounded,
                                         color: FlutterFlowTheme.of(context)
@@ -1868,11 +2153,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                     cursorColor:
-                                    FlutterFlowTheme.of(context).primary,
+                                        FlutterFlowTheme.of(context).primary,
                                     validator: _model.textControllerValidator
                                         .asValidator(context),
                                   ),
@@ -1885,7 +2170,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                           height: 50,
                           decoration: BoxDecoration(
                             color:
-                            FlutterFlowTheme.of(context).primaryBackground,
+                                FlutterFlowTheme.of(context).primaryBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: const AlignmentDirectional(-1, 0),
@@ -1902,9 +2187,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                 ),
                                 if (responsiveVisibility(
@@ -1918,20 +2203,25 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
+                                if (responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                  tablet: false,
+                                ))
                                 Expanded(
                                   child: Text(
                                     'Palete',
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                 ),
                                 Expanded(
@@ -1940,9 +2230,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                 ),
                                 Expanded(
@@ -1951,9 +2241,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                 ),
                                 if (responsiveVisibility(
@@ -1964,17 +2254,17 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                   Expanded(
                                     child: Padding(
                                       padding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          0, 4, 40, 4),
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 4, 40, 4),
                                       child: Text(
                                         'Status',
                                         textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
                                             .override(
-                                          fontFamily: 'Readex Pro',
-                                          letterSpacing: 0,
-                                        ),
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -2005,17 +2295,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 itemBuilder: (context, index) {
                                   var corStatus = FlutterFlowTheme.of(context)
                                       .primaryBackground;
-                                  var corBordaStatus =
-                                      FlutterFlowTheme.of(context).secondary;
                                   var corFundoStatus =
                                       FlutterFlowTheme.of(context).accent2;
                                   var corTextoStatus = Colors.black;
-                                  if (pedidos[index].status == 'Errado') {
-                                    corStatus = Colors.red.shade100;
-                                    corBordaStatus = Colors.red;
-                                    corFundoStatus = Colors.red.shade100;
-                                    corTextoStatus = Colors.red;
-                                  }
                                   return InkWell(
                                     splashColor: Colors.transparent,
                                     focusColor: Colors.transparent,
@@ -2029,7 +2311,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                             builder: (context) =>
                                                 ListaPedidoWidget(
                                                     cont: pedidos[index].ped,
-                                                    usur, bd),
+                                                    usur,
+                                                    bd),
                                           ));
                                     },
                                     child: Padding(
@@ -2048,34 +2331,39 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             children: [
                                               Expanded(
                                                 child: Text(
                                                   '${pedidos[index].ped}',
                                                   style: FlutterFlowTheme.of(
-                                                      context)
+                                                          context)
                                                       .bodyMedium
                                                       .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
+                                                        color: corTextoStatus,
+                                                        fontFamily:
+                                                            'Readex Pro',
+                                                        letterSpacing: 0,
+                                                      ),
                                                 ),
                                               ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
                                               Expanded(
                                                 child: Text(
                                                   '${pedidos[index].cod_cli}',
                                                   style: FlutterFlowTheme.of(
-                                                      context)
+                                                          context)
                                                       .bodyMedium
                                                       .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
+                                                        color: corTextoStatus,
+                                                        fontFamily:
+                                                            'Readex Pro',
+                                                        letterSpacing: 0,
+                                                      ),
                                                 ),
                                               ),
                                               if (responsiveVisibility(
@@ -2087,48 +2375,72 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   child: Text(
                                                     pedidos[index].palete,
                                                     style: FlutterFlowTheme.of(
-                                                        context)
+                                                            context)
                                                         .bodyMedium
                                                         .override(
-                                                      color: corTextoStatus,
-                                                      fontFamily:
-                                                      'Readex Pro',
-                                                      letterSpacing: 0,
-                                                    ),
+                                                          color: corTextoStatus,
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                   ),
                                                 ),
                                               Expanded(
-                                                child: Text(
-                                                  '${pedidos[index].caixas} / ${pedidos[index].vol}',
-                                                  style: FlutterFlowTheme.of(
-                                                      context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
+                                                child: Align(
+                                                  alignment: AlignmentDirectional.centerStart,
+                                                  child: SizedBox(
+                                                    width: 40,
+                                                    height: 30,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: pedidos[index].caixas < pedidos[index].vol ? Colors.red.shade100 : Colors.transparent,
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                        border: Border.all(
+                                                          width: 1.5,
+                                                          color: pedidos[index].caixas < pedidos[index].vol ? Colors.red : Colors.transparent,
+                                                        ),
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        '${pedidos[index].caixas} / ${pedidos[index].vol}',
+                                                        textAlign: TextAlign.center,
+                                                        style: FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              color: pedidos[index].caixas < pedidos[index].vol ? Colors.red : Colors.black,
+                                                              fontFamily:
+                                                                  'Readex Pro',
+                                                              letterSpacing: 0,
+                                                            ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  switch (pedidos[index].situacao ?? 'D'){
+                                                  switch (
+                                                      pedidos[index].situacao ??
+                                                          'D') {
                                                     'F' => 'Faturado',
                                                     'C' => 'Cancelado',
                                                     'L' => 'Liberado',
                                                     'D' => 'Desconhecido',
-                                                    String() => throw UnimplementedError(),
+                                                    String() =>
+                                                      throw UnimplementedError(),
                                                   },
                                                   style: FlutterFlowTheme.of(
-                                                      context)
+                                                          context)
                                                       .bodyMedium
                                                       .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
+                                                        color: corTextoStatus,
+                                                        fontFamily:
+                                                            'Readex Pro',
+                                                        letterSpacing: 0,
+                                                      ),
                                                 ),
                                               ),
                                               if (responsiveVisibility(
@@ -2137,37 +2449,45 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                 tablet: false,
                                               ))
                                                 Expanded(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: corFundoStatus,
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          8),
-                                                      border: Border.all(
-                                                        color: corBordaStatus,
-                                                      ),
-                                                    ),
-                                                    child: Align(
-                                                      alignment:
-                                                      const AlignmentDirectional(
-                                                          0, 0),
-                                                      child: Padding(
-                                                        padding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            8, 4, 8, 4),
-                                                        child: Text(
-                                                          pedidos[index].status,
-                                                          style: FlutterFlowTheme
-                                                              .of(context)
-                                                              .bodySmall
-                                                              .override(
-                                                            color:
-                                                            corTextoStatus,
-                                                            fontFamily:
-                                                            'Readex Pro',
-                                                            letterSpacing:
-                                                            0,
+                                                  child: Align(
+                                                    alignment: Alignment.center,
+                                                    child: SizedBox(
+                                                      width: 80,
+                                                      height: 30,
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: corFundoStatus,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                          border: Border.all(
+                                                            width: 1.5,
+                                                            color: pedidos[index].status != 'Faturado' ? Colors.red : Colors.transparent,
+                                                          ),
+                                                        ),
+                                                        child: Align(
+                                                          alignment:
+                                                              const AlignmentDirectional(
+                                                                  0, 0),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    8, 4, 8, 4),
+                                                            child: Text(
+                                                              pedidos[index].status,
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodySmall
+                                                                  .override(
+                                                                    color:
+                                                                        corTextoStatus,
+                                                                    fontFamily:
+                                                                        'Readex Pro',
+                                                                    letterSpacing:
+                                                                        0,
+                                                                  ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),

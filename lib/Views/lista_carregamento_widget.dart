@@ -71,13 +71,12 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
   }
 
   void rodarBanco() async {
-    romaneioFin = bd.romaneioFinalizado();
-    carregamentoFin = bd.getCarregamento(romaneioSelecionadoint);
+      romaneioFin = bd.romaneioFinalizado();
+      carregamentoFin = bd.getCarregamento(romaneioSelecionadoint);
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -95,6 +94,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
           child: DrawerWidget(
             usur: usur,
             context: context,
+            bd: bd,
           ),
         ),
       ),
@@ -321,27 +321,33 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                 context: context,
                                                                                 phone: false,
                                                                                 tablet: false,
-                                                                              )) ? 20 : 15,
+                                                                              ))
+                                                                                  ? 20
+                                                                                  : 15,
                                                                             ),
                                                                       ),
                                                                     ),
                                                                     if (responsiveVisibility(
-                                                                      context: context,
-                                                                      phone: false,
-                                                                      tablet: false,
-                                                                    )) Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        'Data de Fechamento',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .labelSmall
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              letterSpacing: 0,
-                                                                              fontSize: 20,
-                                                                            ),
+                                                                      context:
+                                                                          context,
+                                                                      phone:
+                                                                          false,
+                                                                      tablet:
+                                                                          false,
+                                                                    ))
+                                                                      Expanded(
+                                                                        child:
+                                                                            Text(
+                                                                          'Data de Fechamento',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .labelSmall
+                                                                              .override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
+                                                                        ),
                                                                       ),
-                                                                    ),
                                                                     Expanded(
                                                                       child:
                                                                           Text(
@@ -355,9 +361,10 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                 context: context,
                                                                                 phone: false,
                                                                                 tablet: false,
-                                                                              )) ? 20 : 15,
+                                                                              ))
+                                                                                  ? 20
+                                                                                  : 15,
                                                                             ),
-
                                                                       ),
                                                                     ),
                                                                   ],
@@ -366,7 +373,8 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                             ),
                                                           ),
                                                           ListView.builder(
-                                                            physics: const AlwaysScrollableScrollPhysics(),
+                                                            physics:
+                                                                const AlwaysScrollableScrollPhysics(),
                                                             shrinkWrap: true,
                                                             padding:
                                                                 EdgeInsets.zero,
@@ -432,15 +440,17 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                               .transparent,
                                                                       onTap:
                                                                           () async {
-                                                                        romaneioSelecionadoint =
-                                                                            0;
-                                                                        carregamentoFin =
-                                                                            bd.getCarregamento(romaneioSelecionadoint);
-                                                                        setter(
-                                                                            () {
-                                                                          setState(
-                                                                              () {});
-                                                                        });
+                                                                        if (await bd.connected(context) ==
+                                                                            null) {
+                                                                          romaneioSelecionadoint =
+                                                                              0;
+                                                                          carregamentoFin =
+                                                                              bd.getCarregamento(romaneioSelecionadoint);
+                                                                          setter(
+                                                                              () {
+                                                                            setState(() {});
+                                                                          });
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Padding(
@@ -468,11 +478,13 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                   style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                    fontSize: (responsiveVisibility(
-                                                                                      context: context,
-                                                                                      phone: false,
-                                                                                      tablet: false,
-                                                                                    )) ? 20 : 15,
+                                                                                        fontSize: (responsiveVisibility(
+                                                                                          context: context,
+                                                                                          phone: false,
+                                                                                          tablet: false,
+                                                                                        ))
+                                                                                            ? 20
+                                                                                            : 15,
                                                                                       ),
                                                                                 ),
                                                                               ),
@@ -481,18 +493,19 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                               context: context,
                                                                               phone: false,
                                                                               tablet: false,
-                                                                            )) Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].dtFechamento}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                      ),
+                                                                            ))
+                                                                              Expanded(
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                  child: Text(
+                                                                                    '${palete[index].dtFechamento}',
+                                                                                    style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
+                                                                                  ),
                                                                                 ),
                                                                               ),
-                                                                            ),
                                                                             Expanded(
                                                                               child: Padding(
                                                                                 padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -501,11 +514,13 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                   style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                    fontSize: (responsiveVisibility(
-                                                                                      context: context,
-                                                                                      phone: false,
-                                                                                      tablet: false,
-                                                                                    )) ? 20 : 15,
+                                                                                        fontSize: (responsiveVisibility(
+                                                                                          context: context,
+                                                                                          phone: false,
+                                                                                          tablet: false,
+                                                                                        ))
+                                                                                            ? 20
+                                                                                            : 15,
                                                                                       ),
                                                                                 ),
                                                                               ),
@@ -557,16 +572,17 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                         InkWell(
                                                                       onTap:
                                                                           () async {
-                                                                        romaneioSelecionadoint =
-                                                                            palete[index].romaneio ??
-                                                                                0;
-                                                                        carregamentoFin =
-                                                                            bd.getCarregamento(romaneioSelecionadoint);
-                                                                        setter(
-                                                                            () {
-                                                                          setState(
-                                                                              () {});
-                                                                        });
+                                                                        if (await bd.connected(context) ==
+                                                                            null) {
+                                                                          romaneioSelecionadoint =
+                                                                              palete[index].romaneio ?? 0;
+                                                                          carregamentoFin =
+                                                                              bd.getCarregamento(romaneioSelecionadoint);
+                                                                          setter(
+                                                                              () {
+                                                                            setState(() {});
+                                                                          });
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Padding(
@@ -602,18 +618,19 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                               context: context,
                                                                               phone: false,
                                                                               tablet: false,
-                                                                            )) Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].dtFechamento}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                      ),
+                                                                            ))
+                                                                              Expanded(
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                  child: Text(
+                                                                                    '${palete[index].dtFechamento}',
+                                                                                    style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                        ),
+                                                                                  ),
                                                                                 ),
                                                                               ),
-                                                                            ),
                                                                             Expanded(
                                                                               child: Padding(
                                                                                 padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -876,81 +893,89 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                         width: 300,
                                         child: TextFormField(
                                           onFieldSubmitted: (value) async {
-                                            _model.textController.text = '';
-                                            List<Carregamento>
-                                                carregamentoAlter;
-                                            carregamentoAlter =
-                                                carregamentoSalvo
-                                                    .where((element) =>
-                                                        element.romaneio ==
-                                                        int.parse(value))
-                                                    .toList();
-                                            if (carregamentoAlter.isEmpty) {
-                                              await showCupertinoModalPopup(
-                                                context: context,
-                                                barrierDismissible: false,
-                                                builder: (context2) {
-                                                  return CupertinoAlertDialog(
-                                                    title: const Text(
-                                                        'Palete não encontrado no Romaneio'),
-                                                    actions: <CupertinoDialogAction>[
-                                                      CupertinoDialogAction(
-                                                          isDefaultAction: true,
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context2);
-                                                          },
-                                                          child: const Text(
-                                                              'Voltar'))
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            } else {
-                                              carregamentoAlter[0].status = 'Carregado';
-                                              carregamentoSalvo.removeWhere((element) => element.romaneio == int.parse(value));
-                                              carregamentoSalvo
-                                                  .add(carregamentoAlter[0]);
-                                              if (carregamentoSalvo
-                                                  .where((element) =>
-                                              element.status ==
-                                                  'Não Carregado')
-                                                  .isEmpty) {
+                                            if (await bd.connected(context) == 1) {
+                                              _model.textController.text = '';
+                                              List<Carregamento>
+                                                  carregamentoAlter;
+                                              carregamentoAlter =
+                                                  carregamentoSalvo
+                                                      .where((element) =>
+                                                          element.romaneio ==
+                                                          int.parse(value))
+                                                      .toList();
+                                              if (carregamentoAlter.isEmpty) {
                                                 await showCupertinoModalPopup(
                                                   context: context,
                                                   barrierDismissible: false,
                                                   builder: (context2) {
                                                     return CupertinoAlertDialog(
                                                       title: const Text(
-                                                          'Romaneio carregado totalmente'),
+                                                          'Palete não encontrado no Romaneio'),
                                                       actions: <CupertinoDialogAction>[
                                                         CupertinoDialogAction(
                                                             isDefaultAction:
-                                                            true,
+                                                                true,
                                                             onPressed: () {
                                                               Navigator.pop(
                                                                   context2);
-                                                              Navigator.pop(
-                                                                  context2);
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        ProgressWidget(
-                                                                            usur,bd),
-                                                                  ));
                                                             },
                                                             child: const Text(
-                                                                'Continuar'))
+                                                                'Voltar'))
                                                       ],
                                                     );
                                                   },
                                                 );
+                                              } else {
+                                                carregamentoAlter[0].status =
+                                                    'Carregado';
+                                                carregamentoSalvo.removeWhere(
+                                                    (element) =>
+                                                        element.romaneio ==
+                                                        int.parse(value));
+                                                carregamentoSalvo
+                                                    .add(carregamentoAlter[0]);
+                                                if (carregamentoSalvo
+                                                    .where((element) =>
+                                                        element.status ==
+                                                        'Não Carregado')
+                                                    .isEmpty) {
+                                                  await showCupertinoModalPopup(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context2) {
+                                                      return CupertinoAlertDialog(
+                                                        title: const Text(
+                                                            'Romaneio carregado totalmente'),
+                                                        actions: <CupertinoDialogAction>[
+                                                          CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                                  true,
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context2);
+                                                                Navigator.pop(
+                                                                    context2);
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          ProgressWidget(
+                                                                              usur,
+                                                                              bd),
+                                                                    ));
+                                                              },
+                                                              child: const Text(
+                                                                  'Continuar'))
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                                bd.updateCarregamento(
+                                                    int.parse(value), usur);
                                               }
-                                              bd.updateCarregamento(
-                                                  int.parse(value), usur);
+                                              setState(() {});
                                             }
-                                            setState(() {});
                                           },
                                           controller: _model.textController,
                                           focusNode: _model.textFieldFocusNode,
@@ -1080,36 +1105,36 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                   phone: false,
                                   tablet: false,
                                 ))
-                                Expanded(
-                                  child: Text(
-                                    'Conferido',
-                                    style: FlutterFlowTheme.of(context)
-                                        .labelSmall
-                                        .override(
-                                          fontFamily: 'Readex Pro',
-                                          letterSpacing: 0,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
                                   Expanded(
-                                    flex: 2,
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 4, 40, 4),
-                                      child: Text(
-                                        'Status',
-                                        textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelSmall
-                                            .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
-                                      ),
+                                    child: Text(
+                                      'Conferido',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0, 4, 40, 4),
+                                    child: Text(
+                                      'Status',
+                                      textAlign: TextAlign.center,
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -1156,8 +1181,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceAround,
+                                                  MainAxisAlignment.spaceAround,
                                               children: [
                                                 Expanded(
                                                   child: Padding(
@@ -1166,15 +1190,13 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                             .fromSTEB(
                                                             0, 4, 0, 0),
                                                     child: Text(
-                                                      textAlign: TextAlign.start,
-                                                      '${carregamento.isNotEmpty ? carregamento[index].romaneio : 0}',
-                                                      style:
-                                                        TextStyle(
-                                                          fontSize: 32,
-                                                          color: Colors.grey.shade700
-                                                        )
-
-                                                    ),
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        '${carregamento.isNotEmpty ? carregamento[index].romaneio : 0}',
+                                                        style: TextStyle(
+                                                            fontSize: 32,
+                                                            color: Colors.grey
+                                                                .shade700)),
                                                   ),
                                                 ),
                                                 Expanded(
@@ -1184,7 +1206,8 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                             .fromSTEB(
                                                             0, 4, 0, 0),
                                                     child: Text(
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       '${carregamento.isNotEmpty ? carregamento[index].vol : 0}',
                                                       style:
                                                           FlutterFlowTheme.of(
@@ -1205,7 +1228,8 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                               .fromSTEB(
                                                               0, 4, 0, 0),
                                                       child: Text(
-                                                        textAlign: TextAlign.center,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         'Cidade : ??',
                                                         style:
                                                             FlutterFlowTheme.of(
@@ -1219,24 +1243,30 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsetsDirectional
-                                                            .fromSTEB(0, 4, 0, 0),
+                                                            .fromSTEB(
+                                                            0, 4, 0, 0),
                                                     child: Container(
                                                       height: 80,
-                                                      width: (responsiveVisibility(
+                                                      width:
+                                                          (responsiveVisibility(
                                                         context: context,
                                                         phone: false,
                                                         tablet: false,
-                                                      )) ? 160 : 100,
+                                                      ))
+                                                              ? 160
+                                                              : 100,
                                                       decoration: BoxDecoration(
-                                                        color: carregamento[index]
+                                                        color: carregamento[
+                                                                        index]
                                                                     .status ==
                                                                 'Carregado'
                                                             ? const Color(
                                                                 0xFF6ABD6A)
-                                                            : Colors.red.shade100,
+                                                            : Colors
+                                                                .red.shade100,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                12),
+                                                            BorderRadius
+                                                                .circular(12),
                                                         border: Border.all(
                                                           color: carregamento[
                                                                           index]
@@ -1265,11 +1295,17 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                       '${carregamento.isNotEmpty ? carregamento[index].status : ''}',
                                                                   style:
                                                                       TextStyle(
-                                                                    fontSize: (responsiveVisibility(
-                                                                      context: context,
-                                                                      phone: false,
-                                                                      tablet: false,
-                                                                    )) ? 20 : 15,
+                                                                    fontSize:
+                                                                        (responsiveVisibility(
+                                                                      context:
+                                                                          context,
+                                                                      phone:
+                                                                          false,
+                                                                      tablet:
+                                                                          false,
+                                                                    ))
+                                                                            ? 20
+                                                                            : 15,
                                                                   ),
                                                                 )
                                                               ],
@@ -1279,21 +1315,21 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                   .override(
                                                                     fontFamily:
                                                                         'Readex Pro',
-                                                                    color: carregamento[index]
-                                                                                .status ==
+                                                                    color: carregamento[index].status ==
                                                                             'Carregado'
                                                                         ? const Color(
                                                                             0xFF005200)
                                                                         : Colors
                                                                             .red,
-                                                                    fontSize: 24,
+                                                                    fontSize:
+                                                                        24,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w800,
                                                                   ),
                                                             ),
-                                                            textAlign:
-                                                                TextAlign.center,
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       ),

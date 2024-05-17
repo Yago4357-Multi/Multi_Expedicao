@@ -29,7 +29,7 @@ class _LoginWidgetState extends State<LoginWidget>
   @override
   void initState() {
     super.initState();
-    bd = Banco();
+    bd = Banco(context);
     _model = createModel(context, LoginModel.new);
 
     _model.emailAddressTextController ??= TextEditingController();
@@ -71,7 +71,6 @@ class _LoginWidgetState extends State<LoginWidget>
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
   }
 
@@ -305,8 +304,15 @@ class _LoginWidgetState extends State<LoginWidget>
                                                   child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
-                                                      onFieldSubmitted: (value) {
-                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context, bd);
+                                                      onFieldSubmitted: (value) async {
+                                                        if (await bd.connected(context) == 1) {
+                                                          bd.auth(_model
+                                                              .emailAddressTextController
+                                                              .text, _model
+                                                              .passwordTextController
+                                                              .text, context,
+                                                              bd);
+                                                        }
                                                       },
                                                       controller: _model
                                                           .passwordTextController,
@@ -433,7 +439,14 @@ class _LoginWidgetState extends State<LoginWidget>
                                                             0, 0, 0, 16),
                                                     child: FFButtonWidget(
                                                       onPressed: () async {
-                                                        bd.auth(_model.emailAddressTextController.text, _model.passwordTextController.text, context, bd);
+                                                          if (await bd.connected(context) == 1) {
+                                                            bd.auth(_model
+                                                                .emailAddressTextController
+                                                                .text, _model
+                                                                .passwordTextController
+                                                                .text, context,
+                                                                bd);
+                                                          }
                                                       },
                                                       text: 'Logar',
                                                       options: FFButtonOptions(

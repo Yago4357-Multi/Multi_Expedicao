@@ -15,12 +15,12 @@ import 'Views/progress_widget.dart';
 ///Lista para facilitar a navegação entre janelas
 Map<String, Widget Function(BuildContext)> namedRoutes = {
   '/': (context) => const LoginWidget(),
-  '/Progress': (context) => ProgressWidget(Usuario(0,''),Banco()),
-  '/ListaRomaneio': (context)=> ListaRomaneioWidget(0, Usuario(0,''),Banco()),
-  '/ListaPalete': (context) =>  ListaPaleteWidget(cont: 0, Usuario(0,''),Banco()),
-  '/ListaPedido': (context) =>  ListaPedidoWidget(cont: 0, Usuario(0,''),Banco()),
-  '/ListaRomaneioConf': (context) =>  ListaRomaneioConfWidget(palete: 0, Usuario(0,''),Banco()),
-  '/EscolhaRomaneio': (context) =>  EscolhaBipagemWidget(Usuario(0,''),Banco()),
-  '/CriarPalete': (context) =>  CriarPaleteWidget(Usuario(0,''),0,Banco()),
-  '/CriarRomaneio': (context) =>  EscolhaRomaneioWidget(Usuario(0,''),Banco())
+  '/Progress': (context) => ProgressWidget(Usuario(0,''),Banco(context)),
+  '/ListaRomaneio': (context)=> ListaRomaneioWidget(0, Usuario(0,''),Banco(context)),
+  '/ListaPalete': (context) =>  ListaPaleteWidget(cont: 0, Usuario(0,''),Banco(context)),
+  '/ListaPedido': (context) =>  ListaPedidoWidget(cont: 0, Usuario(0,''),Banco(context)),
+  '/ListaRomaneioConf': (context) =>  ListaRomaneioConfWidget(palete: 0, Usuario(0,''),Banco(context)),
+  '/EscolhaRomaneio': (context) =>  EscolhaBipagemWidget(Usuario(0,''),Banco(context)),
+  '/CriarPalete': (context) =>  CriarPaleteWidget(Usuario(0,''),0,Banco(context)),
+  '/CriarRomaneio': (context) =>  EscolhaRomaneioWidget(Usuario(0,''),Banco(context))
 };

@@ -13,7 +13,6 @@ import '../Models/usur.dart';
 import 'lista_pedido_widget.dart';
 import 'progress_widget.dart';
 
-
 ///Página para mostrar a listagem da Bipagem
 class ListaRomaneioConfWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
@@ -25,7 +24,8 @@ class ListaRomaneioConfWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página
-  const ListaRomaneioConfWidget(this.usur, this.bd, {super.key, required this.palete});
+  const ListaRomaneioConfWidget(this.usur, this.bd,
+      {super.key, required this.palete});
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
@@ -47,15 +47,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   @override
   void initState() {
     super.initState();
+    rodarBanco();
     _model = createModel(context, ListaRomaneioConfModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
     _model.textFieldFocusNode!.addListener(() => setState(() {}));
-    rodarBanco();
   }
 
   void rodarBanco() async {
-    teste = bd.selectPallet(palete);
+      teste = bd.selectPallet(palete);
   }
 
   @override
@@ -109,10 +109,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                               isDefaultAction: true,
                               isDestructiveAction: true,
                               onPressed: () async {
-                                bd.endPalete(palete, usur);
-                                Navigator.pop(context);
-                                await Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => ProgressWidget(usur,bd)));
+                                if (await bd.connected(context) == 1) {
+                                  bd.endPalete(palete, usur);
+                                  Navigator.pop(context);
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProgressWidget(usur, bd)));
+                                }
                               },
                               child: const Text(
                                 'Continuar',
@@ -147,7 +152,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
             model: _model.drawerModel,
             updateCallback: () => setState(() {}),
             child: DrawerWidget(
-              usur: usur,context: context,
+              usur: usur,
+              context: context,
+              bd: bd,
             ),
           ),
         ),
@@ -275,16 +282,19 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           controller: _model.textController,
                                           focusNode: _model.textFieldFocusNode,
                                           onFieldSubmitted: (value) async {
+                                            if (await bd.connected(context) == 1) {
                                             setState(() {
-                                              bd.insert(
-                                                  _model.textController!.text,
-                                                  palete,
-                                                  context,
-                                                  usur);
-                                              teste = bd.selectPallet(palete);
-                                              _model.textController.text = '';
-                                              _model.textFieldFocusNode?.requestFocus();
+                                                bd.insert(
+                                                    _model.textController!.text,
+                                                    palete,
+                                                    context,
+                                                    usur);
+                                                teste = bd.selectPallet(palete);
+                                                _model.textController.text = '';
+                                                _model.textFieldFocusNode
+                                                    ?.requestFocus();
                                             });
+                                          }
                                           },
                                           autofocus: true,
                                           obscureText: false,
@@ -395,7 +405,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                           cont: pedidos[index]
                                                                   .ped ??
                                                               0,
-                                                          usur,bd),
+                                                          usur,
+                                                          bd),
                                                 ));
                                           },
                                           child: Padding(
@@ -424,7 +435,10 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                     const EdgeInsetsDirectional
                                                         .fromSTEB(
                                                         10, 12, 12, 12),
-                                                child: Column(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Align(
                                                       alignment:
@@ -435,7 +449,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                         text: TextSpan(
                                                           children: [
                                                             const TextSpan(
-                                                              text: 'Ped. : ',
+                                                              text:
+                                                                  'Ped. : \n ',
                                                               style:
                                                                   TextStyle(),
                                                             ),
@@ -449,7 +464,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w900,
-                                                                fontSize: 24,
+                                                                fontSize: 26,
                                                               ),
                                                             )
                                                           ],
@@ -466,85 +481,30 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                         ),
                                                       ),
                                                     ),
-                                                    Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child: Text(
-                                                                'Palete : ${pedidos[index].palete}',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium,
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
-                                                              child: Text(
-                                                                'Cidade : ${pedidos[index].cidade}',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .labelMedium,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  0, 4, 0, 0),
-                                                          child: Container(
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              0, 4, 0, 0),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            width: 95,
                                                             height: 80,
-                                                            constraints:
-                                                                BoxConstraints(
-                                                              minWidth: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.2,
-                                                              maxWidth: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.3,
-                                                              maxHeight: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .height *
-                                                                  0.8,
-                                                            ),
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: const Color(
                                                                   0xFF6ABD6A),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
+                                                                  const BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        12),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        12),
+                                                              ),
                                                               border:
                                                                   Border.all(
                                                                 color: const Color(
@@ -570,7 +530,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Vol. :\n',
+                                                                            'Caixa. :\n',
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
@@ -582,7 +542,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${pedidos[index].caixa} / ${pedidos[index].vol}',
+                                                                            '${pedidos[index].caixa}',
                                                                         style:
                                                                             const TextStyle(
                                                                           fontSize:
@@ -611,8 +571,93 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                          Container(
+                                                            width: 150,
+                                                            height: 80,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .indigoAccent
+                                                                  .shade100,
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .only(
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        12),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              border:
+                                                                  Border.all(
+                                                                color: Colors
+                                                                    .indigo,
+                                                                width: 2,
+                                                              ),
+                                                            ),
+                                                            child: Align(
+                                                              alignment:
+                                                                  const AlignmentDirectional(
+                                                                      0, 0),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        1,
+                                                                        0,
+                                                                        1,
+                                                                        0),
+                                                                child: RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Progresso :\n',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Readex Pro',
+                                                                              color: Colors.indigo,
+                                                                              fontSize: 18,
+                                                                              fontWeight: FontWeight.w800,
+                                                                            ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${pedidos[index].volBip} / ${pedidos[index].vol}',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              26,
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Readex Pro',
+                                                                          color:
+                                                                              Colors.indigo,
+                                                                          fontSize:
+                                                                              24,
+                                                                          fontWeight:
+                                                                              FontWeight.w800,
+                                                                        ),
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
