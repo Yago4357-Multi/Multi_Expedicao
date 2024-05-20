@@ -18,7 +18,7 @@ class EscolhaBipagemWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página de escolha de bipagem
-  const EscolhaBipagemWidget(this.usur, this.bd, {super.key});
+  const EscolhaBipagemWidget(this.usur, {super.key, required this.bd});
 
   @override
   State<EscolhaBipagemWidget> createState() =>
@@ -227,7 +227,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                     await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CriarPaleteWidget(usur, 0, bd),
+                          builder: (context) => CriarPaleteWidget(usur, 0, bd: bd),
                         ));
                   },
                   text: 'Criar Novo Palete',

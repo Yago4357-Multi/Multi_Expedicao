@@ -5,9 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../Controls/banco.dart';
 import '../../Models/usur.dart';
-import '../../Views/escolha_bipagem_widget.dart';
+import '../../Views/escolha_conferencia_widget.dart';
 import '../../Views/escolha_romaneio_widget.dart';
-import '../../Views/lista_carregamento_widget.dart';
+import '../../Views/carregamento_widget.dart';
 import '../../Views/lista_faturados.dart';
 import '../../Views/lista_palete_widget.dart';
 import '../../Views/lista_pedido_widget.dart';
@@ -145,7 +145,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaCarregamentoWidget(usur,bd),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaCarregamentoWidget(usur,bd: bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -204,7 +204,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             onPressed: () async {
                               Navigator.pop(context);
                               Navigator.pop(context2);
-                              await Navigator.push(context, MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur,bd),));
+                              await Navigator.push(context, MaterialPageRoute(builder: (context) => EscolhaBipagemWidget(usur,bd: bd),));
                             },
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -262,7 +262,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(
                               builder: (context) =>
-                                  EscolhaRomaneioWidget(usur,bd),));
+                                  EscolhaRomaneioWidget(usur,bd: bd),));
                           },
 
                           child: InkWell(
@@ -316,7 +316,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             Navigator.pop(context2);
                             await Navigator.push(context, MaterialPageRoute(
                               builder: (context) =>
-                                  ListaFaturadosWidget(usur, bd),));
+                                  ListaFaturadosWidget(usur, bd: bd),));
                           },
 
                           child: InkWell(
@@ -368,7 +368,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: 0 , usur,bd),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPedidoWidget(cont: 0 , usur,bd: bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -419,7 +419,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur, bd),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur, bd: bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -470,7 +470,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           onPressed: () async {
                             Navigator.pop(context);
                             Navigator.pop(context2);
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur, bd),));
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur, bd: bd),));
                           },
                           child: InkWell(
                             splashColor: Colors.transparent,

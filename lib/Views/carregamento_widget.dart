@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -20,7 +19,7 @@ class ListaCarregamentoWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página
-  const ListaCarregamentoWidget(this.usur, this.bd, {super.key});
+  const ListaCarregamentoWidget(this.usur, {super.key, required this.bd});
 
   @override
   State<ListaCarregamentoWidget> createState() =>
@@ -440,8 +439,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                               .transparent,
                                                                       onTap:
                                                                           () async {
-                                                                        if (await bd.connected(context) ==
-                                                                            null) {
+                                                                        if (await bd.connected(context) == 1) {
                                                                           romaneioSelecionadoint =
                                                                               0;
                                                                           carregamentoFin =
@@ -498,7 +496,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                 child: Padding(
                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                   child: Text(
-                                                                                    '${palete[index].dtFechamento}',
+                                                                                    palete[index].dtFechamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!) : '',
                                                                                     style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                           fontFamily: 'Readex Pro',
                                                                                           letterSpacing: 0,
@@ -572,8 +570,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                         InkWell(
                                                                       onTap:
                                                                           () async {
-                                                                        if (await bd.connected(context) ==
-                                                                            null) {
+                                                                        if (await bd.connected(context) == 1) {
                                                                           romaneioSelecionadoint =
                                                                               palete[index].romaneio ?? 0;
                                                                           carregamentoFin =
@@ -904,27 +901,30 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                           int.parse(value))
                                                       .toList();
                                               if (carregamentoAlter.isEmpty) {
-                                                await showCupertinoModalPopup(
-                                                  context: context,
-                                                  barrierDismissible: false,
-                                                  builder: (context2) {
-                                                    return CupertinoAlertDialog(
-                                                      title: const Text(
-                                                          'Palete não encontrado no Romaneio'),
-                                                      actions: <CupertinoDialogAction>[
-                                                        CupertinoDialogAction(
-                                                            isDefaultAction:
-                                                                true,
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context2);
-                                                            },
-                                                            child: const Text(
-                                                                'Voltar'))
-                                                      ],
-                                                    );
-                                                  },
-                                                );
+                                                if (context.mounted) {
+                                                  await showCupertinoModalPopup(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context2) {
+                                                      return CupertinoAlertDialog(
+                                                        title: const Text(
+                                                            'Palete não encontrado no Romaneio'),
+                                                        actions: <
+                                                            CupertinoDialogAction>[
+                                                          CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                              true,
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context2);
+                                                              },
+                                                              child: const Text(
+                                                                  'Voltar'))
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
                                               } else {
                                                 carregamentoAlter[0].status =
                                                     'Carregado';
@@ -939,37 +939,42 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                         element.status ==
                                                         'Não Carregado')
                                                     .isEmpty) {
-                                                  await showCupertinoModalPopup(
-                                                    context: context,
-                                                    barrierDismissible: false,
-                                                    builder: (context2) {
-                                                      return CupertinoAlertDialog(
-                                                        title: const Text(
-                                                            'Romaneio carregado totalmente'),
-                                                        actions: <CupertinoDialogAction>[
-                                                          CupertinoDialogAction(
-                                                              isDefaultAction:
-                                                                  true,
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context2);
-                                                                Navigator.pop(
-                                                                    context2);
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          ProgressWidget(
-                                                                              usur,
-                                                                              bd),
-                                                                    ));
-                                                              },
-                                                              child: const Text(
-                                                                  'Continuar'))
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
+                                                  if (context.mounted) {
+                                                    await showCupertinoModalPopup(
+                                                      context: context,
+                                                      barrierDismissible: false,
+                                                      builder: (context2) {
+                                                        return CupertinoAlertDialog(
+                                                          title: const Text(
+                                                              'Romaneio carregado totalmente'),
+                                                          actions: <
+                                                              CupertinoDialogAction>[
+                                                            CupertinoDialogAction(
+                                                                isDefaultAction:
+                                                                true,
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context2);
+                                                                  Navigator.pop(
+                                                                      context2);
+                                                                  Navigator
+                                                                      .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder: (
+                                                                            context) =>
+                                                                            ProgressWidget(
+                                                                                usur,
+                                                                                bd: bd),
+                                                                      ));
+                                                                },
+                                                                child: const Text(
+                                                                    'Continuar'))
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  }
                                                 }
                                                 bd.updateCarregamento(
                                                     int.parse(value), usur);
@@ -1100,23 +1105,6 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                ))
-                                  Expanded(
-                                    child: Text(
-                                      'Conferido',
-                                      style: FlutterFlowTheme.of(context)
-                                          .labelSmall
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
                                 Expanded(
                                   flex: 2,
                                   child: Padding(
@@ -1216,28 +1204,6 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                     ),
                                                   ),
                                                 ),
-                                                if (responsiveVisibility(
-                                                    context: context,
-                                                    phone: false,
-                                                    tablet: false,
-                                                    desktop: true))
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 4, 0, 0),
-                                                      child: Text(
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        'Cidade : ??',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium,
-                                                      ),
-                                                    ),
-                                                  ),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Padding(

@@ -19,7 +19,7 @@ class ProgressWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página inicial
-  const ProgressWidget(this.usur, this.bd, {super.key});
+  const ProgressWidget(this.usur, {super.key, required this.bd});
 
   @override
   State<ProgressWidget> createState() => _ProgressWidgetState(this.usur, this.bd);
@@ -404,7 +404,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
                           if (Navigator.of(context).canPop()) {
                             Navigator.pop;
                           }
-                          await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: 0, acess, bd),));
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioConfWidget(palete: 0, acess, bd: bd),));
                         },
                         child: Container(
                           width: double.infinity,

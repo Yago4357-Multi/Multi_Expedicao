@@ -24,7 +24,7 @@ class ListaPaleteWidget extends StatefulWidget {
   final Banco bd;
 
   ///Constutor para a página de listagem dos paletes
-  const ListaPaleteWidget(this.usur, this.bd, {super.key, required this.cont});
+  const ListaPaleteWidget(this.usur, {super.key, required this.cont, required this.bd});
 
   @override
   State<ListaPaleteWidget> createState() =>

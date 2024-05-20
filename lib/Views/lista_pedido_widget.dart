@@ -20,7 +20,7 @@ class ListaPedidoWidget extends StatefulWidget {
   final Banco bd;
 
   ///Constutor para a página de listagem dos pedidos
-  const ListaPedidoWidget(this.usur, this.bd, {super.key, required this.cont});
+  const ListaPedidoWidget(this.usur, {super.key, required this.cont, required this.bd});
 
   @override
   State<ListaPedidoWidget> createState() =>

@@ -24,8 +24,12 @@ class ListaRomaneioConfWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página
-  const ListaRomaneioConfWidget(this.usur, this.bd,
-      {super.key, required this.palete});
+  const ListaRomaneioConfWidget(
+    this.usur, {
+    super.key,
+    required this.palete,
+    required this.bd,
+  });
 
   @override
   State<ListaRomaneioConfWidget> createState() =>
@@ -34,6 +38,7 @@ class ListaRomaneioConfWidget extends StatefulWidget {
 
 class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   int palete;
+  int volumes = 0;
   final Usuario usur;
 
   _ListaRomaneioConfWidgetState(this.palete, this.usur, this.bd);
@@ -55,7 +60,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
   }
 
   void rodarBanco() async {
-      teste = bd.selectPallet(palete);
+    teste = bd.selectPallet(palete);
   }
 
   @override
@@ -116,7 +121,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              ProgressWidget(usur, bd)));
+                                              ProgressWidget(usur, bd: bd)));
                                 }
                               },
                               child: const Text(
@@ -179,508 +184,586 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
           centerTitle: true,
           elevation: 2,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: const AlignmentDirectional(0, -1),
-                      child: Container(
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: const AlignmentDirectional(0, -1),
+                    child: Container(
                         width: double.infinity,
                         constraints: const BoxConstraints(
                           maxWidth: 1170,
                         ),
                         decoration: const BoxDecoration(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: const AlignmentDirectional(-1, -1),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: const AlignmentDirectional(0, 0),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              24, 20, 0, 0),
-                                      child: Text(
-                                        'Pallet :',
-                                        textAlign: TextAlign.start,
-                                        style: FlutterFlowTheme.of(context)
-                                            .headlineMedium,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 20, 24, 0),
-                                      child: Text(
-                                        '$palete',
-                                        textAlign: TextAlign.end,
-                                        style: FlutterFlowTheme.of(context)
-                                            .headlineMedium
-                                            .override(
-                                              fontFamily: 'Outfit',
-                                              fontSize: 40,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  24, 4, 0, 0),
-                              child: Text(
-                                'Pedidos nesse Pallet',
-                                textAlign: TextAlign.start,
-                                style: FlutterFlowTheme.of(context).labelMedium,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  16, 12, 16, 0),
-                              child: Container(
-                                width: double.infinity,
-                                constraints: const BoxConstraints(
-                                  maxWidth: double.infinity,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color:
-                                        FlutterFlowTheme.of(context).alternate,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      16, 12, 16, 12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        flex: 5,
-                                        child: TextFormField(
-                                          controller: _model.textController,
-                                          focusNode: _model.textFieldFocusNode,
-                                          onFieldSubmitted: (value) async {
-                                            if (await bd.connected(context) == 1) {
-                                            setState(() {
-                                                bd.insert(
-                                                    _model.textController!.text,
-                                                    palete,
-                                                    context,
-                                                    usur);
-                                                teste = bd.selectPallet(palete);
-                                                _model.textController.text = '';
-                                                _model.textFieldFocusNode
-                                                    ?.requestFocus();
-                                            });
-                                          }
-                                          },
-                                          autofocus: true,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            labelText: 'Pedido',
-                                            labelStyle: FlutterFlowTheme.of(
-                                                    context)
-                                                .labelMedium
-                                                .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryText,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                            alignLabelWithHint: false,
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium,
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color:
+                        child: FutureBuilder(
+                            future: teste,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                pedidos = snapshot.data ?? [];
+                                for (var i in pedidos) {
+                                  volumes += i.volBip!;
+                                }
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment:
+                                          const AlignmentDirectional(-1, -1),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Align(
+                                            alignment:
+                                                const AlignmentDirectional(
+                                                    0, 0),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(24, 20, 0, 0),
+                                              child: Text(
+                                                'Pallet :',
+                                                textAlign: TextAlign.start,
+                                                style:
                                                     FlutterFlowTheme.of(context)
-                                                        .alternate,
-                                                width: 2,
+                                                        .headlineMedium,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade500,
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade100,
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade100,
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
                                             ),
                                           ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium,
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(),
-                                          validator: _model
-                                              .textControllerValidator
-                                              .asValidator(context),
-                                          inputFormatters: [
-                                            LengthLimitingTextInputFormatter(
-                                                33),
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                          ],
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 20, 24, 0),
+                                              child: Text(
+                                                '$palete',
+                                                textAlign: TextAlign.end,
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .headlineMedium
+                                                        .override(
+                                                          fontFamily: 'Outfit',
+                                                          fontSize: 40,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24, 10, 0, 0),
+                                          child: Text(
+                                            'Volumes :',
+                                            textAlign: TextAlign.start,
+                                            style: FlutterFlowTheme.of(context)
+                                                .labelLarge,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            FutureBuilder(
-                              future: teste,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  pedidos = snapshot.data ?? [];
-                                  return ListView.builder(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        0,
-                                        12,
-                                        0,
-                                        44,
-                                      ),
-                                      reverse: true,
-                                      scrollDirection: Axis.vertical,
-                                      physics: const BouncingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: (pedidos.length),
-                                      itemBuilder: (context, index) {
-                                        return InkWell(
-                                          splashColor: Colors.transparent,
-                                          focusColor: Colors.transparent,
-                                          hoverColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            Navigator.pop(context);
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ListaPedidoWidget(
-                                                          cont: pedidos[index]
-                                                                  .ped ??
-                                                              0,
-                                                          usur,
-                                                          bd),
-                                                ));
-                                          },
+                                        Expanded(
                                           child: Padding(
                                             padding: const EdgeInsetsDirectional
-                                                .fromSTEB(14, 10, 14, 10),
-                                            child: Container(
-                                              width: double.infinity,
-                                              constraints: const BoxConstraints(
-                                                maxWidth: 570,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .alternate,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        10, 12, 12, 12),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: RichText(
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                        text: TextSpan(
-                                                          children: [
-                                                            const TextSpan(
-                                                              text:
-                                                                  'Ped. : \n ',
-                                                              style:
-                                                                  TextStyle(),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  '${pedidos[index].ped}',
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Color(
-                                                                    0xFF007000),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w900,
-                                                                fontSize: 26,
-                                                              ),
-                                                            )
-                                                          ],
-                                                          style: FlutterFlowTheme
+                                                .fromSTEB(0, 10, 24, 0),
+                                            child: Text(
+                                              '$volumes',
+                                              textAlign: TextAlign.end,
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelLarge
+                                                      .override(
+                                                        fontFamily: 'Outfit',
+                                                        fontSize: 30,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24, 4, 0, 0),
+                                      child: Text(
+                                        'Pedidos nesse Pallet',
+                                        textAlign: TextAlign.start,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelMedium,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              16, 12, 16, 0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        constraints: const BoxConstraints(
+                                          maxWidth: double.infinity,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16, 12, 16, 12),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                flex: 5,
+                                                child: TextFormField(
+                                                  controller:
+                                                      _model.textController,
+                                                  focusNode:
+                                                      _model.textFieldFocusNode,
+                                                  onFieldSubmitted:
+                                                      (value) async {
+                                                    if (await bd.connected(
+                                                            context) ==
+                                                        1) {
+                                                      setState(() {
+                                                        bd.insert(
+                                                            _model
+                                                                .textController!
+                                                                .text,
+                                                            palete,
+                                                            context,
+                                                            usur);
+                                                        teste = bd.selectPallet(
+                                                            palete);
+                                                        _model.textController
+                                                            .text = '';
+                                                        _model
+                                                            .textFieldFocusNode
+                                                            ?.requestFocus();
+                                                      });
+                                                    }
+                                                  },
+                                                  autofocus: true,
+                                                  obscureText: false,
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Pedido',
+                                                    labelStyle: FlutterFlowTheme
+                                                            .of(context)
+                                                        .labelMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          color: FlutterFlowTheme
                                                                   .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Readex Pro',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                              ),
+                                                              .secondaryText,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
+                                                    alignLabelWithHint: false,
+                                                    hintStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .labelMedium,
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .alternate,
+                                                        width: 2,
                                                       ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 4, 0, 0),
-                                                      child: Row(
-                                                        children: [
-                                                          Container(
-                                                            width: 95,
-                                                            height: 80,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: const Color(
-                                                                  0xFF6ABD6A),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        12),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        12),
-                                                              ),
-                                                              border:
-                                                                  Border.all(
-                                                                color: const Color(
-                                                                    0xFF005200),
-                                                                width: 2,
-                                                              ),
-                                                            ),
-                                                            child: Align(
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      0, 0),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        1,
-                                                                        0,
-                                                                        1,
-                                                                        0),
-                                                                child: RichText(
-                                                                  text:
-                                                                      TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Caixa. :\n',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              color: const Color(0xFF005200),
-                                                                              fontSize: 18,
-                                                                              fontWeight: FontWeight.w800,
-                                                                            ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${pedidos[index].caixa}',
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              26,
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          color:
-                                                                              const Color(0xFF005200),
-                                                                          fontSize:
-                                                                              24,
-                                                                          fontWeight:
-                                                                              FontWeight.w800,
-                                                                        ),
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 150,
-                                                            height: 80,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors
-                                                                  .indigoAccent
-                                                                  .shade100,
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        12),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              border:
-                                                                  Border.all(
-                                                                color: Colors
-                                                                    .indigo,
-                                                                width: 2,
-                                                              ),
-                                                            ),
-                                                            child: Align(
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      0, 0),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        1,
-                                                                        0,
-                                                                        1,
-                                                                        0),
-                                                                child: RichText(
-                                                                  text:
-                                                                      TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Progresso :\n',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              color: Colors.indigo,
-                                                                              fontSize: 18,
-                                                                              fontWeight: FontWeight.w800,
-                                                                            ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${pedidos[index].volBip} / ${pedidos[index].vol}',
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              26,
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          color:
-                                                                              Colors.indigo,
-                                                                          fontSize:
-                                                                              24,
-                                                                          fontWeight:
-                                                                              FontWeight.w800,
-                                                                        ),
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: Colors
+                                                            .green.shade500,
+                                                        width: 2,
                                                       ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
                                                     ),
+                                                    errorBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: Colors
+                                                            .green.shade100,
+                                                        width: 2,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    focusedErrorBorder:
+                                                        OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: Colors
+                                                            .green.shade100,
+                                                        width: 2,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                  ),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(),
+                                                  validator: _model
+                                                      .textControllerValidator
+                                                      .asValidator(context),
+                                                  inputFormatters: [
+                                                    LengthLimitingTextInputFormatter(
+                                                        33),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
                                                   ],
                                                 ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                        );
-                                      });
-                                } else {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                                        ),
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          0,
+                                          12,
+                                          0,
+                                          44,
+                                        ),
+                                        reverse: true,
+                                        scrollDirection: Axis.vertical,
+                                        physics: const BouncingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: 1,
+                                        itemBuilder: (context, index) {
+                                          return InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              Navigator.pop(context);
+                                              await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ListaPedidoWidget(
+                                                            cont: pedidos[index]
+                                                                    .ped ??
+                                                                0,
+                                                            usur,
+                                                            bd: bd),
+                                                  ));
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(14, 10, 14, 10),
+                                              child: Container(
+                                                width: double.infinity,
+                                                constraints:
+                                                    const BoxConstraints(
+                                                  maxWidth: 570,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryBackground,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .alternate,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          10, 12, 12, 12),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: RichText(
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              const TextSpan(
+                                                                text:
+                                                                    'Ped. : \n ',
+                                                                style:
+                                                                    TextStyle(),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${pedidos[index].ped}',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF007000),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w900,
+                                                                  fontSize: 26,
+                                                                ),
+                                                              )
+                                                            ],
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Readex Pro',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                0, 4, 0, 0),
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                              width: 95,
+                                                              height: 80,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFF6ABD6A),
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          12),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          12),
+                                                                ),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: const Color(
+                                                                      0xFF005200),
+                                                                  width: 2,
+                                                                ),
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    const AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          1,
+                                                                          0,
+                                                                          1,
+                                                                          0),
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Caixa. :\n',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                color: const Color(0xFF005200),
+                                                                                fontSize: 18,
+                                                                                fontWeight: FontWeight.w800,
+                                                                              ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${pedidos[index].caixa}',
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                26,
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Readex Pro',
+                                                                            color:
+                                                                                const Color(0xFF005200),
+                                                                            fontSize:
+                                                                                24,
+                                                                            fontWeight:
+                                                                                FontWeight.w800,
+                                                                          ),
+                                                                    ),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              width: 150,
+                                                              height: 80,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .indigoAccent
+                                                                    .shade100,
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          12),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          12),
+                                                                ),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: Colors
+                                                                      .indigo,
+                                                                  width: 2,
+                                                                ),
+                                                              ),
+                                                              child: Align(
+                                                                alignment:
+                                                                    const AlignmentDirectional(
+                                                                        0, 0),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          1,
+                                                                          0,
+                                                                          1,
+                                                                          0),
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Progresso :\n',
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                color: Colors.indigo,
+                                                                                fontSize: 18,
+                                                                                fontWeight: FontWeight.w800,
+                                                                              ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${pedidos[index].volBip} / ${pedidos[index].vol}',
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                26,
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Readex Pro',
+                                                                            color:
+                                                                                Colors.indigo,
+                                                                            fontSize:
+                                                                                24,
+                                                                            fontWeight:
+                                                                                FontWeight.w800,
+                                                                          ),
+                                                                    ),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                  ],
+                                );
+                              } else {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            })),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

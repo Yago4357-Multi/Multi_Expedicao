@@ -19,7 +19,7 @@ class ListaRomaneiosWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página
-  const ListaRomaneiosWidget(this.usur, this.bd, {super.key});
+  const ListaRomaneiosWidget(this.usur, {super.key, required this.bd});
 
   @override
   State<ListaRomaneiosWidget> createState() => _ListaRomaneiosWidget(usur, bd);

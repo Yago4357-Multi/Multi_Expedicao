@@ -17,7 +17,7 @@ class ListaFaturadosWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página
-  const ListaFaturadosWidget(this.usur, this.bd, {super.key});
+  const ListaFaturadosWidget(this.usur, {super.key, required this.bd});
 
   @override
   State<ListaFaturadosWidget> createState() => _ListaFaturadosWidget(usur, bd);

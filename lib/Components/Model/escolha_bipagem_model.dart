@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../../Views/escolha_bipagem_widget.dart';
+import '../../Views/escolha_conferencia_widget.dart';
 import 'drawer_model.dart';
 
 ///Modelo para a página de escolha da Bipagem

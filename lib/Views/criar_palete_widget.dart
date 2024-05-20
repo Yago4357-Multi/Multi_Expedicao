@@ -24,7 +24,7 @@ class CriarPaleteWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página de criação de novos Paletes
-  const CriarPaleteWidget(this.usur, this.palete, this.bd, {super.key});
+  const CriarPaleteWidget(this.usur, this.palete, {super.key, required this.bd,});
 
   @override
   State<CriarPaleteWidget> createState() =>
@@ -219,7 +219,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ListaRomaneioConfWidget(
-                                      palete: i, usur, bd),
+                                      palete: i, usur, bd: bd),
                                 ));
                           }
                         }

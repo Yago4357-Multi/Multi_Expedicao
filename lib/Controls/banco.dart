@@ -7,15 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/carregamento.dart';
-import '../Models/cidade.dart';
-import '../Models/cliente.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
 import '../Views/conferencia_widget.dart';
-import '../Views/escolha_bipagem_widget.dart';
+import '../Views/escolha_conferencia_widget.dart';
 import '../Views/escolha_romaneio_widget.dart';
 import '../Views/romaneio_widget.dart';
 
@@ -67,7 +65,7 @@ class Banco {
           return 0;
         }
       }
-    } on SocketException catch(e){
+    } on SocketException{
       await showCupertinoModalPopup(
         context: context,
         barrierDismissible: false,
@@ -262,83 +260,30 @@ class Banco {
             a,
             MaterialPageRoute(
                 builder: (context) =>
-                    ListaRomaneioConfWidget(palete: teste, usur, bd)));
+                    ListaRomaneioConfWidget(palete: teste, usur, bd: bd)));
       }
     }
   }
 
-  ///Função para verificar se o Romaneio já existe
-  void romaneioExiste(
-      int romaneio, BuildContext a, Usuario usur, Banco bd) async {
-    Object? teste2 = DateTime.timestamp();
-    var teste = 0;
+  ///Função para puxar todos os Romaneios
+  Future<List<Romaneio>> romaneioExiste() async {
+    var teste = <Romaneio>[];
 
     ///Variável para manter a resposta do Banco
     late final Result pedidos;
 
     try {
       pedidos = await conn.execute(
-          'select "ID","DATA_FECHAMENTO" from "Romaneio" where "ID" = $romaneio;');
+          'select "Romaneio"."ID","Romaneio"."DATA_FECHAMENTO", "Romaneio"."DATA_ROMANEIO", "Usuarios"."NOME", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\'), count("Bipagem"."ID") from "Romaneio" left join "Palete" on "Palete"."ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "Palete"."ID" = "Bipagem"."PALETE" left join "Usuarios" on "Usuarios"."ID" = "Romaneio"."ID_USUR" group by "Romaneio"."ID", "Romaneio"."DATA_FECHAMENTO", "Romaneio"."DATA_ROMANEIO", "Usuarios"."NOME", "Usuarios"."NOME";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
     for (var element in pedidos) {
-      teste = (element[0] ?? 0) as int;
-      teste2 = element[1];
+      teste.add(Romaneio(element[0] as int?, element[5] as int?, (element[1] as DateTime?)?.toLocal(), (element[2] as DateTime?)?.toLocal(), element[3] as String?, element[4] as String?));
     }
-    if (a.mounted) {
-      if (teste == 0) {
-        await showCupertinoModalPopup(
-          context: a,
-          barrierDismissible: false,
-          builder: (context) {
-            return CupertinoAlertDialog(
-              title: const Text('Romaneio não encontrado'),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                    isDefaultAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Voltar'))
-              ],
-            );
-          },
-        );
-        return;
-      }
-      if (teste2 != null) {
-        await showCupertinoModalPopup(
-            barrierDismissible: false,
-            builder: (context) {
-              return CupertinoAlertDialog(
-                title: const Text(
-                  'Romaneio finalizado\n',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                content: const Text(
-                    'Escolha outro Romaneio ou converse com os Desenvolvedores'),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                      isDefaultAction: true,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Voltar'))
-                ],
-              );
-            },
-            context: a);
-        return;
-      }
-      Navigator.pop(a);
-      await Navigator.push(
-          a,
-          MaterialPageRoute(
-              builder: (context) => ListaRomaneioWidget(romaneio, usur, bd)));
-    }
+    return teste;
   }
 
   ///Função para buscar o último Romaneio do Banco
@@ -416,7 +361,7 @@ class Banco {
     }
     for (var element in pedidos) {
       teste.add(Romaneio(element[0] as int?, element[1] as int?,
-          DateTime.parse('${element[2]}').toLocal()));
+          DateTime.parse('${element[2]}').toLocal() as DateTime?,null, null, null));
     }
 
     return teste;
@@ -686,7 +631,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select * from "Bipagem" where "PALETE" = $palete order by "ID";');
+          'select * from "Bipagem" where "PALETE" = $palete order by "ID" desc;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -900,14 +845,14 @@ class Banco {
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => EscolhaBipagemWidget(usur!, bd),
+                builder: (context) => EscolhaBipagemWidget(usur!, bd: bd),
               ));
         } else {
           Navigator.pop(a);
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => EscolhaRomaneioWidget(usur!, bd),
+                builder: (context) => EscolhaRomaneioWidget(usur!, bd: bd),
               ));
         }
       }
@@ -972,12 +917,12 @@ class Banco {
 
   ///Busca pedidos não bipados que foram faturados
   Future<List<Pedido>> faturadosNBipados(
-      DateTime dt_ini, DateTime dt_fim) async {
+      DateTime dtIni, DateTime dtFim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dt_ini}\' and \'${dt_fim}\';');
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'${dtIni}\' and \'${dtFim}\';');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1007,7 +952,7 @@ class Banco {
             element[2] as int,
             element[1] != ''
                 ? DateTime.parse('${element[1]}').toLocal()
-                : null));
+                : null, null , null, null));
       }
     }
 
