@@ -150,7 +150,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   0, 4, 0, 0),
                               child: Text(
-                                'Criar novo Palete para bipagem',
+                                'Criar novo Palete para Conferência',
                                 textAlign: TextAlign.start,
                                 style: FlutterFlowTheme.of(context)
                                     .labelLarge

@@ -1171,7 +1171,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                               CupertinoDialogAction(
                                   isDefaultAction: true,
                                   onPressed: () {
-                                    Navigator.pop(context2, '/Progress');
+                                    Navigator.pop(context2, '/Home');
                                   },
                                   child: const Text(
                                     'Voltar',

@@ -249,247 +249,158 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            child: Stack(
-                                              children: [
-                                                Align(
-                                                  alignment:
-                                                      const AlignmentDirectional(
-                                                          -1, 0),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Align(
-                                                        alignment:
-                                                            const AlignmentDirectional(
-                                                                -1, -1),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                  10, 20, 0, 0),
-                                                          child: Text(
-                                                            'Nº Palete :',
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .headlineMedium
+                                            child: Align(
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1, 0),
+                                              child: Column(
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                        const AlignmentDirectional(
+                                                            -1, -1),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              10, 20, 0, 0),
+                                                      child: Text(
+                                                        'Nº Palete :',
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .headlineMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'Outfit',
+                                                              fontSize: 20,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            25, 8, 0, 0),
+                                                    child: TextField(
+                                                      textAlignVertical:
+                                                          TextAlignVertical
+                                                              .center,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
                                                                 .override(
                                                                   fontFamily:
-                                                                      'Outfit',
-                                                                  fontSize: 20,
+                                                                      'Readex Pro',
+                                                                  color: const Color(
+                                                                      0xFF005200),
+                                                                  fontSize:
+                                                                      30,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
                                                                 ),
+                                                        hintText: palete
+                                                                .isNotEmpty
+                                                            ? '${palete[0].pallet}'
+                                                            : 'Palete desconhecido',
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: corBorda,
+                                                            width: 2,
                                                           ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: corDica,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12),
+                                                        ),
+                                                        errorBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12),
+                                                        ),
+                                                        focusedErrorBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                25, 8, 0, 0),
-                                                        child: TextField(
-                                                          textAlignVertical:
-                                                              TextAlignVertical
-                                                                  .center,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: const Color(
-                                                                          0xFF005200),
-                                                                      fontSize:
-                                                                          30,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                    ),
-                                                            hintText: palete
-                                                                    .isNotEmpty
-                                                                ? '${palete[0].pallet}'
-                                                                : 'Palete desconhecido',
-                                                            enabledBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: corBorda,
-                                                                width: 2,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: corDica,
-                                                                width: 2,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            errorBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .error,
-                                                                width: 2,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .error,
-                                                                width: 2,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
+                                                      onSubmitted:
+                                                          (value) async {
+                                                        if (await bd.connected(context) == 1) {
+                                                          cont = int.parse(
+                                                              value);
+                                                          getPed = bd
+                                                              .selectPallet(
+                                                                  cont);
+                                                          getPalete =
+                                                              bd.paleteAll(
+                                                                  cont,
+                                                                  context);
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      controller: _model
+                                                          .textController,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .headlineMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                'Outfit',
+                                                            fontSize: 24,
                                                           ),
-                                                          onSubmitted:
-                                                              (value) async {
-                                                            if (await bd.connected(context) == 1) {
-                                                              cont = int.parse(
-                                                                  value);
-                                                              getPed = bd
-                                                                  .selectPallet(
-                                                                      cont);
-                                                              getPalete =
-                                                                  bd.paleteAll(
-                                                                      cont,
-                                                                      context);
-                                                              setState(() {});
-                                                            }
-                                                          },
-                                                          controller: _model
-                                                              .textController,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .headlineMedium
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                fontSize: 24,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
-                                                inicial == false
-                                                    ? palete.isNotEmpty
-                                                        ? Positioned(
-                                                            right: 5,
-                                                            top: 20,
-                                                            child: SizedBox(
-                                                              width: 180,
-                                                              height: 35,
-                                                              child:
-                                                                  FloatingActionButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  await showCupertinoModalPopup(
-                                                                    context:
-                                                                        context,
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    builder:
-                                                                        (context) {
-                                                                      return CupertinoAlertDialog(
-                                                                        title: const Text(
-                                                                            'Reimprimir etiqueta?'),
-                                                                        actions: <CupertinoDialogAction>[
-                                                                          CupertinoDialogAction(
-                                                                              isDefaultAction: true,
-                                                                              isDestructiveAction: true,
-                                                                              onPressed: () async {
-                                                                                pdf.addPage(pw.Page(
-                                                                                  pageFormat: PdfPageFormat.a4,
-                                                                                  build: (context2) {
-                                                                                    return pw.BarcodeWidget(
-                                                                                        data: _model.textController?.text ?? '0',
-                                                                                        barcode: Barcode.code128(),
-                                                                                        width: 300,
-                                                                                        height: 200,
-                                                                                        color: PdfColors.black,
-                                                                                        drawText: true,
-                                                                                        textStyle: const pw.TextStyle(
-                                                                                          fontSize: 20,
-                                                                                          letterSpacing: 0,
-                                                                                        ));
-                                                                                  },
-                                                                                ));
-                                                                                await Printing.layoutPdf(onLayout: (format) => pdf.save());
-                                                                              },
-                                                                              child: const Text('Continuar')),
-                                                                          CupertinoDialogAction(
-                                                                              isDefaultAction: true,
-                                                                              onPressed: () {
-                                                                                setState(() {
-                                                                                  Navigator.pop(context);
-                                                                                });
-                                                                              },
-                                                                              child: const Text('Voltar'))
-                                                                        ],
-                                                                      );
-                                                                    },
-                                                                  );
-                                                                },
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .orange
-                                                                        .shade400,
-                                                                elevation: 8,
-                                                                child:
-                                                                    const Text(
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  'Reimprimir',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w900,
-                                                                    fontSize:
-                                                                        20,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ))
-                                                        : Container()
-                                                    : Container(),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           Expanded(

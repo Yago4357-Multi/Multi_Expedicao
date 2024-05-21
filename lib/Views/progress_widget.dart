@@ -429,7 +429,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Continuar Bipagem',
+                                  'Continuar Conferência',
                                   style:
                                       FlutterFlowTheme.of(context).titleLarge,
                                 ),
@@ -517,7 +517,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
                                             padding: const EdgeInsetsDirectional
                                                 .fromSTEB(0, 4, 0, 0),
                                             child: Text(
-                                              'Lista de Erros de Bipagem',
+                                              'Lista de Erros da Conferência',
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .labelMedium,

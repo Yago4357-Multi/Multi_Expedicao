@@ -39,7 +39,6 @@ class ExcelClass {
           pickCli();
           pickCid();
           pickPed();
-          print('aaaaaaaaaaaaaa');
         }else{
           conn = await Connection.open(
               Endpoint(

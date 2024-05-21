@@ -2,7 +2,7 @@
 class Paletes{
 
   ///Variáveis do Palete não finalizado
-  int? pallet, volumetria;
+  int? pallet, volumetria, romaneio;
   ///Variáveis de Data do Palete não finalizado
   DateTime? dtInclusao;
 
@@ -20,5 +20,5 @@ class Paletes{
 
   ///Construtor para criar um objeto Palete
   Paletes(this.pallet, this.UsurInclusao, this.dtInclusao, this.volumetria,{this.UsurFechamento,
-    this.dtFechamento, this.UsurCarregamento, this.dtCarregamento});
+    this.dtFechamento, this.UsurCarregamento, this.dtCarregamento, this.romaneio});
 }

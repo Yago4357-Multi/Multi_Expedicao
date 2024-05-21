@@ -15,7 +15,7 @@ import '../Models/usur.dart';
 import '../Views/conferencia_widget.dart';
 import '../Views/escolha_conferencia_widget.dart';
 import '../Views/escolha_romaneio_widget.dart';
-import '../Views/romaneio_widget.dart';
+import '../Views/home_widget.dart';
 
 ///Classe para manter funções do Banco
 class Banco {
@@ -527,7 +527,7 @@ class Banco {
     late Result volumeResponse;
 
     try {
-      pedidos = await conn.execute('select * from "Bipagem";');
+      pedidos = await conn.execute('Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -631,7 +631,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select * from "Bipagem" where "PALETE" = $palete order by "ID" desc;');
+          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PALETE" = $palete order by "ID" desc;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -672,7 +672,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -723,7 +723,7 @@ class Banco {
     for (var element in pedidos) {
       try {
         pedidosResponse = await conn.execute(
-            'select * from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
+            'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
         for (var element2 in pedidosResponse) {
           await conn.execute(
               "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
@@ -743,7 +743,7 @@ class Banco {
 
     try {
       pedidos2 = await conn.execute(
-          'select * from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -827,7 +827,7 @@ class Banco {
     late final Result pedidos;
     try {
       pedidos = await conn.execute(
-          "select \"ID\", \"SETOR\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
+          "select \"ID\", \"SETOR\", \"NOME\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -835,26 +835,17 @@ class Banco {
     }
     for (var element in pedidos) {
       if (element[0] != null) {
-        usur = Usuario(element[0] as int, element[1] as String);
+        usur = Usuario(element[0] as int, element[1] as String, element[2] as String);
       }
     }
     if (usur?.acess != null) {
       if (a.mounted) {
-        if (Platform.isAndroid) {
           Navigator.pop(a);
           await Navigator.push(
               a,
               MaterialPageRoute(
-                builder: (context) => EscolhaBipagemWidget(usur!, bd: bd),
+                builder: (context) => HomeWidget(usur!, bd: bd),
               ));
-        } else {
-          Navigator.pop(a);
-          await Navigator.push(
-              a,
-              MaterialPageRoute(
-                builder: (context) => EscolhaRomaneioWidget(usur!, bd: bd),
-              ));
-        }
       }
     } else {
       if (a.mounted) {
@@ -937,6 +928,28 @@ class Banco {
 
     return teste;
   }
+
+
+  Future<List<Paletes>> paletesFull() async{
+    var teste = <Paletes>[];
+    late Result volumeResponse;
+
+    volumeResponse = await conn.execute(
+        'select "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO", count("Bipagem"."ID") from "Palete" left join "Usuarios" Cri on Cri."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" left join "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" left join "Bipagem" on "PALETE" = "Palete"."ID" group by "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO"');
+    for (var element in volumeResponse) {
+        teste.add(Paletes(element[0] as int?, element[2] as String?,
+            (element[3] as DateTime).toLocal(), element[8] as int?,
+            romaneio: element[1] as int?,
+            UsurFechamento: element[4] as String?,
+            dtFechamento: element[5] != null ? (
+                element[5] as DateTime).toLocal() : null,
+            UsurCarregamento: element[6] as String?,
+            dtCarregamento: element[7] != null ? (
+                element[7] as DateTime).toLocal() : null));
+    }
+    print(teste);
+    return teste;
+}
 
   Future<List<Romaneio>> romaneiosFinalizados(
       DateTime dtIni, DateTime dtFim) async {
