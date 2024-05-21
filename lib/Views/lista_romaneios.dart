@@ -70,12 +70,12 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
   }
 
   void rodarBanco() async {
-      romaneioResposta = bd.romaneiosFinalizados(dtIni, dtFim);
-      var teste = await romaneioResposta;
-      for (var i in teste) {
-        romaneiosSelecionadoint.add(i.romaneio!);
-      }
-      pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
+    romaneioResposta = bd.romaneiosFinalizados(dtIni, dtFim);
+    var teste = await romaneioResposta;
+    for (var i in teste) {
+      romaneiosSelecionadoint.add(i.romaneio!);
+    }
+    pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
   }
 
   @override
@@ -579,7 +579,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                               padding:
                                                                   const EdgeInsetsDirectional
                                                                       .all(10),
-                                                              height: 100,
+                                                              height: 130,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 borderRadius:
@@ -603,7 +603,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                             .max,
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
-                                                                            .spaceBetween,
+                                                                            .spaceEvenly,
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -636,6 +636,35 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                         ),
                                                                       ),
                                                                       RichText(
+                                                                        textAlign: TextAlign.start,
+                                                                        overflow: TextOverflow.fade,
+                                                                        softWrap: true,
+                                                                        text: TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Nota : ',
+                                                                              style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 10,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: '${pedidosRomaneio[index].nota}',
+                                                                              style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 12,
+                                                                              ),
+                                                                            )
+                                                                          ],
+                                                                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                            fontFamily: 'Readex Pro',
+                                                                            fontWeight: FontWeight.normal,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      RichText(
                                                                         textAlign:
                                                                             TextAlign.end,
                                                                         text:
@@ -662,83 +691,194 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                               ),
                                                                         ),
                                                                       ),
+                                                                      RichText(
+                                                                        textAlign:
+                                                                            TextAlign.end,
+                                                                        text:
+                                                                            TextSpan(
+                                                                          children: [
+                                                                            const TextSpan(
+                                                                              text: 'Palete : ',
+                                                                              style: TextStyle(fontSize: 10),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: pedidosRomaneio[index].palete,
+                                                                              style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                    fontSize: 14,
+                                                                                  ),
+                                                                            )
+                                                                          ],
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyLarge
+                                                                              .override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
+                                                                        ),
+                                                                      ),
                                                                     ],
                                                                   ),
                                                                   Flexible(
+                                                                    flex: 2,
                                                                     child:
-                                                                        SizedBox(
-                                                                      width:
-                                                                          400,
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              20),
                                                                       child:
-                                                                          Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: [
-                                                                          RichText(
-                                                                            textAlign:
-                                                                                TextAlign.start,
-                                                                            overflow:
-                                                                                TextOverflow.fade,
-                                                                            softWrap:
-                                                                                true,
-                                                                            text:
-                                                                                TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: 'Cliente \n ',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 10,
-                                                                                      ),
-                                                                                ),
-                                                                                TextSpan(
-                                                                                  text: '${pedidosRomaneio[index].cod_cli} - ${pedidosRomaneio[index].cliente}',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 12,
-                                                                                      ),
-                                                                                )
-                                                                              ],
-                                                                              style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                    fontFamily: 'Readex Pro',
-                                                                                    fontWeight: FontWeight.normal,
+                                                                          SizedBox(
+                                                                        width:
+                                                                            400,
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          children: [
+                                                                            RichText(
+                                                                              textAlign: TextAlign.start,
+                                                                              overflow: TextOverflow.fade,
+                                                                              softWrap: true,
+                                                                              text: TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Cliente \n ',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 10,
+                                                                                        ),
                                                                                   ),
+                                                                                  TextSpan(
+                                                                                    text: '${pedidosRomaneio[index].cod_cli} - ${pedidosRomaneio[index].cliente}',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 12,
+                                                                                        ),
+                                                                                  )
+                                                                                ],
+                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                    ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                          RichText(
-                                                                            text:
-                                                                                TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: 'Cidade \n ',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 10,
-                                                                                      ),
-                                                                                ),
-                                                                                TextSpan(
-                                                                                  text: pedidosRomaneio[index].cidade,
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 12,
-                                                                                      ),
-                                                                                )
-                                                                              ],
-                                                                              style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                    fontFamily: 'Readex Pro',
-                                                                                    fontWeight: FontWeight.normal,
+                                                                            RichText(
+                                                                              text: TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Cidade \n ',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 10,
+                                                                                        ),
                                                                                   ),
+                                                                                  TextSpan(
+                                                                                    text: pedidosRomaneio[index].cidade,
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 12,
+                                                                                        ),
+                                                                                  )
+                                                                                ],
+                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                    ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ],
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Flexible(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              20),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        width:
+                                                                            400,
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          children: [
+                                                                            RichText(
+                                                                              textAlign: TextAlign.start,
+                                                                              overflow: TextOverflow.fade,
+                                                                              softWrap: true,
+                                                                              text: TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Dt. Pedido \n ',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 10,
+                                                                                        ),
+                                                                                  ),
+                                                                                  TextSpan(
+                                                                                    text: pedidosRomaneio[index].dt_pedido != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dt_pedido!) : '',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 12,
+                                                                                        ),
+                                                                                  )
+                                                                                ],
+                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                    ),
+                                                                              ),
+                                                                            ),
+                                                                            RichText(
+                                                                              text: TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Dt. Faturamento \n ',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 10,
+                                                                                        ),
+                                                                                  ),
+                                                                                  TextSpan(
+                                                                                    text: pedidosRomaneio[index].dt_fat != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dt_fat!) : '',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 12,
+                                                                                        ),
+                                                                                  )
+                                                                                ],
+                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                    ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),

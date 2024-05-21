@@ -887,19 +887,30 @@ class Banco {
     var teste = <Pedido>[];
     late Result volumeResponse;
 
-    volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods.join(',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO";');
+    try {
+      volumeResponse = await conn.execute(
+          'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods
+              .join(
+              ',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+    } catch(e){
+      print(e);
+    }
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
-            element[0]! as int, '0', 0, element[1]! as int, 'Errado',
+            element[0]! as int,
+            element[10] as String,
+            0,
+            element[1]! as int, 'Errado',
             cod_cli: element[2]! as int,
             cliente: element[3]!.toString(),
             valor: element[4]! as double,
             nota: element[5] as int,
             cidade: element[6].toString(),
             romaneio: element[7] as int?,
-            dt_fat: element[8] as DateTime?));
+            dt_fat: element[8] as DateTime?,
+            dt_pedido: element[9] as DateTime?,));
+
       }
     }
 
