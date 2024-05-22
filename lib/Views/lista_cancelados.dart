@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import '../Components/Model/lista_faturados.dart';
+import '../Components/Model/lista_cancelados.dart';
 import '../Controls/banco.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
@@ -10,26 +10,26 @@ import '../Models/usur.dart';
 import '/Components/Widget/drawer_widget.dart';
 
 ///Página da listagem de Romaneio
-class ListaFaturadosWidget extends StatefulWidget {
+class ListaCanceladosWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
   final Banco bd;
 
   ///Construtor da página
-  const ListaFaturadosWidget(this.usur, {super.key, required this.bd});
+  const ListaCanceladosWidget(this.usur, {super.key, required this.bd});
 
   @override
-  State<ListaFaturadosWidget> createState() => _ListaFaturadosWidget(usur, bd);
+  State<ListaCanceladosWidget> createState() => _ListaCanceladosWidget(usur, bd);
 }
 
-class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
+class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
   final Usuario usur;
   final Banco bd;
 
   DateRangePickerController datas = DateRangePickerController();
 
-  _ListaFaturadosWidget(this.usur, this.bd);
+  _ListaCanceladosWidget(this.usur, this.bd);
 
   ///Variáveis para mostrar erro no TextField
   Color corDica = Colors.green.shade400;
@@ -42,7 +42,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   late PickerDateRange datasRange;
 
   late StateSetter internalSetter;
-  late ListaFaturadosModel _model;
+  late ListaCanceladosModel _model;
 
   late List<Paletes> palete = [];
   late List<int> paleteSelecionadoint = [];
@@ -58,14 +58,14 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   void initState() {
     datasRange = PickerDateRange(dt_ini, dt_fim);
     super.initState();
-    _model = createModel(context, ListaFaturadosModel.new);
+    _model = createModel(context, ListaCanceladosModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
     rodarBanco();
   }
 
   void rodarBanco() async {
-      pedidoResposta = bd.faturadosNBipados(dt_ini, dt_fim);
+      pedidoResposta = bd.canceladosBipados(dt_ini, dt_fim);
   }
 
   @override
@@ -616,7 +616,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                               .fromSTEB(
                                                               8, 4, 8, 4),
                                                       child: Text(
-                                                        '${pedidos[index].vol ?? ''}',
+                                                        '${pedidos[index].vol}',
                                                         style: FlutterFlowTheme
                                                                 .of(context)
                                                             .bodySmall

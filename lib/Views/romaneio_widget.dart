@@ -2387,7 +2387,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                               ))
                                               Expanded(
                                                 child: Text(
-                                                  '${pedidos[index].cod_cli}',
+                                                  '${pedidos[index].codCli}',
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium

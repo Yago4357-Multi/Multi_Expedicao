@@ -756,7 +756,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   TextSpan(
-                                                                                    text: '${pedidosRomaneio[index].cod_cli} - ${pedidosRomaneio[index].cliente}',
+                                                                                    text: '${pedidosRomaneio[index].codCli} - ${pedidosRomaneio[index].cliente}',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                           fontFamily: 'Readex Pro',
                                                                                           letterSpacing: 0,
@@ -837,7 +837,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   TextSpan(
-                                                                                    text: pedidosRomaneio[index].dt_pedido != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dt_pedido!) : '',
+                                                                                    text: pedidosRomaneio[index].dtPedido != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dtPedido!) : '',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                           fontFamily: 'Readex Pro',
                                                                                           letterSpacing: 0,
@@ -863,7 +863,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                         ),
                                                                                   ),
                                                                                   TextSpan(
-                                                                                    text: pedidosRomaneio[index].dt_fat != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dt_fat!) : '',
+                                                                                    text: pedidosRomaneio[index].dtFat != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dtFat!) : '',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                           fontFamily: 'Readex Pro',
                                                                                           letterSpacing: 0,

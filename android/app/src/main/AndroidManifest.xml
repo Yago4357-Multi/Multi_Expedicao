@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="romaneio_teste"
+        android:label="Multi Expedicao"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

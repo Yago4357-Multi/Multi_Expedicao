@@ -72,16 +72,16 @@ class ExcelClass {
         element.ped == i[0]).toList();
 
         if (teste.isNotEmpty) {
-          teste[0].cod_venda = (i[1] != '' && i[1] != null ? i[1] : 0);
-          teste[0].cod_cli = (i[2] != '' && i[2] != null ? i[2] : '');
+          teste[0].codVenda = (i[1] != '' && i[1] != null ? i[1] : 0);
+          teste[0].codCli = (i[2] != '' && i[2] != null ? i[2] : '');
           teste[0].situacao = (i[3] != '' && i[3] != null ? i[3] : '').toString();
-          teste[0].dt_pedido =
+          teste[0].dtPedido =
           i[4] != '' && i[4] != null ? DateFormat('dd/MM/yyyy').parse(i[4]) : null;
-          teste[0].dt_cancel_ped =
+          teste[0].dtCancelPed =
           i[5] != '' && i[5] != null ? DateFormat('dd/MM/yyyy').parse(i[5]) : null;
-          teste[0].dt_fat =
+          teste[0].dtFat =
           i[6] != '' && i[6] != null ? DateFormat('dd/MM/yyyy').parse(i[6]) : null;
-          teste[0].dt_cancel_nf =
+          teste[0].dtCancelNf =
           i[7] != '' && i[7] != null ? DateFormat('dd/MM/yyyy').parse(i[7]) : null;
           teste[0].nota = (i[8]) != '' && (i[8]) != null ? int.parse(i[8].toString()) : null;
           teste[0].valor = (i[10] ?? i[9]) != '' && (i[10] ?? i[9]) != null? double.parse((i[10] ?? i[9])) : null;
@@ -90,15 +90,15 @@ class ExcelClass {
 
         } else {
           teste.add(Pedido(
-            (i[0]), '0', 0, 0, 'Errado', cod_venda: (i[1] != null && i[1] != '' ? i[1] : null),
-            cod_cli: (i[2] != null && i[2] != '' ? i[2] : null),
+            (i[0]), '0', 0, 0, 'Errado', codVenda: (i[1] != null && i[1] != '' ? i[1] : null),
+            codCli: (i[2] != null && i[2] != '' ? i[2] : null),
             situacao: (i[3] != null && i[3] != '' ? i[3] : null).toString(),
-            dt_pedido: i[4] != '' && i[4] != null ? DateFormat('dd/MM/yyyy').parse(i[4]) : null,
-            dt_cancel_ped: i[5] != '' && i[5] != null
+            dtPedido: i[4] != '' && i[4] != null ? DateFormat('dd/MM/yyyy').parse(i[4]) : null,
+            dtCancelPed: i[5] != '' && i[5] != null
               ? DateFormat('dd/MM/yyyy').parse(i[5])
                 : null,
-            dt_fat: i[6] != '' && i[6] != null ? DateFormat('dd/MM/yyyy').parse(i[6]) : null,
-            dt_cancel_nf: i[7] != '' && i[7] != null
+            dtFat: i[6] != '' && i[6] != null ? DateFormat('dd/MM/yyyy').parse(i[6]) : null,
+            dtCancelNf: i[7] != '' && i[7] != null
               ? DateFormat('dd/MM/yyyy').parse(i[7])
                 : null,
             valor: (i[10] ?? i[9]) != null && (i[10] ?? i[9]) != '' ? double.parse((i[10] ?? i[9])) : null,
@@ -153,12 +153,12 @@ class ExcelClass {
   }
 
   Future<void> updatePedido(Pedido pedidos) async {
-    await conn.execute('update "Pedidos" set "COND_VENDA" = ${pedidos.cod_venda}, "ID_CLI" = ${pedidos.cod_cli} , "STATUS" = \'${pedidos.situacao}\', "DATA_PEDIDO" = ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_PED" = ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_FATURAMENTO" = ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_NF" = ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "NF" = ${pedidos.nota} , "VLTOTAL" = ${pedidos.valor}, "VOLUME_NF" = ${pedidos.volfat} where "NUMPED" = ${pedidos.ped};');
+    await conn.execute('update "Pedidos" set "COND_VENDA" = ${pedidos.codVenda}, "ID_CLI" = ${pedidos.codCli} , "STATUS" = \'${pedidos.situacao}\', "DATA_PEDIDO" = ${pedidos.dtPedido != null ? 'to_timestamp(\'${pedidos.dtPedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_PED" = ${pedidos.dtCancelPed != null ? 'to_timestamp(\'${pedidos.dtCancelPed}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_FATURAMENTO" = ${pedidos.dtFat != null ? 'to_timestamp(\'${pedidos.dtFat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "DATA_CANC_NF" = ${pedidos.dtCancelNf != null ? 'to_timestamp(\'${pedidos.dtCancelNf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, "NF" = ${pedidos.nota} , "VLTOTAL" = ${pedidos.valor}, "VOLUME_NF" = ${pedidos.volfat} where "NUMPED" = ${pedidos.ped};');
   }
 
   Future<void> insertPedido(Pedido pedidos) async {
     await conn.execute(
-        'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI","STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "DATA_CANC_PED", "DATA_CANC_NF", "VOLUME_NF") values (${pedidos.ped}, ${pedidos.vol}, ${pedidos.dt_fat != null ? 'to_timestamp(\'${pedidos.dt_fat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.valor}, ${pedidos.cod_cli}, \'${pedidos.situacao}\', ${pedidos.nota}, ${pedidos.cod_venda}, ${pedidos.dt_pedido != null ? 'to_timestamp(\'${pedidos.dt_pedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_ped != null ? 'to_timestamp(\'${pedidos.dt_cancel_ped}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dt_cancel_nf != null ? 'to_timestamp(\'${pedidos.dt_cancel_nf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.volfat}) ON CONFLICT DO NOTHING;');
+        'insert into "Pedidos"("NUMPED","VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI","STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "DATA_CANC_PED", "DATA_CANC_NF", "VOLUME_NF") values (${pedidos.ped}, ${pedidos.vol}, ${pedidos.dtFat != null ? 'to_timestamp(\'${pedidos.dtFat}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.valor}, ${pedidos.codCli}, \'${pedidos.situacao}\', ${pedidos.nota}, ${pedidos.codVenda}, ${pedidos.dtPedido != null ? 'to_timestamp(\'${pedidos.dtPedido}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dtCancelPed != null ? 'to_timestamp(\'${pedidos.dtCancelPed}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.dtCancelNf != null ? 'to_timestamp(\'${pedidos.dtCancelNf}\',\'YYYY-MM-DD HH24:MI:SS\')' : null}, ${pedidos.volfat}) ON CONFLICT DO NOTHING;');
   }
 
   void pickCid() async {
