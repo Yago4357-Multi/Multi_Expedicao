@@ -15,6 +15,7 @@ class EscolhaBipagemWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página de escolha de bipagem

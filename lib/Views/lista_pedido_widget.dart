@@ -17,6 +17,7 @@ class ListaPedidoWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Constutor para a página de listagem dos pedidos
@@ -84,88 +85,6 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-            color: Colors.green.shade700,
-            borderRadius: const BorderRadius.all(Radius.circular(20))),
-        child: inicial
-            ? IconButton(
-                color: Colors.white,
-                onPressed: () {
-                  setState(() {
-                    inicial = false;
-                  });
-                },
-                icon: const Icon(Icons.edit_outlined))
-            : IconButton(
-                color: Colors.white,
-                onPressed: () async {
-                  if (pedidosExc.isNotEmpty || pedidosAlt.isNotEmpty) {
-                    await showCupertinoModalPopup(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return CupertinoAlertDialog(
-                          title: const Text('Salvar Alterações?'),
-                          content: const Text(
-                              'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                isDestructiveAction: true,
-                                onPressed: () async {
-                                  if (await bd.connected(context) == 1) {
-                                    if (pedidosAlt.isNotEmpty) {
-                                      bd.updatePedidoBip(pedidosAlt);
-                                      pedidosAlt = [];
-                                      getPed = bd.selectPedido(cont);
-                                      setState(() {
-                                        Navigator.pop(context);
-                                      });
-                                    }
-                                    if (pedidosExc.isNotEmpty) {
-                                      getPed = bd.excluiPedido(
-                                          pedidosExc, usur, cont);
-                                      var pedidosSet = pedidos.toSet();
-                                      var pedidosSetExc = pedidosExc.toSet();
-                                      pedidos = pedidosSet
-                                          .difference(pedidosSetExc)
-                                          .toList();
-                                      if (pedidos.isEmpty) {
-                                        cont = 0;
-                                      }
-                                      pedidosExc = [];
-                                      setState(() {
-                                        Navigator.pop(context);
-                                      });
-                                    }
-                                    inicial = true;
-                                  }
-                                },
-                                child: const Text('Continuar')),
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: const Text('Voltar'))
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    setState(() {
-                      inicial = true;
-                    });
-                  }
-                },
-                icon: const Icon(Icons.done)),
-      ),
       appBar: AppBar(
         backgroundColor: const Color(0xFF007000),
         automaticallyImplyLeading: false,
@@ -183,7 +102,99 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Container(
+              width: 120,
+              height: 50,
+              decoration: BoxDecoration(
+                  color: Colors.green.shade700,
+                  borderRadius: const BorderRadius.all(Radius.circular(20))),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  inicial
+                      ? Text('Editar',  style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),)
+                      : Text('Salvar', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),),
+                      inicial
+                      ? IconButton(
+                      color: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          inicial = false;
+                        });
+                      },
+                      icon: const Icon(Icons.edit_outlined))
+                      : IconButton(
+                      color: Colors.white,
+                      onPressed: () async {
+                        if (pedidosExc.isNotEmpty || pedidosAlt.isNotEmpty) {
+                          await showCupertinoModalPopup(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: const Text('Salvar Alterações?'),
+                                content: const Text(
+                                    'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                                actions: <CupertinoDialogAction>[
+                                  CupertinoDialogAction(
+                                      isDefaultAction: true,
+                                      isDestructiveAction: true,
+                                      onPressed: () async {
+                                        if (await bd.connected(context) == 1) {
+                                          if (pedidosAlt.isNotEmpty) {
+                                            bd.updatePedidoBip(pedidosAlt);
+                                            pedidosAlt = [];
+                                            getPed = bd.selectPedido(cont);
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                          }
+                                          if (pedidosExc.isNotEmpty) {
+                                            getPed = bd.excluiPedido(
+                                                pedidosExc, usur, cont);
+                                            var pedidosSet = pedidos.toSet();
+                                            var pedidosSetExc = pedidosExc.toSet();
+                                            pedidos = pedidosSet
+                                                .difference(pedidosSetExc)
+                                                .toList();
+                                            if (pedidos.isEmpty) {
+                                              cont = 0;
+                                            }
+                                            pedidosExc = [];
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                          }
+                                          inicial = true;
+                                        }
+                                      },
+                                      child: const Text('Continuar')),
+                                  CupertinoDialogAction(
+                                      isDefaultAction: true,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: const Text('Voltar'))
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          setState(() {
+                            inicial = true;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.done)),
+                    ],
+              ),
+            ),
+          ),
+        ],
         centerTitle: true,
         elevation: 2,
       ),
@@ -333,10 +344,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             20, 0, 0, 0),
                                                   ),
                                                   onSubmitted: (value) async {
-                                                    if (await bd.connected(context) ==
-                                                        null) {
-                                                      getPed =
-                                                          bd.selectPedido(cont);
+                                                    if (await bd.connected(context) == 1) {
                                                       setState(() {
                                                         cont = int.parse(
                                                             value == ''
@@ -344,6 +352,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                 : value);
                                                         _model.textController
                                                             .text = '';
+                                                        getPed =
+                                                            bd.selectPedido(cont);
                                                       });
                                                     }
                                                   },

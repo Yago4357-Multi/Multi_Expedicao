@@ -16,13 +16,14 @@ class ProgressWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página inicial
   const ProgressWidget(this.usur, {super.key, required this.bd});
 
   @override
-  State<ProgressWidget> createState() => _ProgressWidgetState(this.usur, this.bd);
+  State<ProgressWidget> createState() => _ProgressWidgetState(usur, bd);
 }
 
 class _ProgressWidgetState extends State<ProgressWidget>

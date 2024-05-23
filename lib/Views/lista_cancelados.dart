@@ -8,12 +8,14 @@ import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '/Components/Widget/drawer_widget.dart';
+import 'lista_pedido_widget.dart';
 
 ///Página da listagem de Romaneio
 class ListaCanceladosWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página
@@ -36,9 +38,6 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
   Color corBorda = Colors.green.shade700;
   String dica = 'Procure um pedido...';
 
-  DateTime dt_ini =
-      (getCurrentTimestamp.subtract(const Duration(days: 30))).startOfDay;
-  DateTime dt_fim = (getCurrentTimestamp).endOfDay;
   late PickerDateRange datasRange;
 
   late StateSetter internalSetter;
@@ -56,7 +55,6 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
 
   @override
   void initState() {
-    datasRange = PickerDateRange(dt_ini, dt_fim);
     super.initState();
     _model = createModel(context, ListaCanceladosModel.new);
     _model.textController ??= TextEditingController();
@@ -65,7 +63,7 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
   }
 
   void rodarBanco() async {
-      pedidoResposta = bd.canceladosBipados(dt_ini, dt_fim);
+      pedidoResposta = bd.canceladosBipados();
   }
 
   @override
@@ -269,64 +267,6 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
                                   ),
                                 ),
                               ),
-                            SizedBox(
-                              width: 300,
-                              height: 300,
-                              child: SfDateRangePicker(
-                                view: DateRangePickerView.year,
-                                navigationDirection:
-                                    DateRangePickerNavigationDirection.vertical,
-                                maxDate: getCurrentTimestamp,
-                                startRangeSelectionColor: Colors.green.shade700,
-                                initialDisplayDate: dt_fim,
-                                onSelectionChanged:
-                                    (dateRangePickerSelectionChangedArgs) async {
-                                  if (await bd.connected(context) == 1) {
-                                    datasRange =
-                                        dateRangePickerSelectionChangedArgs
-                                            .value;
-                                    dt_ini = datasRange.startDate ??
-                                        DateTime.parse('01/01/2000');
-                                    dt_fim = (datasRange.endDate ??
-                                            DateTime(dt_ini.year,
-                                                dt_ini.month + 1, 0))
-                                        .endOfDay;
-                                    datasRange =
-                                        PickerDateRange(dt_ini, dt_fim);
-                                    pedidoResposta =
-                                        bd.faturadosNBipados(dt_ini, dt_fim);
-                                    setState(() {});
-                                  }
-                                },
-                                monthViewSettings:
-                                    const DateRangePickerMonthViewSettings(
-                                  weekendDays: [6, 7],
-                                  weekNumberStyle:
-                                      DateRangePickerWeekNumberStyle(
-                                          backgroundColor: Colors.grey,
-                                          textStyle: TextStyle(
-                                              fontWeight: FontWeight.w200)),
-                                ),
-                                initialSelectedRange:
-                                    PickerDateRange(dt_ini, dt_fim),
-                                headerStyle: const DateRangePickerHeaderStyle(
-                                    backgroundColor: Colors.white,
-                                    textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    )),
-                                allowViewNavigation: false,
-                                showNavigationArrow: true,
-                                monthFormat: 'MM',
-                                rangeSelectionColor: Colors.green.shade100,
-                                backgroundColor: Colors.white,
-                                endRangeSelectionColor: Colors.green.shade700,
-                                selectionColor: Colors.green.shade200,
-                                todayHighlightColor: Colors.green.shade600,
-                                selectionMode:
-                                    DateRangePickerSelectionMode.range,
-                                controller: datas,
-                              ),
-                            )
                           ],
                         ),
                         Container(
@@ -432,7 +372,7 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
                                           const EdgeInsetsDirectional.fromSTEB(
                                               0, 4, 40, 4),
                                       child: Text(
-                                        'Volumes',
+                                        'Volumes Bip.',
                                         textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
@@ -481,158 +421,175 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
                                     corFundoStatus = Colors.red.shade100;
                                     corTextoStatus = Colors.red;
                                   }
-                                  return Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: corStatus,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 12, 16, 12),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                '${pedidos[index].ped}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                '${pedidos[index].nota}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
+                                  return InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ListaPedidoWidget(
+                                                    cont: pedidos[index].ped,
+                                                    usur,
+                                                    bd: bd),
+                                          ));
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: corStatus,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(20)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16, 12, 16, 12),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
                                               Expanded(
                                                 flex: 1,
                                                 child: Text(
-                                                  '${pedidos[index].codCli ?? ''}',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        color: corTextoStatus,
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        letterSpacing: 0,
-                                                      ),
+                                                  '${pedidos[index].ped}',
+                                                  style:
+                                                      FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color: corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
                                                 ),
                                               ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 4,
-                                              child: Text(
-                                                pedidos[index].cliente ?? '',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                '${pedidos[index].cidade}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
                                               Expanded(
                                                 flex: 1,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: corFundoStatus,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                      color: corBordaStatus,
-                                                    ),
+                                                child: Text(
+                                                  '${pedidos[index].nota}',
+                                                  style:
+                                                      FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color: corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                ),
+                                              ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    '${pedidos[index].codCli ?? ''}',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          color: corTextoStatus,
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                   ),
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            0, 0),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              8, 4, 8, 4),
-                                                      child: Text(
-                                                        '${pedidos[index].vol}',
-                                                        style: FlutterFlowTheme
-                                                                .of(context)
-                                                            .bodySmall
-                                                            .override(
-                                                              color:
-                                                                  corTextoStatus,
-                                                              fontFamily:
-                                                                  'Readex Pro',
-                                                              letterSpacing: 0,
-                                                            ),
+                                                ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                              Expanded(
+                                                flex: 4,
+                                                child: Text(
+                                                  pedidos[index].cliente ?? '',
+                                                  style:
+                                                      FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color: corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                ),
+                                              ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  '${pedidos[index].cidade}',
+                                                  style:
+                                                      FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color: corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                ),
+                                              ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: corFundoStatus,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      border: Border.all(
+                                                        color: corBordaStatus,
+                                                      ),
+                                                    ),
+                                                    child: Align(
+                                                      alignment:
+                                                          const AlignmentDirectional(
+                                                              0, 0),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                8, 4, 8, 4),
+                                                        child: Text(
+                                                          '${pedidos[index].caixas}',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodySmall
+                                                              .override(
+                                                                color:
+                                                                    corTextoStatus,
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                letterSpacing: 0,
+                                                              ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

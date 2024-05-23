@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/escolha_romaneio_model.dart';
@@ -18,6 +17,7 @@ class EscolhaRomaneioWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página de escolha do Romaneio
@@ -29,7 +29,7 @@ class EscolhaRomaneioWidget extends StatefulWidget {
 
   @override
   State<EscolhaRomaneioWidget> createState() =>
-      _EscolhaRomaneioWidgetState(this.usur, this.bd);
+      _EscolhaRomaneioWidgetState(usur, bd);
 }
 
 class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
@@ -533,52 +533,69 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                             children: [
                                                                               Expanded(
                                                                                 child: Text(
-                                                                                  'Romaneio',
+                                                                                  (responsiveVisibility(
+                                                                                      context: context,
+                                                                                      phone: false,
+                                                                                      tablet: false,
+                                                                                      desktop: true)) ? 'Romaneio' : 'Rom.',
                                                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                        fontSize: 20,
+                                                                                        fontSize: 15,
                                                                                       ),
                                                                                 ),
                                                                               ),
-                                                                              Expanded(
+                                                              if (responsiveVisibility(
+                                                              context: context,
+                                                              phone: false,
+                                                              tablet: false,
+                                                              desktop: true))(Expanded(
                                                                                 child: Text(
                                                                                   softWrap: true,
                                                                                   'Usuário de Abertura',
                                                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                        fontSize: 20,
+                                                                                        fontSize: 15,
                                                                                       ),
                                                                                 ),
-                                                                              ),
+                                                                              )),
+                                                                              if (responsiveVisibility(
+                                                                                  context: context,
+                                                                                  phone: false,
+                                                                                  tablet: false,
+                                                                                  desktop: true))(
                                                                               Expanded(
                                                                                 child: Text(
                                                                                   'Dt. de Abertura',
                                                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                        fontSize: 20,
+                                                                                        fontSize: 15,
                                                                                       ),
                                                                                 ),
-                                                                              ),
+                                                                              )),
                                                                               Expanded(
                                                                                 child: Text(
                                                                                   'Paletes',
                                                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                        fontSize: 20,
+                                                                                        fontSize: 15,
                                                                                       ),
                                                                                 ),
                                                                               ),
                                                                               Expanded(
                                                                                 child: Text(
-                                                                                  'Volumetria',
+                                                                                (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) ? 'Volumetria' : 'Vol.',
                                                                                   style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
-                                                                                        fontSize: 20,
+                                                                                        fontSize: 15,
                                                                                       ),
                                                                                 ),
                                                                               ),
@@ -671,6 +688,11 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           ),
+                                                                                          if (responsiveVisibility(
+                                                                                              context: context,
+                                                                                              phone: false,
+                                                                                              tablet: false,
+                                                                                              desktop: true))(
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -682,7 +704,12 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ),
+                                                                                          )),
+                                                                                          if (responsiveVisibility(
+                                                                                              context: context,
+                                                                                              phone: false,
+                                                                                              tablet: false,
+                                                                                              desktop: true))(
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -694,7 +721,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ),
+                                                                                          )),
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -783,6 +810,11 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           ),
+                                                                                        if (responsiveVisibility(
+                                                                                    context: context,
+                                                                                    phone: false,
+                                                                                        tablet: false,
+                                                                                        desktop: true))(
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -794,7 +826,12 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ),
+                                                                                          )),
+                                                                                    if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                    tablet: false,
+                                                                                    desktop: true))(
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -806,7 +843,7 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ),
+                                                                                          )),
                                                                                           Expanded(
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -967,7 +1004,10 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                   onPressed: () async {
                     if (await bd.connected(context) == 1) {
                       bd.createRomaneio(usur);
-                      var i = await bd.getRomaneio(context) ?? 0;
+                      var i = 0;
+                      if (context.mounted) {
+                        i = await bd.getRomaneio(context) ?? 0;
+                      }
                       if (context.mounted) {
                         Navigator.pop(context);
                         await Navigator.push(

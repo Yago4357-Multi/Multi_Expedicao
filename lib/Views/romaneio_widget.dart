@@ -1,6 +1,6 @@
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -12,8 +12,8 @@ import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
 import '/Components/Widget/drawer_widget.dart';
+import 'home_widget.dart';
 import 'lista_pedido_widget.dart';
-import 'progress_widget.dart';
 
 ///Página da listagem de Romaneio
 class ListaRomaneioWidget extends StatefulWidget {
@@ -23,6 +23,7 @@ class ListaRomaneioWidget extends StatefulWidget {
   ///Variável para puxar o número do romaneio
   final int romaneio;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página
@@ -105,11 +106,31 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
           ),
         ),
       ),
-      floatingActionButton: (['BI', 'Comercial'].contains(usur.acess))
-          ? SizedBox(
-              width: 300,
-              height: 60,
-              child: FloatingActionButton(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF007000),
+        automaticallyImplyLeading: false,
+        leading: FlutterFlowIconButton(
+          borderColor: Colors.transparent,
+          borderRadius: 30,
+          borderWidth: 1,
+          buttonSize: 60,
+          icon: const Icon(
+            Icons.dehaze_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () async {
+            scaffoldKey.currentState!.openDrawer();
+          },
+        ),
+        actions: [
+          (['BI', 'Comercial'].contains(usur.acess))
+              ? Padding(
+            padding: const EdgeInsets.all(5),
+                child: SizedBox(
+                            width: 300,
+                            height: 60,
+                            child: FloatingActionButton(
                 onPressed: () async {
                   await showCupertinoModalPopup(
                       barrierDismissible: false,
@@ -144,19 +165,19 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       0, 0, 0, 20),
                                                   child: pw.Row(
                                                     mainAxisSize:
-                                                        pw.MainAxisSize.max,
+                                                    pw.MainAxisSize.max,
                                                     mainAxisAlignment: pw
                                                         .MainAxisAlignment
                                                         .spaceEvenly,
                                                     children: [
                                                       pw.Column(
                                                         mainAxisSize:
-                                                            pw.MainAxisSize.max,
+                                                        pw.MainAxisSize.max,
                                                         children: [
                                                           pw.Text(
                                                               'MULTILIST DISTRIBUIDORA DE COSMÉTICOS',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -165,7 +186,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Text(
                                                               '07.759.795/001-06',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -174,7 +195,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Text(
                                                               'Anfilóquio Nunes Pires, 4155',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -183,7 +204,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Text(
                                                               'Bela Vista - (47) 3337-1992',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -191,7 +212,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                               )),
                                                           pw.Text('GASPAR',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -200,7 +221,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Text(
                                                               'DATA ${DateFormat('dd/MM/yyyy').format(DateTime.now())}',
                                                               style:
-                                                                  pw.TextStyle(
+                                                              pw.TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight: pw
                                                                     .FontWeight
@@ -216,13 +237,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           width: 160,
                                                           height: 20,
                                                           decoration:
-                                                              pw.BoxDecoration(
+                                                          pw.BoxDecoration(
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xFFFFFFFF),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xFFFFFFFF),
                                                             border:
-                                                                pw.Border.all(
+                                                            pw.Border.all(
                                                               width: 2,
                                                             ),
                                                           ),
@@ -239,7 +260,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   style: pw
                                                                       .TextStyle(
                                                                     fontSize:
-                                                                        11,
+                                                                    11,
                                                                     fontWeight: pw
                                                                         .FontWeight
                                                                         .bold,
@@ -262,7 +283,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   style: pw
                                                                       .TextStyle(
                                                                     fontSize:
-                                                                        11,
+                                                                    11,
                                                                     fontWeight: pw
                                                                         .FontWeight
                                                                         .bold,
@@ -271,6 +292,18 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           ),
                                                         ),
                                                       ),
+                                                      pw.Padding( padding: const pw.EdgeInsets.fromLTRB(
+                                                          20, 10, 0, 0), child: pw.BarcodeWidget(
+                                                    data: '$palete',
+                                                    barcode: Barcode.code128(),
+                                                    width: 300,
+                                                    height: 200,
+                                                    color: PdfColors.black,
+                                                    drawText: true,
+                                                    textStyle: const pw.TextStyle(
+                                                      fontSize: 20,
+                                                      letterSpacing: 0,
+                                                    ))),
                                                     ],
                                                   ),
                                                 ),
@@ -278,15 +311,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   height: 20,
                                                   decoration: pw.BoxDecoration(
                                                     color:
-                                                        const PdfColor.fromInt(
-                                                            0xFFFFFFFF),
+                                                    const PdfColor.fromInt(
+                                                        0xFFFFFFFF),
                                                     border: pw.Border.all(
                                                       width: 1,
                                                     ),
                                                   ),
                                                   child: pw.Row(
                                                     mainAxisSize:
-                                                        pw.MainAxisSize.max,
+                                                    pw.MainAxisSize.max,
                                                     mainAxisAlignment: pw
                                                         .MainAxisAlignment
                                                         .spaceEvenly,
@@ -459,7 +492,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     return pw.Container(
                                                       height: 20,
                                                       decoration:
-                                                          pw.BoxDecoration(
+                                                      pw.BoxDecoration(
                                                         color: const PdfColor
                                                             .fromInt(
                                                             0xFFFFFFFF),
@@ -469,7 +502,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       ),
                                                       child: pw.Row(
                                                         mainAxisSize:
-                                                            pw.MainAxisSize.max,
+                                                        pw.MainAxisSize.max,
                                                         mainAxisAlignment: pw
                                                             .MainAxisAlignment
                                                             .start,
@@ -493,15 +526,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 4,
                                                             child: pw.Text(
                                                                 pedidos[index]
-                                                                        .cnpj ??
+                                                                    .cnpj ??
                                                                     '',
                                                                 textAlign: pw
                                                                     .TextAlign
@@ -515,9 +548,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 12,
@@ -527,7 +560,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   10, 0, 0, 0),
                                                               child: pw.Text(
                                                                   pedidos[index]
-                                                                          .cliente ??
+                                                                      .cliente ??
                                                                       '',
                                                                   style: const pw
                                                                       .TextStyle(
@@ -539,15 +572,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 4,
                                                             child: pw.Text(
                                                                 pedidos[index]
-                                                                        .cidade ??
+                                                                    .cidade ??
                                                                     '',
                                                                 textAlign: pw
                                                                     .TextAlign
@@ -561,9 +594,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 2,
@@ -581,9 +614,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 2,
@@ -601,9 +634,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 2,
@@ -621,9 +654,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             width: 0,
                                                             thickness: 0.5,
                                                             color:
-                                                                const PdfColor
-                                                                    .fromInt(
-                                                                    0xCC000000),
+                                                            const PdfColor
+                                                                .fromInt(
+                                                                0xCC000000),
                                                           ),
                                                           pw.Expanded(
                                                             flex: 1,
@@ -646,15 +679,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   height: 20,
                                                   decoration: pw.BoxDecoration(
                                                     color:
-                                                        const PdfColor.fromInt(
-                                                            0xFFFFFFFF),
+                                                    const PdfColor.fromInt(
+                                                        0xFFFFFFFF),
                                                     border: pw.Border.all(
                                                       width: 1,
                                                     ),
                                                   ),
                                                   child: pw.Row(
                                                     mainAxisSize:
-                                                        pw.MainAxisSize.max,
+                                                    pw.MainAxisSize.max,
                                                     mainAxisAlignment: pw
                                                         .MainAxisAlignment
                                                         .spaceEvenly,
@@ -709,13 +742,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       0, 10, 0, 0),
                                                   child: pw.Container(
                                                     decoration:
-                                                        const pw.BoxDecoration(
+                                                    const pw.BoxDecoration(
                                                       color: PdfColor.fromInt(
                                                           0xFFFFFFFF),
                                                     ),
                                                     child: pw.Column(
                                                       mainAxisSize:
-                                                          pw.MainAxisSize.min,
+                                                      pw.MainAxisSize.min,
                                                       mainAxisAlignment: pw
                                                           .MainAxisAlignment
                                                           .start,
@@ -746,26 +779,26 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     children: [
                                                                       pw.Container(
                                                                         width:
-                                                                            174,
+                                                                        174,
                                                                         height:
-                                                                            20,
+                                                                        20,
                                                                         decoration:
-                                                                            const pw.BoxDecoration(
+                                                                        const pw.BoxDecoration(
                                                                           color:
-                                                                              PdfColor.fromInt(0xFFFFFFFF),
+                                                                          PdfColor.fromInt(0xFFFFFFFF),
                                                                         ),
                                                                       ),
                                                                       pw.Container(
                                                                         width:
-                                                                            76,
+                                                                        76,
                                                                         height:
-                                                                            20,
+                                                                        20,
                                                                         decoration:
-                                                                            pw.BoxDecoration(
+                                                                        pw.BoxDecoration(
                                                                           border:
-                                                                              pw.Border.all(
+                                                                          pw.Border.all(
                                                                             width:
-                                                                                1,
+                                                                            1,
                                                                           ),
                                                                         ),
                                                                       ),
@@ -775,19 +808,19 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     width: 250,
                                                                     height: 20,
                                                                     decoration:
-                                                                        pw.BoxDecoration(
+                                                                    pw.BoxDecoration(
                                                                       color: const PdfColor
                                                                           .fromInt(
                                                                           0xFFFFFFFF),
                                                                       border: pw
-                                                                              .Border
+                                                                          .Border
                                                                           .all(
                                                                         width:
-                                                                            1,
+                                                                        1,
                                                                       ),
                                                                     ),
                                                                     child:
-                                                                        pw.Row(
+                                                                    pw.Row(
                                                                       mainAxisSize: pw
                                                                           .MainAxisSize
                                                                           .max,
@@ -797,15 +830,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       children: [
                                                                         pw.Expanded(
                                                                           flex:
-                                                                              7,
+                                                                          7,
                                                                           child:
-                                                                              pw.Container(
+                                                                          pw.Container(
                                                                             decoration:
-                                                                                const pw.BoxDecoration(
+                                                                            const pw.BoxDecoration(
                                                                               color: PdfColor.fromInt(0xFFB0B0B0),
                                                                             ),
                                                                             child:
-                                                                                pw.Align(
+                                                                            pw.Align(
                                                                               alignment: const pw.AlignmentDirectional(0, 0),
                                                                               child: pw.Text('PALETES',
                                                                                   textAlign: pw.TextAlign.center,
@@ -818,16 +851,16 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                         ),
                                                                         pw.VerticalDivider(
                                                                           width:
-                                                                              2,
+                                                                          2,
                                                                           thickness:
-                                                                              1,
+                                                                          1,
                                                                           color: const PdfColor
                                                                               .fromInt(
                                                                               0xCC000000),
                                                                         ),
                                                                         pw.Spacer(
                                                                             flex:
-                                                                                3),
+                                                                            3),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -856,7 +889,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     style: const pw
                                                                         .TextStyle(
                                                                       fontSize:
-                                                                          9,
+                                                                      9,
                                                                     )),
                                                               ),
                                                               pw.Expanded(
@@ -869,7 +902,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       .BoxDecoration(
                                                                       color: PdfColor
                                                                           .fromInt(
-                                                                              0xFFFFFFFF),
+                                                                          0xFFFFFFFF),
                                                                       shape: pw
                                                                           .BoxShape
                                                                           .rectangle,
@@ -877,9 +910,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                           .Border(
                                                                         bottom: pw.BorderSide(
                                                                             width:
-                                                                                1,
+                                                                            1,
                                                                             color:
-                                                                                PdfColors.black),
+                                                                            PdfColors.black),
                                                                       )),
                                                                 ),
                                                               ),
@@ -890,7 +923,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     .BoxDecoration(
                                                                   color: PdfColor
                                                                       .fromInt(
-                                                                          0xFFFFFFFF),
+                                                                      0xFFFFFFFF),
                                                                 ),
                                                               ),
                                                               pw.Expanded(
@@ -903,7 +936,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     style: const pw
                                                                         .TextStyle(
                                                                       fontSize:
-                                                                          9,
+                                                                      9,
                                                                     )),
                                                               ),
                                                               pw.Expanded(
@@ -916,7 +949,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       .BoxDecoration(
                                                                       color: PdfColor
                                                                           .fromInt(
-                                                                              0xFFFFFFFF),
+                                                                          0xFFFFFFFF),
                                                                       shape: pw
                                                                           .BoxShape
                                                                           .rectangle,
@@ -924,9 +957,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                           .Border(
                                                                         bottom: pw.BorderSide(
                                                                             width:
-                                                                                1,
+                                                                            1,
                                                                             color:
-                                                                                PdfColors.black),
+                                                                            PdfColors.black),
                                                                       )),
                                                                 ),
                                                               ),
@@ -952,7 +985,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     style: const pw
                                                                         .TextStyle(
                                                                       fontSize:
-                                                                          9,
+                                                                      9,
                                                                     )),
                                                               ),
                                                               pw.Expanded(
@@ -965,7 +998,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       .BoxDecoration(
                                                                       color: PdfColor
                                                                           .fromInt(
-                                                                              0xFFFFFFFF),
+                                                                          0xFFFFFFFF),
                                                                       shape: pw
                                                                           .BoxShape
                                                                           .rectangle,
@@ -973,9 +1006,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                           .Border(
                                                                         bottom: pw.BorderSide(
                                                                             width:
-                                                                                1,
+                                                                            1,
                                                                             color:
-                                                                                PdfColors.black),
+                                                                            PdfColors.black),
                                                                       )),
                                                                 ),
                                                               ),
@@ -986,7 +1019,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     .BoxDecoration(
                                                                   color: PdfColor
                                                                       .fromInt(
-                                                                          0xFFFFFFFF),
+                                                                      0xFFFFFFFF),
                                                                 ),
                                                               ),
                                                               pw.Expanded(
@@ -999,7 +1032,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     style: const pw
                                                                         .TextStyle(
                                                                       fontSize:
-                                                                          9,
+                                                                      9,
                                                                     )),
                                                               ),
                                                               pw.Expanded(
@@ -1012,7 +1045,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       .BoxDecoration(
                                                                       color: PdfColor
                                                                           .fromInt(
-                                                                              0xFFFFFFFF),
+                                                                          0xFFFFFFFF),
                                                                       shape: pw
                                                                           .BoxShape
                                                                           .rectangle,
@@ -1020,9 +1053,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                           .Border(
                                                                         bottom: pw.BorderSide(
                                                                             width:
-                                                                                1,
+                                                                            1,
                                                                             color:
-                                                                                PdfColors.black),
+                                                                            PdfColors.black),
                                                                       )),
                                                                 ),
                                                               ),
@@ -1048,26 +1081,26 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                     .MainAxisSize
                                                                     .max,
                                                                 mainAxisAlignment:
-                                                                    pw.MainAxisAlignment
-                                                                        .end,
+                                                                pw.MainAxisAlignment
+                                                                    .end,
                                                                 children: [
                                                                   pw.Container(
                                                                     width: 250,
                                                                     height: 20,
                                                                     decoration:
-                                                                        pw.BoxDecoration(
+                                                                    pw.BoxDecoration(
                                                                       color: const PdfColor
                                                                           .fromInt(
                                                                           0xFFFFFFFF),
                                                                       border: pw
-                                                                              .Border
+                                                                          .Border
                                                                           .all(
                                                                         width:
-                                                                            1,
+                                                                        1,
                                                                       ),
                                                                     ),
                                                                     child:
-                                                                        pw.Row(
+                                                                    pw.Row(
                                                                       mainAxisSize: pw
                                                                           .MainAxisSize
                                                                           .max,
@@ -1077,15 +1110,15 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                       children: [
                                                                         pw.Expanded(
                                                                           flex:
-                                                                              7,
+                                                                          7,
                                                                           child:
-                                                                              pw.Container(
+                                                                          pw.Container(
                                                                             decoration:
-                                                                                const pw.BoxDecoration(
+                                                                            const pw.BoxDecoration(
                                                                               color: PdfColor.fromInt(0xFFB0B0B0),
                                                                             ),
                                                                             child:
-                                                                                pw.Align(
+                                                                            pw.Align(
                                                                               alignment: const pw.AlignmentDirectional(0, 0),
                                                                               child: pw.Text(
                                                                                 'HORÁRIO COLETA',
@@ -1096,16 +1129,16 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                         ),
                                                                         pw.VerticalDivider(
                                                                           width:
-                                                                              1,
+                                                                          1,
                                                                           thickness:
-                                                                              1,
+                                                                          1,
                                                                           color: const PdfColor
                                                                               .fromInt(
                                                                               0xCC000000),
                                                                         ),
                                                                         pw.Spacer(
                                                                             flex:
-                                                                                3),
+                                                                            3),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -1129,7 +1162,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ProgressWidget(usur, bd: bd),
+                                                    HomeWidget(usur, bd: bd),
                                               ));
                                         }
                                       }
@@ -1192,27 +1225,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                     fontSize: 20,
                   ),
                 ),
-              ),
-            )
-          : Container(),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF007000),
-        automaticallyImplyLeading: false,
-        leading: FlutterFlowIconButton(
-          borderColor: Colors.transparent,
-          borderRadius: 30,
-          borderWidth: 1,
-          buttonSize: 60,
-          icon: const Icon(
-            Icons.dehaze_rounded,
-            color: Colors.white,
-            size: 30,
-          ),
-          onPressed: () async {
-            scaffoldKey.currentState!.openDrawer();
-          },
-        ),
-        actions: const [],
+                            ),
+                          ),
+              )
+              : Container(),
+        ],
         centerTitle: true,
         elevation: 2,
       ),

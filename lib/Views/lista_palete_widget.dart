@@ -1,10 +1,7 @@
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../Components/Model/lista_palete_model.dart';
 import '../Components/Widget/drawer_widget.dart';
@@ -21,6 +18,7 @@ class ListaPaleteWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Constutor para a página de listagem dos paletes
@@ -28,7 +26,7 @@ class ListaPaleteWidget extends StatefulWidget {
 
   @override
   State<ListaPaleteWidget> createState() =>
-      _ListaPaleteWidgetState(cont, this.usur, bd);
+      _ListaPaleteWidgetState(cont, usur, bd);
 }
 
 class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
@@ -98,94 +96,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-            color: Colors.green.shade700,
-            borderRadius: const BorderRadius.all(Radius.circular(20))),
-        child: inicial
-            ? IconButton(
-                color: Colors.white,
-                onPressed: () async {
-                  if (palete.isNotEmpty) {
-                    setState(() {
-                      inicial = false;
-                    });
-                  } else {
-                    await showCupertinoModalPopup(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return CupertinoAlertDialog(
-                          title: const Text('Selecione um Palete'),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: const Text('Voltar'))
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-                icon: const Icon(Icons.edit_outlined))
-            : IconButton(
-                color: Colors.white,
-                onPressed: () async {
-                  if (pedidosExc.isNotEmpty) {
-                    await showCupertinoModalPopup(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        return CupertinoAlertDialog(
-                          title: const Text('Salvar Alterações?'),
-                          content: const Text(
-                              'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                isDestructiveAction: true,
-                                onPressed: () async {
-                                  if (await bd.connected(context) == 1) {
-                                    if (pedidosExc.isNotEmpty) {
-                                      getPed = bd.excluiPedido(
-                                          pedidosExc, usur, cont);
-                                      pedidosExc = [];
-                                    }
-                                    setState(() {
-                                      inicial = true;
-                                      Navigator.pop(context);
-                                    });
-                                  }
-                                },
-                                child: const Text('Continuar')),
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () {
-                                  setState(() {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: const Text('Voltar'))
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    setState(() {
-                      inicial = true;
-                    });
-                  }
-                },
-                icon: const Icon(Icons.done)),
-      ),
       appBar: AppBar(
         backgroundColor: const Color(0xFF007000),
         automaticallyImplyLeading: false,
@@ -203,7 +113,103 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          Container(
+            width: 100,
+            height: 50,
+            decoration: BoxDecoration(
+                color: Colors.green.shade700,
+                borderRadius: const BorderRadius.all(Radius.circular(20))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                inicial
+                    ? Text('Editar',  style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),)
+                    : Text('Salvar', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),),
+                    inicial
+                    ? IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      if (palete.isNotEmpty) {
+                        setState(() {
+                          inicial = false;
+                        });
+                      } else {
+                        await showCupertinoModalPopup(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Text('Selecione um Palete'),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    child: const Text('Voltar'))
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.edit_outlined))
+                    : IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      if (pedidosExc.isNotEmpty) {
+                        await showCupertinoModalPopup(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Text('Salvar Alterações?'),
+                              content: const Text(
+                                  'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    isDestructiveAction: true,
+                                    onPressed: () async {
+                                      if (await bd.connected(context) == 1) {
+                                        if (pedidosExc.isNotEmpty) {
+                                          getPed = bd.excluiPedido(
+                                              pedidosExc, usur, cont);
+                                          pedidosExc = [];
+                                        }
+                                        setState(() {
+                                          inicial = true;
+                                          Navigator.pop(context);
+                                        });
+                                      }
+                                    },
+                                    child: const Text('Continuar')),
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    child: const Text('Voltar'))
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        setState(() {
+                          inicial = true;
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.done)),
+                  ],
+            ),
+          ),
+        ],
         centerTitle: true,
         elevation: 2,
       ),
@@ -378,10 +384,12 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           getPed = bd
                                                               .selectPallet(
                                                                   cont);
-                                                          getPalete =
-                                                              bd.paleteAll(
-                                                                  cont,
-                                                                  context);
+                                                          if (context.mounted) {
+                                                            getPalete =
+                                                                bd.paleteAll(
+                                                                    cont,
+                                                                    context);
+                                                          }
                                                           setState(() {});
                                                         }
                                                       },

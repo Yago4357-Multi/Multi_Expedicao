@@ -742,45 +742,46 @@ class Banco {
       }
     }
 
-    var teste = <Contagem>[];
-    late final Result pedidos2;
-    late Result volumeResponse;
+      var teste = <Contagem>[];
+      late final Result pedidos2;
+      late Result volumeResponse;
 
-    try {
-      pedidos2 = await conn.execute(
-          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in pedidos2) {
       try {
-        volumeResponse = (await conn.execute(
-            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
-        for (var element2 in volumeResponse) {
-          if (element2[0] != null) {
-            teste.add(Contagem(element[1] as int?, element[5] as int?,
-                element[4] as int?, (int.parse('${element2[0]}')),
-                cliente: '${element2[2]}',
-                cidade: '${element2[3]}',
-                status: switch (element2[4] ?? 'D') {
-                  'F' => 'Faturado',
-                  'C' => 'Cancelado',
-                  'L' => 'Libearado',
-                  'D' => 'Desconhecido',
-                  Object() => throw UnimplementedError(),
-                }));
-          }
-        }
+        pedidos2 = await conn.execute(
+            'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
       } on Exception catch (e) {
         if (kDebugMode) {
           print(e);
         }
       }
-    }
+      for (var element in pedidos2) {
+        try {
+          volumeResponse = (await conn.execute(
+              'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
+          for (var element2 in volumeResponse) {
+            if (element2[0] != null) {
+              teste.add(Contagem(element[1] as int?, element[5] as int?,
+                  element[4] as int?, (int.parse('${element2[0]}')),
+                  cliente: '${element2[2]}',
+                  cidade: '${element2[3]}',
+                  status: switch (element2[4] ?? 'D') {
+                    'F' => 'Faturado',
+                    'C' => 'Cancelado',
+                    'L' => 'Libearado',
+                    'D' => 'Desconhecido',
+                    Object() => throw UnimplementedError(),
+                  }));
+            }
+          }
+        } on Exception catch (e) {
+          if (kDebugMode) {
+            print(e);
+          }
+        }
+      }
 
-    return teste;
+
+      return teste;
   }
 
   ///Função para atualizar o romaneio do Palete
@@ -941,22 +942,24 @@ class Banco {
   }
 
   ///Função para buscar pedidos que já foram Bipados e forma cancelados após isso.
-  Future<List<Pedido>> canceladosBipados(
-      DateTime dtIni, DateTime dtFim) async {
+  Future<List<Pedido>> canceladosBipados() async {
     var teste = <Pedido>[];
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and "STATUS" like \'C\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'$dtIni\' and \'$dtFim\';');
+          'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", count("Bipagem"."ID"), "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and ("DATA_CANC_PED" IS NOT NULL OR "DATA_CANC_NF" IS NOT NULL) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "NF", "Cidades"."CIDADE";');
     for (var element in volumeResponse) {
+      try{
       if (element.isNotEmpty) {
         teste.add(Pedido(
-            element[0]! as int, '0', 0, element[1]! as int, 'Errado',
+            element[0]! as int, '0', element[4] as int, element[1]! as int, 'Errado',
             codCli: element[2]! as int,
             cliente: element[3]!.toString(),
-            valor: element[4]! as double,
             nota: element[5] as int,
             cidade: element[6].toString()));
+      }
+      }catch(e){
+        print(e);
       }
     }
 

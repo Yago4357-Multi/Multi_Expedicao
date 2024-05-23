@@ -21,6 +21,7 @@ class CriarPaleteWidget extends StatefulWidget {
   ///Variável para guardar número do palete
   final int palete;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página de criação de novos Paletes

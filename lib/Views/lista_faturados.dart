@@ -14,6 +14,7 @@ class ListaFaturadosWidget extends StatefulWidget {
   ///Variável para definir permissões do usuário
   final Usuario usur;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página
@@ -36,9 +37,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   Color corBorda = Colors.green.shade700;
   String dica = 'Procure um pedido...';
 
-  DateTime dt_ini =
+  DateTime dtIni =
       (getCurrentTimestamp.subtract(const Duration(days: 30))).startOfDay;
-  DateTime dt_fim = (getCurrentTimestamp).endOfDay;
+  DateTime dtFim = (getCurrentTimestamp).endOfDay;
   late PickerDateRange datasRange;
 
   late StateSetter internalSetter;
@@ -56,7 +57,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
 
   @override
   void initState() {
-    datasRange = PickerDateRange(dt_ini, dt_fim);
+    datasRange = PickerDateRange(dtIni, dtFim);
     super.initState();
     _model = createModel(context, ListaFaturadosModel.new);
     _model.textController ??= TextEditingController();
@@ -65,7 +66,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   }
 
   void rodarBanco() async {
-      pedidoResposta = bd.faturadosNBipados(dt_ini, dt_fim);
+      pedidoResposta = bd.faturadosNBipados(dtIni, dtFim);
   }
 
   @override
@@ -136,11 +137,6 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                           height: 24,
                           decoration: const BoxDecoration(),
                         ),
-                        if (responsiveVisibility(
-                            context: context,
-                            phone: false,
-                            tablet: false,
-                            desktop: true))
                           if (responsiveVisibility(
                             context: context,
                             phone: true,
@@ -278,23 +274,23 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     DateRangePickerNavigationDirection.vertical,
                                 maxDate: getCurrentTimestamp,
                                 startRangeSelectionColor: Colors.green.shade700,
-                                initialDisplayDate: dt_fim,
+                                initialDisplayDate: dtFim,
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) async {
                                   if (await bd.connected(context) == 1) {
                                     datasRange =
                                         dateRangePickerSelectionChangedArgs
                                             .value;
-                                    dt_ini = datasRange.startDate ??
+                                    dtIni = datasRange.startDate ??
                                         DateTime.parse('01/01/2000');
-                                    dt_fim = (datasRange.endDate ??
-                                            DateTime(dt_ini.year,
-                                                dt_ini.month + 1, 0))
+                                    dtFim = (datasRange.endDate ??
+                                            DateTime(dtIni.year,
+                                                dtIni.month + 1, 0))
                                         .endOfDay;
                                     datasRange =
-                                        PickerDateRange(dt_ini, dt_fim);
+                                        PickerDateRange(dtIni, dtFim);
                                     pedidoResposta =
-                                        bd.faturadosNBipados(dt_ini, dt_fim);
+                                        bd.faturadosNBipados(dtIni, dtFim);
                                     setState(() {});
                                   }
                                 },
@@ -308,7 +304,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                               fontWeight: FontWeight.w200)),
                                 ),
                                 initialSelectedRange:
-                                    PickerDateRange(dt_ini, dt_fim),
+                                    PickerDateRange(dtIni, dtFim),
                                 headerStyle: const DateRangePickerHeaderStyle(
                                     backgroundColor: Colors.white,
                                     textStyle: TextStyle(
@@ -616,7 +612,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                               .fromSTEB(
                                                               8, 4, 8, 4),
                                                       child: Text(
-                                                        '${pedidos[index].vol ?? ''}',
+                                                        '${pedidos[index].vol}',
                                                         style: FlutterFlowTheme
                                                                 .of(context)
                                                             .bodySmall

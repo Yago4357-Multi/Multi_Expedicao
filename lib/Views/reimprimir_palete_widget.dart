@@ -23,6 +23,7 @@ class ReimprimirPaleteWidget extends StatefulWidget {
   ///Variável para guardar número do palete
   final int palete;
 
+  ///Variável para manter conexão com o Banco
   final Banco bd;
 
   ///Construtor da página de criação de novos Paletes
@@ -1029,7 +1030,39 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                           height: 50,
                                                           child: IconButton(
                                                             onPressed:
-                                                                () async {},
+                                                                () async {
+                                                                  if (await bd.connected(context) == 1) {
+                                                                    bd.createPalete(usur);
+                                                                    pdf.addPage(pw.Page(
+                                                                      pageFormat: PdfPageFormat.a4,
+                                                                      build: (context2) {
+                                                                        return pw.BarcodeWidget(
+                                                                            data: '$palete',
+                                                                            barcode: Barcode.code128(),
+                                                                            width: 300,
+                                                                            height: 200,
+                                                                            color: PdfColors.black,
+                                                                            drawText: true,
+                                                                            textStyle: const pw.TextStyle(
+                                                                              fontSize: 20,
+                                                                              letterSpacing: 0,
+                                                                            ));
+                                                                      },
+                                                                    ));
+                                                                    await Printing.layoutPdf(
+                                                                        onLayout: (format) => pdf.save());
+                                                                    if (context.mounted) {
+                                                                      Navigator.pop(context);
+                                                                      await Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                ListaRomaneioConfWidget(
+                                                                                    palete: palete, usur, bd: bd),
+                                                                          ));
+                                                                    }
+                                                                  }
+                                                                },
                                                             icon: const Icon(
                                                                 Icons.receipt_long,
                                                                 color: Colors

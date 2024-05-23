@@ -104,7 +104,7 @@ class _LoginWidgetState extends State<LoginWidget>
                       children: [
                         Padding(
                           padding:
-                              const EdgeInsetsDirectional.fromSTEB(0, 44, 0, 0),
+                          const EdgeInsetsDirectional.fromSTEB(0, 44, 0, 0),
                           child: Container(
                             width: double.infinity,
                             constraints: const BoxConstraints(
@@ -129,10 +129,10 @@ class _LoginWidgetState extends State<LoginWidget>
                             width: double.infinity,
                             height:
                             (responsiveVisibility(
-                            context: context,
-                            phone: false,
-                            tablet: false,
-                          )) ? 700 : 400,
+                              context: context,
+                              phone: false,
+                              tablet: false,
+                            )) ? 700 : 400,
                             constraints: const BoxConstraints(
                               maxWidth: 602,
                             ),
@@ -154,14 +154,14 @@ class _LoginWidgetState extends State<LoginWidget>
                                       labelStyle: FlutterFlowTheme.of(context)
                                           .displaySmall
                                           .override(
-                                            fontFamily: 'Outfit',
-                                            letterSpacing: 0,
-                                          ),
+                                        fontFamily: 'Outfit',
+                                        letterSpacing: 0,
+                                      ),
                                       indicatorColor: Colors.green.shade700,
                                       indicatorWeight: 4,
                                       padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 12, 16, 12),
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          0, 12, 16, 12),
                                       isScrollable: true,
                                       unselectedLabelColor: FlutterFlowTheme.of(context).secondaryText,
                                       unselectedLabelStyle:
@@ -182,19 +182,19 @@ class _LoginWidgetState extends State<LoginWidget>
                                       children: [
                                         Align(
                                           alignment:
-                                              const AlignmentDirectional(0, 0),
+                                          const AlignmentDirectional(0, 0),
                                           child: Padding(
                                             padding: const EdgeInsetsDirectional
                                                 .fromSTEB(12, 0, 12, 12),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 40, 0, 16),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 40, 0, 16),
                                                   child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
@@ -215,82 +215,82 @@ class _LoginWidgetState extends State<LoginWidget>
                                                       decoration: InputDecoration(
                                                         labelText: 'Login',
                                                         labelStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  letterSpacing:
-                                                                      0,
-                                                                ),
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .labelMedium
+                                                            .override(
+                                                          fontFamily:
+                                                          'Readex Pro',
+                                                          letterSpacing:
+                                                          0,
+                                                        ),
                                                         enabledBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .alternate,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         focusedBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: Colors
                                                                 .green.shade700,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         errorBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .error,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         focusedErrorBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .error,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         filled: true,
                                                         fillColor: FlutterFlowTheme
-                                                                .of(context)
+                                                            .of(context)
                                                             .secondaryBackground,
                                                         contentPadding:
-                                                            const EdgeInsets.all(
-                                                                24),
+                                                        const EdgeInsets.all(
+                                                            24),
                                                       ),
                                                       style: FlutterFlowTheme.of(
-                                                              context)
+                                                          context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Readex Pro',
-                                                            letterSpacing: 0,
-                                                          ),
+                                                        fontFamily:
+                                                        'Readex Pro',
+                                                        letterSpacing: 0,
+                                                      ),
                                                       keyboardType: TextInputType
                                                           .emailAddress,
                                                       cursorColor:
-                                                          Colors.green.shade700,
+                                                      Colors.green.shade700,
                                                       validator: _model
                                                           .emailAddressTextControllerValidator
                                                           .asValidator(context),
@@ -299,19 +299,20 @@ class _LoginWidgetState extends State<LoginWidget>
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 0, 0, 16),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 0, 0, 16),
                                                   child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       onFieldSubmitted: (value) async {
                                                         if (await bd.connected(context) == 1) {
-                                                          bd.auth(_model
-                                                              .emailAddressTextController
-                                                              .text, _model
-                                                              .passwordTextController
-                                                              .text, context,
-                                                              bd);
+                                                          if (context.mounted){
+                                                            bd.auth(_model
+                                                                .emailAddressTextController
+                                                                .text, _model
+                                                                .passwordTextController
+                                                                .text, context,
+                                                                bd);}
                                                         }
                                                       },
                                                       controller: _model
@@ -327,99 +328,99 @@ class _LoginWidgetState extends State<LoginWidget>
                                                       decoration: InputDecoration(
                                                         labelText: 'Senha',
                                                         labelStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  letterSpacing:
-                                                                      0,
-                                                                ),
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .labelMedium
+                                                            .override(
+                                                          fontFamily:
+                                                          'Readex Pro',
+                                                          letterSpacing:
+                                                          0,
+                                                        ),
                                                         enabledBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .alternate,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         focusedBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: Colors.green.shade700,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         errorBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .error,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         focusedErrorBorder:
-                                                            OutlineInputBorder(
+                                                        OutlineInputBorder(
                                                           borderSide: BorderSide(
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .error,
                                                             width: 2,
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(40),
+                                                          BorderRadius
+                                                              .circular(40),
                                                         ),
                                                         filled: true,
                                                         fillColor: FlutterFlowTheme
-                                                                .of(context)
+                                                            .of(context)
                                                             .secondaryBackground,
                                                         contentPadding:
-                                                            const EdgeInsets.all(
-                                                                24),
+                                                        const EdgeInsets.all(
+                                                            24),
                                                         suffixIcon: InkWell(
                                                           onTap: () => setState(
-                                                            () => _model
-                                                                    .passwordVisibility =
-                                                                !_model
-                                                                    .passwordVisibility,
+                                                                () => _model
+                                                                .passwordVisibility =
+                                                            !_model
+                                                                .passwordVisibility,
                                                           ),
                                                           focusNode: FocusNode(
                                                               skipTraversal:
-                                                                  true),
+                                                              true),
                                                           child: Icon(
                                                             _model.passwordVisibility
                                                                 ? Icons
-                                                                    .visibility_outlined
+                                                                .visibility_outlined
                                                                 : Icons
-                                                                    .visibility_off_outlined,
+                                                                .visibility_off_outlined,
                                                             color: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .secondaryText,
                                                             size: 24,
                                                           ),
                                                         ),
                                                       ),
                                                       style: FlutterFlowTheme.of(
-                                                              context)
+                                                          context)
                                                           .bodyMedium
                                                           .override(
-                                                            fontFamily:
-                                                                'Readex Pro',
-                                                            letterSpacing: 0,
-                                                          ),
+                                                        fontFamily:
+                                                        'Readex Pro',
+                                                        letterSpacing: 0,
+                                                      ),
                                                       cursorColor:
                                                       Colors.green.shade700,
                                                       validator: _model
@@ -430,67 +431,70 @@ class _LoginWidgetState extends State<LoginWidget>
                                                 ),
                                                 Align(
                                                   alignment:
-                                                      const AlignmentDirectional(
-                                                          0, 0),
+                                                  const AlignmentDirectional(
+                                                      0, 0),
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            0, 0, 0, 16),
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        0, 0, 0, 16),
                                                     child: FFButtonWidget(
                                                       onPressed: () async {
-                                                          if (await bd.connected(context) == 1) {
+                                                        if (await bd.connected(context) == 1) {
+                                                          if (context.mounted) {
                                                             bd.auth(_model
                                                                 .emailAddressTextController
                                                                 .text, _model
                                                                 .passwordTextController
-                                                                .text, context,
+                                                                .text,
+                                                                context,
                                                                 bd);
                                                           }
+                                                        }
                                                       },
                                                       text: 'Logar',
                                                       options: FFButtonOptions(
                                                         width: 230,
                                                         height: 52,
                                                         padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 0, 0, 0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 0, 0, 0),
                                                         iconPadding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 0, 0, 0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 0, 0, 0),
                                                         color:
                                                         Colors.green.shade700,
                                                         textStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .titleSmall
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  color: Colors
-                                                                      .white,
-                                                                  letterSpacing:
-                                                                      0,
-                                                                ),
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .titleSmall
+                                                            .override(
+                                                          fontFamily:
+                                                          'Readex Pro',
+                                                          color: Colors
+                                                              .white,
+                                                          letterSpacing:
+                                                          0,
+                                                        ),
                                                         elevation: 3,
                                                         borderSide:
-                                                            const BorderSide(
+                                                        const BorderSide(
                                                           color:
-                                                              Colors.transparent,
+                                                          Colors.transparent,
                                                           width: 1,
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                40),
+                                                        BorderRadius.circular(
+                                                            40),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ],
                                             ).animateOnPageLoad(animationsMap[
-                                                'columnOnPageLoadAnimation']!),
+                                            'columnOnPageLoadAnimation']!),
                                           ),
                                         ),
                                       ],

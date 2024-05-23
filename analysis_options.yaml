@@ -12,7 +12,6 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     # STYLE
-    - no_logic_in_create_state #avoid
     - unawaited_futures # Requires handling/awaiting all futures
     - discarded_futures
     - unnecessary_await_in_return
