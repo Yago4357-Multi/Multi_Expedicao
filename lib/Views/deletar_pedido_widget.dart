@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/lista_romaneio.dart';
@@ -98,7 +99,87 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Container(
+                width: 120,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: Colors.green, borderRadius: BorderRadius.circular(20)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'Salvar',
+                      style: FlutterFlowTheme.of(context).headlineSmall.override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 15),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.check_outlined, color: Colors.white),
+                      onPressed: () async {
+                        await showCupertinoModalPopup(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Text(
+                                'Verifique todos os pedidos antes de exclui-los',
+                              ),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Voltar')),
+                                CupertinoDialogAction(
+                                    isDestructiveAction: true,
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      await showCupertinoModalPopup(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return CupertinoAlertDialog(
+                                            title: const Text(
+                                              'Após exclusão todos os pedidos excluídos terão que ser bipados novamente. Deseja continuar??',
+                                            ),
+                                            actions: <CupertinoDialogAction>[
+                                              CupertinoDialogAction(
+                                                  isDefaultAction: true,
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Voltar')),
+                                              CupertinoDialogAction(
+                                                  isDestructiveAction: true,
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    bd.excluiPedido(
+                                                        pedidosExc, usur, 0);
+                                                    pedidosExc = [];
+                                                    setState(() {});
+                                                  },
+                                                  child: const Text('Continuar'))
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text('Continuar'))
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                )),
+          ),
+        ],
         centerTitle: true,
         elevation: 2,
       ),
@@ -159,9 +240,17 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                             value.substring(14, 33);
                                         var ped = codArrumado.substring(0, 10);
                                         var cx = codArrumado.substring(14, 16);
-                                        if (pedidosExc.contains(Contagem(int.parse(ped), 0, int.parse(cx), 0)) ==
+                                        if (pedidosExc.contains(Contagem(
+                                                int.parse(ped),
+                                                0,
+                                                int.parse(cx),
+                                                0)) ==
                                             false) {
-                                          pedidosExc.add(Contagem(int.parse(ped), 0, int.parse(cx), 0));
+                                          pedidosExc.add(Contagem(
+                                              int.parse(ped),
+                                              0,
+                                              int.parse(cx),
+                                              0));
                                         }
                                         _model.textController.text = '';
                                         setState(() {});
@@ -356,80 +445,6 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                       ),
                     ),
                   ),
-                  Positioned(
-                      top: 20,
-                      right: 20,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: IconButton(
-                            icon: const Icon(Icons.check_outlined,
-                                color: Colors.white),
-                            onPressed: () async {
-                              await showCupertinoModalPopup(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) {
-                                  return CupertinoAlertDialog(
-                                    title: const Text(
-                                      'Verifique todos os pedidos antes de exclui-los',
-                                    ),
-                                    actions: <CupertinoDialogAction>[
-                                      CupertinoDialogAction(
-                                          isDefaultAction: true,
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Voltar')),
-                                      CupertinoDialogAction(
-                                          isDestructiveAction: true,
-                                          onPressed: () async {
-                                            Navigator.pop(context);
-                                            await showCupertinoModalPopup(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return CupertinoAlertDialog(
-                                                  title: const Text(
-                                                    'Após exclusão todos os pedidos excluídos terão que ser bipados novamente. Deseja continuar??',
-                                                  ),
-                                                  actions: <CupertinoDialogAction>[
-                                                    CupertinoDialogAction(
-                                                        isDefaultAction: true,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Voltar')),
-                                                    CupertinoDialogAction(
-                                                        isDestructiveAction:
-                                                            true,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                          bd.excluiPedido(
-                                                              pedidosExc,
-                                                              usur,
-                                                              0);
-                                                          pedidosExc = [];
-                                                          setState(() {});
-                                                        },
-                                                        child: const Text(
-                                                            'Continuar'))
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text('Continuar'))
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          )))
                 ],
               ),
             ),

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "Multi Expedicao" "\0"
+            VALUE "FileDescription", "MultiExpedicao" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Multi Expedição" "\0"
+            VALUE "InternalName", "MultiExpedicao" "\0"
             VALUE "LegalCopyright", "Todos os direitos reservados a Multilist Distribuidora" "\0"
-            VALUE "OriginalFilename", "Multi Expedicao.exe" "\0"
-            VALUE "ProductName", "Multi Expedicao" "\0"
+            VALUE "OriginalFilename", "MultiExpedicao.exe" "\0"
+            VALUE "ProductName", "MultiExpedicao" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

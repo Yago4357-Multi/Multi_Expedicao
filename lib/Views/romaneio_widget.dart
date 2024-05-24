@@ -128,7 +128,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
               ? Padding(
             padding: const EdgeInsets.all(5),
                 child: SizedBox(
-                            width: 300,
+                            width: 220,
                             height: 60,
                             child: FloatingActionButton(
                 onPressed: () async {
@@ -137,7 +137,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                       builder: (context2) {
                         if (paleteSelecionadoint.isNotEmpty) {
                           if (pedidosSalvos
-                              .where((element) => element.status == 'Errado')
+                              .where((element) => element.status == 'Divergente')
                               .isEmpty) {
                             return CupertinoAlertDialog(
                               title: Text(
@@ -2041,7 +2041,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                               child: FlutterFlowChoiceChips(
                                   options: const [
                                     ChipData('Todos'),
-                                    ChipData('Errado'),
+                                    ChipData('Divergente'),
                                     ChipData('OK')
                                   ],
                                   onChanged: (val) {
