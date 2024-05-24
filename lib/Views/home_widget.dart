@@ -1215,7 +1215,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      DeletarPedidoWidget(acess, bd: bd)));
+                                      ReimprimirPaleteWidget(acess, 0, bd: bd)));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -1237,13 +1237,13 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                               mainAxisAlignment:
                               MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.delete_sweep_outlined),
+                                const Icon(Icons.print_rounded),
                                 Container(
                                   height: 20,
                                   color: Colors.white,
                                 ),
                                 Text(
-                                  'Deletar Caixa',
+                                  'Reimpressão',
                                   style: FlutterFlowTheme.of(context)
                                       .titleLarge,
                                   textAlign: TextAlign.center,
@@ -1258,6 +1258,63 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DeletarPedidoWidget(acess,
+                                          bd: bd)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 10, top: 10 , right: 20),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width:
+                            MediaQuery.of(context).size.height *
+                                0.8,
+                            height:
+                            MediaQuery.of(context).size.height *
+                                0.1,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                BorderRadius.circular(20)),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(width: 20),
+                                const Icon(Icons.delete_sweep_outlined),
+                                Expanded(
+                                  child: Container(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  'Deletar Caixa',
+                                  style: FlutterFlowTheme.of(context)
+                                      .titleLarge,
+                                  textAlign: TextAlign.center,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -1317,129 +1374,6 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                       ),
                     ],
                   )),
-              Padding(
-                padding: const EdgeInsets.only(top: 20, left: 20),
-                child: (responsiveVisibility(
-                    context: context,
-                    phone: false,
-                    tablet: false,
-                    desktop: true))
-                    ? Row(
-                  children: [
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReimprimirPaleteWidget(acess, 0,
-                                        bd: bd)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.3,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.2,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.print_rounded),
-                              Container(
-                                height: 20,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                'Reimpressão',
-                                style: FlutterFlowTheme.of(context)
-                                    .titleLarge,
-                                textAlign: TextAlign.center,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ) :
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReimprimirPaleteWidget(acess, 0,
-                                        bd: bd)));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 10, top: 10 , right: 20),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.8,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.1,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(width: 20),
-                              const Icon(Icons.print_rounded),
-                              Expanded(
-                                child: Container(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Reimpressão',
-                                style: FlutterFlowTheme.of(context)
-                                    .titleLarge,
-                                textAlign: TextAlign.center,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
             ],
           ),
         ),
