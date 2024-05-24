@@ -249,7 +249,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           ),
                         ),
                       ),
-                      Padding(
+                      if (responsiveVisibility(
+                          context: context,
+                          phone: true,
+                          tablet: true,
+                          desktop: false)) (Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
                             16, 0, 16, 0),
                         child: AnimatedContainer(
@@ -294,7 +298,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                           .fromSTEB(
                                           12, 0, 0, 0),
                                       child: Text(
-                                        'Deletar Palete',
+                                        'Deletar Caixa',
                                         style:
                                         FlutterFlowTheme
                                             .of(context)
@@ -307,7 +311,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             ),
                           ),
                         ),
-                      ),
+                      )),
                       if (acessosCol.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
                             16, 0, 16, 0),

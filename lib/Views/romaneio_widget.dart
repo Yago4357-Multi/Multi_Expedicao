@@ -137,7 +137,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                       builder: (context2) {
                         if (paleteSelecionadoint.isNotEmpty) {
                           if (pedidosSalvos
-                              .where((element) => element.status == 'Errado')
+                              .where((element) => element.status == 'Divergente')
                               .isEmpty) {
                             return CupertinoAlertDialog(
                               title: Text(
@@ -2041,7 +2041,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                               child: FlutterFlowChoiceChips(
                                   options: const [
                                     ChipData('Todos'),
-                                    ChipData('Errado'),
+                                    ChipData('Divergente'),
                                     ChipData('OK')
                                   ],
                                   onChanged: (val) {

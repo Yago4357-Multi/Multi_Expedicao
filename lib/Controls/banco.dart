@@ -583,7 +583,7 @@ class Banco {
               .toString()
               .replaceAll(RegExp(',| '), ', ')) ||
           (element[10] != 'F')) {
-        status = 'Errado';
+        status = 'Divergente';
       } else {
         status = 'OK';
       }
@@ -902,7 +902,7 @@ class Banco {
           element[0]! as int,
           element[10] as String,
           0,
-          element[1]! as int, 'Errado',
+          element[1]! as int, 'Divergente',
           codCli: element[2]! as int,
           cliente: element[3]!.toString(),
           valor: element[4]! as double,
@@ -929,7 +929,7 @@ class Banco {
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
-            element[0]! as int, '0', 0, element[1]! as int, 'Errado',
+            element[0]! as int, '0', 0, element[1]! as int, 'Divergente',
             codCli: element[2]! as int,
             cliente: element[3]!.toString(),
             valor: element[4]! as double,
@@ -952,7 +952,7 @@ class Banco {
       try{
       if (element.isNotEmpty) {
         teste.add(Pedido(
-            element[0]! as int, '0', element[4] as int, element[1]! as int, 'Errado',
+            element[0]! as int, '0', element[4] as int, element[1]! as int, 'Divergente',
             codCli: element[2]! as int,
             cliente: element[3]!.toString(),
             nota: element[5] as int,

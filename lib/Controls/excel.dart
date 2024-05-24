@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:postgres/postgres.dart';
@@ -90,7 +89,7 @@ class ExcelClass {
 
         } else {
           teste.add(Pedido(
-            (i[0]), '0', 0, 0, 'Errado', codVenda: (i[1] != null && i[1] != '' ? i[1] : null),
+            (i[0]), '0', 0, 0, 'Divergente', codVenda: (i[1] != null && i[1] != '' ? i[1] : null),
             codCli: (i[2] != null && i[2] != '' ? i[2] : null),
             situacao: (i[3] != null && i[3] != '' ? i[3] : null).toString(),
             dtPedido: i[4] != '' && i[4] != null ? DateFormat('dd/MM/yyyy').parse(i[4]) : null,

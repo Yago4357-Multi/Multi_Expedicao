@@ -415,7 +415,7 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
                                   var corFundoStatus =
                                       FlutterFlowTheme.of(context).accent2;
                                   var corTextoStatus = Colors.black;
-                                  if (pedidos[index].status == 'Errado') {
+                                  if (pedidos[index].status == 'Divergente') {
                                     corStatus = Colors.red.shade100;
                                     corBordaStatus = Colors.red;
                                     corFundoStatus = Colors.red.shade100;
