@@ -49,7 +49,7 @@ class ExcelClass {
               ),
               settings: const ConnectionSettings(sslMode: SslMode.disable));
         }
-        await Future.delayed(const Duration(minutes: 5));
+        await Future.delayed(const Duration(minutes: 15));
       }
     } on SocketException catch(e){
       print(e);
@@ -108,12 +108,7 @@ class ExcelClass {
            await insertPedido(teste[0]);
         }
       }
-
     }
-
-
-
-
   }
 
   ///Importar Clientes para o Banco
@@ -127,7 +122,7 @@ class ExcelClass {
 
     for (var i in fields){
       if (i != fields[0]) {
-        List<Cliente> teste = bancoCli.where((element) =>
+        var teste = bancoCli.where((element) =>
         element.cod_cli == i[0]).toList();
 
         if (teste.isNotEmpty) {

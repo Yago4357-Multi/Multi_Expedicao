@@ -21,7 +21,8 @@ class ListaPedidoWidget extends StatefulWidget {
   final Banco bd;
 
   ///Constutor para a página de listagem dos pedidos
-  const ListaPedidoWidget(this.usur, {super.key, required this.cont, required this.bd});
+  const ListaPedidoWidget(this.usur,
+      {super.key, required this.cont, required this.bd});
 
   @override
   State<ListaPedidoWidget> createState() =>
@@ -31,6 +32,8 @@ class ListaPedidoWidget extends StatefulWidget {
 class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   int cont;
   final Usuario usur;
+
+  final TextEditingController _model2 = TextEditingController();
 
   final Banco bd;
 
@@ -58,7 +61,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   }
 
   void rodarBanco() async {
-      getPed = bd.selectPedido(cont);
+    getPed = bd.selectPedido(cont);
   }
 
   @override
@@ -105,95 +108,164 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(5),
-            child: Container(
-              width: 120,
-              height: 50,
-              decoration: BoxDecoration(
-                  color: Colors.green.shade700,
-                  borderRadius: const BorderRadius.all(Radius.circular(20))),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  inicial
-                      ? Text('Editar',  style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),)
-                      : Text('Salvar', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', color: Colors.white, fontSize: 15),),
-                      inicial
-                      ? IconButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          inicial = false;
-                        });
+            child: InkWell(
+              splashColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () async {
+                if (inicial) {
+                  setState(() {
+                    inicial = false;
+                  });
+                } else {
+                  if (pedidosExc.isNotEmpty || pedidosAlt.isNotEmpty) {
+                    await showCupertinoModalPopup(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          title: const Text('Salvar Alterações?'),
+                          content: const Text(
+                              'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                isDestructiveAction: true,
+                                onPressed: () async {
+                                  if (await bd.connected(context) == 1) {
+                                    if (pedidosAlt.isNotEmpty) {
+                                      bd.updatePedidoBip(pedidosAlt);
+                                      pedidosAlt = [];
+                                      getPed = bd.selectPedido(cont);
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                    if (pedidosExc.isNotEmpty) {
+                                      getPed = bd.excluiPedido(
+                                          pedidosExc, usur, cont);
+                                      var pedidosSet = pedidos.toSet();
+                                      var pedidosSetExc = pedidosExc.toSet();
+                                      pedidos = pedidosSet
+                                          .difference(pedidosSetExc)
+                                          .toList();
+                                      if (pedidos.isEmpty) {
+                                        cont = 0;
+                                      }
+                                      pedidosExc = [];
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                    inicial = true;
+                                  }
+                                  setState(() {});
+                                },
+                                child: const Text('Continuar')),
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: const Text('Voltar'))
+                          ],
+                        );
                       },
-                      icon: const Icon(Icons.edit_outlined))
-                      : IconButton(
-                      color: Colors.white,
-                      onPressed: () async {
-                        if (pedidosExc.isNotEmpty || pedidosAlt.isNotEmpty) {
-                          await showCupertinoModalPopup(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) {
-                              return CupertinoAlertDialog(
-                                title: const Text('Salvar Alterações?'),
-                                content: const Text(
-                                    'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
-                                actions: <CupertinoDialogAction>[
-                                  CupertinoDialogAction(
-                                      isDefaultAction: true,
-                                      isDestructiveAction: true,
-                                      onPressed: () async {
-                                        if (await bd.connected(context) == 1) {
-                                          if (pedidosAlt.isNotEmpty) {
-                                            bd.updatePedidoBip(pedidosAlt);
-                                            pedidosAlt = [];
-                                            getPed = bd.selectPedido(cont);
-                                            setState(() {
-                                              Navigator.pop(context);
-                                            });
-                                          }
-                                          if (pedidosExc.isNotEmpty) {
-                                            getPed = bd.excluiPedido(
-                                                pedidosExc, usur, cont);
-                                            var pedidosSet = pedidos.toSet();
-                                            var pedidosSetExc = pedidosExc.toSet();
-                                            pedidos = pedidosSet
-                                                .difference(pedidosSetExc)
-                                                .toList();
-                                            if (pedidos.isEmpty) {
-                                              cont = 0;
-                                            }
-                                            pedidosExc = [];
-                                            setState(() {
-                                              Navigator.pop(context);
-                                            });
-                                          }
-                                          inicial = true;
-                                        }
-                                      },
-                                      child: const Text('Continuar')),
-                                  CupertinoDialogAction(
-                                      isDefaultAction: true,
-                                      onPressed: () {
-                                        setState(() {
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                      child: const Text('Voltar'))
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          setState(() {
-                            inicial = true;
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.done)),
-                    ],
+                    );
+                  } else {
+                    setState(() {
+                      inicial = true;
+                    });
+                  }
+                }
+              },
+              child: Container(
+                width: 120,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: Colors.green.shade700,
+                    borderRadius: const BorderRadius.all(Radius.circular(20))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    inicial
+                        ? Text(
+                            'Editar',
+                            style: FlutterFlowTheme.of(context)
+                                .headlineSmall
+                                .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: Colors.white,
+                                    fontSize: 15),
+                          )
+                        : Text(
+                            'Salvar',
+                            style: FlutterFlowTheme.of(context)
+                                .headlineSmall
+                                .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: Colors.white,
+                                    fontSize: 15),
+                          ),
+                    inicial
+                        ? const Icon(Icons.edit_outlined, color: Colors.white)
+                        : const Icon(
+                            Icons.done,
+                            color: Colors.white,
+                          ),
+                  ],
+                ),
               ),
             ),
           ),
+          if (!inicial)
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 15, top: 5, bottom: 5, right: 5),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  pedidosAlt = [];
+                  pedidosExc = [];
+                  inicial = true;
+                  setState(() {});
+                },
+                child: Container(
+                  width: 120,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: Colors.green.shade700,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        'Cancelar',
+                        style: FlutterFlowTheme.of(context)
+                            .headlineSmall
+                            .override(
+                                fontFamily: 'Readex Pro',
+                                color: Colors.white,
+                                fontSize: 15),
+                      ),
+                      const Icon(
+                        Icons.cancel_outlined,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else
+            Container(),
         ],
         centerTitle: true,
         elevation: 2,
@@ -344,7 +416,9 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             20, 0, 0, 0),
                                                   ),
                                                   onSubmitted: (value) async {
-                                                    if (await bd.connected(context) == 1) {
+                                                    if (await bd.connected(
+                                                            context) ==
+                                                        1) {
                                                       setState(() {
                                                         cont = int.parse(
                                                             value == ''
@@ -352,10 +426,11 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                 : value);
                                                         _model.textController
                                                             .text = '';
-                                                        getPed =
-                                                            bd.selectPedido(cont);
+                                                        getPed = bd
+                                                            .selectPedido(cont);
                                                       });
                                                     }
+                                                    setState(() {});
                                                   },
                                                   controller:
                                                       _model.textController,
@@ -794,7 +869,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                     BorderRadius.circular(8),
                                                 border: Border.all(
                                                   color: Colors.red,
-                                                  width: 2,
+                                                  width: 4,
                                                 ),
                                               ),
                                               child: Padding(
@@ -821,49 +896,56 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          RichText(
-                                                            text: TextSpan(
-                                                              children: [
-                                                                const TextSpan(
-                                                                    text:
-                                                                        'Palete Localizado\n',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      fontSize:
-                                                                          18,
-                                                                    )),
-                                                                TextSpan(
-                                                                  text:
-                                                                      '${pedidos[index].palete}',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Colors
-                                                                        .red,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w900,
-                                                                    fontSize:
-                                                                        24,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyLarge
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                  ),
+                                                          const Text(
+                                                              'Palete Localizado',
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontSize: 18,
+                                                                wordSpacing: 0,
+                                                              )),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade100,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
+                                                            width: 120,
+                                                            child: Expanded(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        top: 5),
+                                                                child: Text(
+                                                                  '${pedidos[index].palete}',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Readex Pro',
+                                                                        color: Colors
+                                                                            .red
+                                                                            .shade500,
+                                                                        fontSize:
+                                                                            26,
+                                                                        fontWeight:
+                                                                            FontWeight.w800,
+                                                                      ),
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
                                                           Padding(
@@ -893,6 +975,21 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                         ],
                                                       ),
                                                     ),
+                                                    Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(20),
+                                                        child: Text(
+                                                          'Caixa será \nexclúida !!',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .titleLarge
+                                                              .override(
+                                                                  fontFamily:
+                                                                      'Readex Pro',
+                                                                  color: Colors
+                                                                      .red),
+                                                        )),
                                                     Padding(
                                                       padding:
                                                           const EdgeInsetsDirectional
@@ -1044,8 +1141,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                       BorderRadius.circular(8),
                                                   border: Border.all(
                                                     color:
-                                                        Colors.yellow.shade500,
-                                                    width: 2,
+                                                        Colors.orange.shade500,
+                                                    width: 4,
                                                   ),
                                                 ),
                                                 child: Padding(
@@ -1087,55 +1184,99 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   wordSpacing:
                                                                       0,
                                                                 )),
-                                                            SizedBox(
-                                                              width: 50,
-                                                              child: TextField(
-                                                                keyboardType:
-                                                                    TextInputType
-                                                                        .number,
-                                                                decoration: InputDecoration
-                                                                    .collapsed(
-                                                                        hintStyle: FlutterFlowTheme.of(context)
+                                                            Container(
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .orange
+                                                                      .shade100,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              4)),
+                                                              width: 120,
+                                                              child: Center(
+                                                                child: Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
+                                                                            top:
+                                                                                5),
+                                                                        child:
+                                                                            Text(
+                                                                          '${pedidos[index].palete}',
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
+                                                                                fontFamily: 'Readex Pro',
+                                                                                color: Colors.orange.shade500,
+                                                                                fontSize: 26,
+                                                                                fontWeight: FontWeight.w800,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const Expanded(
+                                                                        child: Padding(
+                                                                            padding: EdgeInsets.only(left: 5, top: 5),
+                                                                            child: Icon(
+                                                                              Icons.arrow_right_alt,
+                                                                              color: Colors.orange,
+                                                                            ))),
+                                                                    Expanded(
+                                                                      child:
+                                                                          TextField(
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        keyboardType:
+                                                                            TextInputType.number,
+                                                                        decoration: InputDecoration.collapsed(
+                                                                            hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  color: Colors.orange.shade500,
+                                                                                  fontSize: 26,
+                                                                                  fontWeight: FontWeight.w800,
+                                                                                ),
+                                                                            hintText: '${pedidosAlt.where((element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa).toList()[0].palete}'),
+                                                                        style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: 'Readex Pro',
-                                                                              color: const Color(0xFF005200),
+                                                                              color: Colors.orange.shade500,
                                                                               fontSize: 26,
-                                                                              fontWeight: FontWeight.w400,
+                                                                              fontWeight: FontWeight.w800,
                                                                             ),
-                                                                        hintText:
-                                                                            '${pedidos[index].palete}'),
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: Colors
-                                                                          .yellow
-                                                                          .shade500,
-                                                                      fontSize:
-                                                                          26,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w800,
+                                                                        onTapAlwaysCalled:
+                                                                            true,
+                                                                        controller:
+                                                                            _model2,
+                                                                        onSubmitted:
+                                                                            (value) {
+                                                                          setState(
+                                                                              () {
+                                                                            pedidosAlt.removeWhere(
+                                                                              (element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa,
+                                                                            );
+                                                                            pedidosAlt.add(Contagem(
+                                                                                pedidos[index].ped,
+                                                                                int.parse(value),
+                                                                                pedidos[index].caixa,
+                                                                                pedidos[index].vol));
+                                                                            _model2.text =
+                                                                                '';
+                                                                          });
+                                                                        },
+                                                                      ),
                                                                     ),
-                                                                onTapAlwaysCalled:
-                                                                    true,
-                                                                onSubmitted:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    pedidosAlt.add(Contagem(
-                                                                        pedidos[index]
-                                                                            .ped,
-                                                                        int.parse(
-                                                                            value),
-                                                                        pedidos[index]
-                                                                            .caixa,
-                                                                        pedidos[index]
-                                                                            .vol));
-                                                                  });
-                                                                },
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                             Padding(
@@ -1171,6 +1312,21 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                           ],
                                                         ),
                                                       ),
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(20),
+                                                          child: Text(
+                                                            'Caixa será \nalterada !!',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .titleLarge
+                                                                .override(
+                                                                    fontFamily:
+                                                                        'Readex Pro',
+                                                                    color: Colors
+                                                                        .orange),
+                                                          )),
                                                       Padding(
                                                         padding:
                                                             const EdgeInsetsDirectional
@@ -1369,55 +1525,57 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                   wordSpacing:
                                                                       0,
                                                                 )),
-                                                            SizedBox(
-                                                              width: 50,
-                                                              child: TextField(
-                                                                keyboardType:
-                                                                    TextInputType
-                                                                        .number,
-                                                                decoration: InputDecoration
-                                                                    .collapsed(
-                                                                        hintStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              color: const Color(0xFF005200),
-                                                                              fontSize: 26,
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                        hintText:
-                                                                            '${pedidos[index].palete}'),
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: const Color(
-                                                                          0xFF005200),
-                                                                      fontSize:
-                                                                          26,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w800,
-                                                                    ),
-                                                                onTapAlwaysCalled:
-                                                                    true,
-                                                                onSubmitted:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    pedidosAlt.add(Contagem(
-                                                                        pedidos[index]
-                                                                            .ped,
-                                                                        int.parse(
-                                                                            value),
-                                                                        pedidos[index]
-                                                                            .caixa,
-                                                                        pedidos[index]
-                                                                            .vol));
-                                                                  });
-                                                                },
-                                                              ),
+                                                            TextField(
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              decoration: InputDecoration
+                                                                  .collapsed(
+                                                                      hintStyle: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Readex Pro',
+                                                                            color:
+                                                                                const Color(0xFF005200),
+                                                                            fontSize:
+                                                                                26,
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                          ),
+                                                                      hintText:
+                                                                          '${pedidos[index].palete}'),
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Readex Pro',
+                                                                    color: const Color(
+                                                                        0xFF005200),
+                                                                    fontSize:
+                                                                        26,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w800,
+                                                                  ),
+                                                              onTapAlwaysCalled:
+                                                                  true,
+                                                              onSubmitted:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  pedidosAlt.add(Contagem(
+                                                                      pedidos[index]
+                                                                          .ped,
+                                                                      int.parse(
+                                                                          value),
+                                                                      pedidos[index]
+                                                                          .caixa,
+                                                                      pedidos[index]
+                                                                          .vol));
+                                                                });
+                                                              },
                                                             ),
                                                             Padding(
                                                               padding:

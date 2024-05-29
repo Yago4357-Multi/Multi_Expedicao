@@ -314,6 +314,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                                 .text, context,
                                                                 bd);}
                                                         }
+                                                        setState(() {});
                                                       },
                                                       controller: _model
                                                           .passwordTextController,
@@ -451,6 +452,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                                                 bd);
                                                           }
                                                         }
+                                                        setState(() {});
                                                       },
                                                       text: 'Logar',
                                                       options: FFButtonOptions(

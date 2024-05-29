@@ -21,6 +21,16 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.1.2 <4.0.0'
 
+msix_config:
+  display_name: MultiExpedição
+  publisher_display_name: Yago Lima Bortolini
+  logo_path: windows/runner/resources/app_icon.ico
+  identity_name: company.suite.multiromaneio
+  msix_version: 0.1.1.0
+  capabilities: internetClient, location, microphone, webcam
+  certificate_path: C:\Program Files\OpenSSL-Win64\bin\CERTIFICATE.pfx
+  certificate_password: '@mlt77'
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -64,6 +74,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  msix: ^3.16.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

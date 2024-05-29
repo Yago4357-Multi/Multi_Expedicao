@@ -37,8 +37,13 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
   Color corBorda = Colors.green.shade700;
   String dica = 'Procure um Romaneio...';
 
+  ///Variáveis para mostrar erro no TextField do Pedido
+  Color corDica2 = Colors.green.shade400;
+  Color corBorda2 = Colors.green.shade700;
+  String dica2 = 'Procure um Pedido...';
+
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 30))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
   DateTime dtFim = (getCurrentTimestamp.endOfDay);
   late PickerDateRange datasRange;
 
@@ -63,8 +68,11 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
     datasRange = PickerDateRange(dtIni, dtFim);
     super.initState();
     _model = createModel(context, ListaRomaneiosModel.new);
+    _model.expansionTileController ??= ExpansionTileController();
     _model.textController ??= TextEditingController();
+    _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
+    _model.textFieldFocusNode2 ??= FocusNode();
     rodarBanco();
   }
 
@@ -74,7 +82,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
     for (var i in teste) {
       romaneiosSelecionadoint.add(i.romaneio!);
     }
-    pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
+          pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
   }
 
   @override
@@ -171,121 +179,236 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                               phone: false,
                               tablet: false,
                             ))
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    16, 40, 0, 40),
-                                child: SizedBox(
-                                  width: 500,
-                                  child: TextFormField(
-                                    canRequestFocus: true,
-                                    onChanged: (value) {
-                                      _model.choiceChipsValue = 'Todos';
-                                      setState(() {
-                                        if (romaneiosSalvos.length <
-                                            romaneios.length) {
-                                          romaneiosSalvos = romaneios;
-                                        }
-                                        if (value.isNotEmpty) {
-                                          var x =
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        16, 40, 0, 40),
+                                    child: SizedBox(
+                                      width: 500,
+                                      child: TextFormField(
+                                        canRequestFocus: true,
+                                        onChanged: (value) {
+                                          _model.textController2?.value = TextEditingValue.empty;
+                                            if (romaneiosSalvos.length <
+                                                romaneios.length) {
+                                              romaneiosSalvos = romaneios;
+                                            }
+                                            if (value.isNotEmpty) {
+                                              var x =
                                               romaneiosSalvos.where((element) {
-                                            var texto =
+                                                var texto =
                                                 element.romaneio.toString();
-                                            texto.startsWith(value);
-                                            return texto.startsWith(value);
-                                          });
-                                          if (x.isNotEmpty) {
-                                            romaneios = x.toList();
-                                          } else {
-                                            romaneios = [];
-                                            dica = 'Romaneio não encontrado';
-                                            corDica = Colors.red.shade400;
-                                            corBorda = Colors.red.shade700;
-                                          }
-                                        } else {
-                                          romaneios = romaneiosSalvos;
-                                          dica = 'Procure por um Romaneio...';
-                                          corDica = Colors.green.shade400;
-                                          corBorda = Colors.green.shade700;
-                                        }
-                                      });
-                                    },
-                                    controller: _model.textController,
-                                    focusNode: _model.textFieldFocusNode,
-                                    autofocus: false,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      labelText: dica,
-                                      labelStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
+                                                texto.startsWith(value);
+                                                return texto.startsWith(value);
+                                              });
+                                              if (x.isNotEmpty) {
+                                                romaneios = x.toList();
+                                              } else {
+                                                romaneios = [];
+                                                dica = 'Romaneio não encontrado';
+                                                corDica = Colors.red.shade400;
+                                                corBorda = Colors.red.shade700;
+                                              }
+                                            } else {
+                                              romaneios = romaneiosSalvos;
+                                              dica = 'Procure por um Romaneio...';
+                                              corDica = Colors.green.shade400;
+                                              corBorda = Colors.green.shade700;
+                                            }
+                                          setState(() {});
+                                        },
+                                        controller: _model.textController,
+                                        focusNode: _model.textFieldFocusNode,
+                                        autofocus: false,
+                                        obscureText: false,
+                                        decoration: InputDecoration(
+                                          labelText: dica,
+                                          labelStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
                                             fontFamily: 'Readex Pro',
                                             letterSpacing: 0,
                                           ),
-                                      hintStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
+                                          hintStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
                                             fontFamily: 'Readex Pro',
                                             letterSpacing: 0,
                                           ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: corBorda,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: corDica,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .error,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .error,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      contentPadding:
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corBorda,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corDica,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          contentPadding:
                                           const EdgeInsetsDirectional.fromSTEB(
                                               20, 0, 0, 0),
-                                      suffixIcon: Icon(
-                                        Icons.search_rounded,
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                      ),
-                                    ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
+                                          suffixIcon: Icon(
+                                            Icons.search_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                          ),
+                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
                                           fontFamily: 'Readex Pro',
                                           letterSpacing: 0,
                                         ),
-                                    cursorColor:
+                                        cursorColor:
                                         FlutterFlowTheme.of(context).primary,
-                                    validator: _model.textControllerValidator
-                                        .asValidator(context),
+                                        validator: _model.textControllerValidator
+                                            .asValidator(context),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        16, 40, 0, 40),
+                                    child: SizedBox(
+                                      width: 500,
+                                      child: TextFormField(
+                                        canRequestFocus: true,
+                                        controller: _model.textController2,
+                                        onChanged: (value) {
+                                          if (pedidosSalvos.length <
+                                                pedidos.length) {
+
+                                              pedidosSalvos = pedidos;
+                                            }
+                                            if (value.isNotEmpty) {
+                                              var x =
+                                              pedidosSalvos.where((element) {
+                                                var texto =
+                                                element.ped.toString();
+                                                texto.startsWith(value);
+                                                return texto.startsWith(value);
+                                              });
+                                              if (x.isNotEmpty) {
+                                                pedidos = x.toList();
+                                              } else {
+                                                pedidos = [];
+                                                dica2 = 'Pedido não encontrado';
+                                                corDica2 = Colors.red.shade400;
+                                                corBorda2 = Colors.red.shade700;
+                                              }
+                                            } else {
+                                              pedidos = pedidosSalvos;
+                                              dica2 = 'Procure por um Pedido...';
+                                              corDica2 = Colors.green.shade400;
+                                              corBorda2 = Colors.green.shade700;
+                                            }
+                                          for( var i in pedidos){
+                                            romaneios = romaneiosSalvos.where((element) => element.romaneio == i.romaneio).toList();
+                                          }
+                                          setState(() {
+
+                                          });
+                                        },
+                                        focusNode: _model.textFieldFocusNode2,
+                                        autofocus: false,
+                                        obscureText: false,
+                                        decoration: InputDecoration(
+                                          labelText: dica2,
+                                          labelStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                          hintStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corBorda2,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corDica2,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          contentPadding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              20, 0, 0, 0),
+                                          suffixIcon: Icon(
+                                            Icons.search_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                          ),
+                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
+                                        cursorColor:
+                                        FlutterFlowTheme.of(context).primary,
+                                        validator: _model.textControllerValidator2
+                                            .asValidator(context),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             SizedBox(
                               width: 300,
                               height: 300,
                               child: SfDateRangePicker(
-                                view: DateRangePickerView.year,
+                                view: DateRangePickerView.month,
                                 navigationDirection:
-                                    DateRangePickerNavigationDirection.vertical,
+                                DateRangePickerNavigationDirection.vertical,
                                 maxDate: getCurrentTimestamp,
                                 startRangeSelectionColor: Colors.green.shade700,
                                 initialDisplayDate: dtFim,
@@ -295,30 +418,63 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                     datasRange =
                                         dateRangePickerSelectionChangedArgs
                                             .value;
-                                    dtIni = (datasRange.startDate ??
+                                    if (datasRange.endDate != null){
+                                      if (datasRange.startDate! >=
+                                          (dtFim
+                                              .add(const Duration(days: -7)))) {
+                                        dtIni =
+                                            dtFim.add(const Duration(days: -7)).startOfDay;
+                                      } else {
+                                        dtIni = (datasRange.startDate ??
                                             DateTime.parse('01/01/2000'))
-                                        .startOfDay;
-                                    dtFim = (datasRange.endDate ??
-                                            DateTime(
-                                                dtIni.year, dtIni.month + 1, 0))
-                                        .endOfDay;
+                                            .startOfDay;
+                                      }
+                                    }else{
+                                      dtIni = (datasRange.startDate ??
+                                          DateTime.parse('01/01/2000'))
+                                          .startOfDay;
+                                      dtFim = (datasRange.endDate ?? dtIni).endOfDay;
+                                    }
                                     datasRange = PickerDateRange(dtIni, dtFim);
                                     romaneioResposta =
                                         bd.romaneiosFinalizados(dtIni, dtFim);
-                                    setState(() {});
+                                    var teste = await romaneioResposta;
+                                    if (teste.isNotEmpty) {
+                                      for (var i in teste) {
+                                        if (romaneiosSelecionadoint.contains(i.romaneio!) == false){
+                                          romaneiosSelecionadoint.add(
+                                              i.romaneio!);
+                                        }
+                                      }
+                                      pedidosResposta =
+                                          bd.selectPedidosRomaneio(
+                                              romaneiosSelecionadoint);
+                                    }
+                                    datas.selectedRange = datasRange;
+                                    setState(() {
+                                      _model.textController?.value = TextEditingValue.empty;
+                                      _model.textController2?.value = TextEditingValue.empty;
+                                      dica = 'Procure por um Romaneio...';
+                                      corDica = Colors.green.shade400;
+                                      corBorda = Colors.green.shade700;
+                                      dica2 = 'Procure por um Pedido...';
+                                      corDica2 = Colors.green.shade400;
+                                      corBorda2 = Colors.green.shade700;
+                                    });
                                   }
+                                  setState(() {});
                                 },
                                 monthViewSettings:
-                                    const DateRangePickerMonthViewSettings(
+                                const DateRangePickerMonthViewSettings(
                                   weekendDays: [6, 7],
                                   weekNumberStyle:
-                                      DateRangePickerWeekNumberStyle(
-                                          backgroundColor: Colors.grey,
-                                          textStyle: TextStyle(
-                                              fontWeight: FontWeight.w200)),
+                                  DateRangePickerWeekNumberStyle(
+                                      backgroundColor: Colors.grey,
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w200)),
                                 ),
                                 initialSelectedRange:
-                                    PickerDateRange(dtIni, dtFim),
+                                PickerDateRange(dtIni, dtFim),
                                 headerStyle: const DateRangePickerHeaderStyle(
                                     backgroundColor: Colors.white,
                                     textStyle: TextStyle(
@@ -333,7 +489,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                 selectionColor: Colors.green.shade200,
                                 todayHighlightColor: Colors.green.shade600,
                                 selectionMode:
-                                    DateRangePickerSelectionMode.range,
+                                DateRangePickerSelectionMode.range,
                                 controller: datas,
                               ),
                             )
@@ -344,7 +500,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                           height: 50,
                           decoration: BoxDecoration(
                             color:
-                                FlutterFlowTheme.of(context).primaryBackground,
+                            FlutterFlowTheme.of(context).primaryBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: const AlignmentDirectional(-1, 0),
@@ -361,9 +517,9 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                          fontFamily: 'Readex Pro',
-                                          letterSpacing: 0,
-                                        ),
+                                      fontFamily: 'Readex Pro',
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                                 if (responsiveVisibility(
@@ -374,17 +530,17 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                   Expanded(
                                     child: Padding(
                                       padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 4, 40, 4),
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          0, 4, 40, 4),
                                       child: Text(
                                         'Volumes',
                                         textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
                                             .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -396,17 +552,17 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                   Expanded(
                                     child: Padding(
                                       padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 4, 40, 4),
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          0, 4, 40, 4),
                                       child: Text(
                                         'Dt. Fechamento',
                                         textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
                                             .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -449,111 +605,112 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                           var corTextoStatus = Colors.black;
                                           var pedidosRomaneio = pedidos
                                               .where((element) =>
-                                                  element.romaneio ==
-                                                  romaneios[index].romaneio)
+                                          element.romaneio ==
+                                              romaneios[index].romaneio)
                                               .toList();
                                           if (pedidosRomaneio.isNotEmpty) {
                                             return Padding(
                                               padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 10, 0, 0),
+                                              const EdgeInsets.fromLTRB(
+                                                  0, 10, 0, 0),
                                               child: Theme(
                                                 data: ThemeData(
                                                     splashColor:
-                                                        Colors.transparent,
+                                                    Colors.transparent,
                                                     hoverColor:
-                                                        Colors.transparent,
+                                                    Colors.transparent,
                                                     highlightColor:
-                                                        Colors.transparent),
+                                                    Colors.transparent),
                                                 child: ExpansionTile(
+                                                  enableFeedback: true,
                                                   childrenPadding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          35, 0, 80, 0),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      35, 0, 80, 0),
                                                   expansionAnimationStyle:
-                                                      AnimationStyle
-                                                          .noAnimation,
+                                                  AnimationStyle
+                                                      .noAnimation,
                                                   shape: Border.all(
                                                       color:
-                                                          Colors.transparent),
+                                                      Colors.transparent),
                                                   title: Container(
                                                     width: double.infinity,
                                                     decoration: BoxDecoration(
                                                       color: corStatus,
                                                       borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  20)),
+                                                      const BorderRadius
+                                                          .all(
+                                                          Radius.circular(
+                                                              20)),
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              16, 12, 16, 12),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          16, 12, 16, 12),
                                                       child: Row(
                                                         mainAxisSize:
-                                                            MainAxisSize.max,
+                                                        MainAxisSize.max,
                                                         mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                         children: [
                                                           Expanded(
                                                             child: Text(
                                                               '${romaneios[index].romaneio}',
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    color:
-                                                                        corTextoStatus,
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    letterSpacing:
-                                                                        0,
-                                                                  ),
+                                                                color:
+                                                                corTextoStatus,
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                letterSpacing:
+                                                                0,
+                                                              ),
                                                             ),
                                                           ),
                                                           Expanded(
                                                             child: Text(
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                               '${romaneios[index].vol!}',
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    color:
-                                                                        corTextoStatus,
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    letterSpacing:
-                                                                        0,
-                                                                  ),
+                                                                color:
+                                                                corTextoStatus,
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                letterSpacing:
+                                                                0,
+                                                              ),
                                                             ),
                                                           ),
                                                           Expanded(
                                                             child: Text(
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                               DateFormat(
-                                                                      'HH:mm dd/MM/yyyy')
+                                                                  'HH:mm dd/MM/yyyy')
                                                                   .format(romaneios[
-                                                                          index]
-                                                                      .dtFechamento!),
+                                                              index]
+                                                                  .dtFechamento!),
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    color:
-                                                                        corTextoStatus,
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    letterSpacing:
-                                                                        0,
-                                                                  ),
+                                                                color:
+                                                                corTextoStatus,
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                letterSpacing:
+                                                                0,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -563,7 +720,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                   children: [
                                                     ListView.builder(
                                                       scrollDirection:
-                                                          Axis.vertical,
+                                                      Axis.vertical,
                                                       shrinkWrap: true,
                                                       itemCount: pedidosRomaneio
                                                           .length,
@@ -571,47 +728,47 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                           (context, index) {
                                                         return Padding(
                                                             padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(0,
-                                                                    0, 0, 10),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0,
+                                                                0, 0, 10),
                                                             child: Container(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .all(10),
+                                                              const EdgeInsetsDirectional
+                                                                  .all(10),
                                                               height: 130,
                                                               decoration:
-                                                                  BoxDecoration(
+                                                              BoxDecoration(
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    20),
                                                                 color:
-                                                                    corStatus,
+                                                                corStatus,
                                                               ),
                                                               child: Row(
                                                                 mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                                 mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
+                                                                MainAxisSize
+                                                                    .max,
                                                                 children: [
                                                                   Column(
                                                                     mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
+                                                                    MainAxisSize
+                                                                        .max,
                                                                     mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceEvenly,
+                                                                    MainAxisAlignment
+                                                                        .spaceEvenly,
                                                                     crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                     children: [
                                                                       RichText(
                                                                         textAlign:
-                                                                            TextAlign.start,
+                                                                        TextAlign.start,
                                                                         text:
-                                                                            TextSpan(
+                                                                        TextSpan(
                                                                           children: [
                                                                             const TextSpan(
                                                                               text: 'Pedido \n',
@@ -620,18 +777,18 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                             TextSpan(
                                                                               text: '${pedidosRomaneio[index].ped}',
                                                                               style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                    fontFamily: 'Readex Pro',
-                                                                                    letterSpacing: 0,
-                                                                                    fontSize: 20,
-                                                                                  ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 20,
+                                                                              ),
                                                                             )
                                                                           ],
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyLarge
                                                                               .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
+                                                                            fontFamily: 'Readex Pro',
+                                                                            fontWeight: FontWeight.normal,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                       RichText(
@@ -665,9 +822,9 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                       ),
                                                                       RichText(
                                                                         textAlign:
-                                                                            TextAlign.end,
+                                                                        TextAlign.end,
                                                                         text:
-                                                                            TextSpan(
+                                                                        TextSpan(
                                                                           children: [
                                                                             const TextSpan(
                                                                               text: 'Volumetria : ',
@@ -676,25 +833,25 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                             TextSpan(
                                                                               text: '${pedidosRomaneio[index].vol}',
                                                                               style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                    fontFamily: 'Readex Pro',
-                                                                                    letterSpacing: 0,
-                                                                                    fontSize: 14,
-                                                                                  ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 14,
+                                                                              ),
                                                                             )
                                                                           ],
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyLarge
                                                                               .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
+                                                                            fontFamily: 'Readex Pro',
+                                                                            fontWeight: FontWeight.normal,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                       RichText(
                                                                         textAlign:
-                                                                            TextAlign.end,
+                                                                        TextAlign.end,
                                                                         text:
-                                                                            TextSpan(
+                                                                        TextSpan(
                                                                           children: [
                                                                             const TextSpan(
                                                                               text: 'Palete : ',
@@ -703,18 +860,18 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                             TextSpan(
                                                                               text: pedidosRomaneio[index].palete,
                                                                               style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                    fontFamily: 'Readex Pro',
-                                                                                    letterSpacing: 0,
-                                                                                    fontSize: 14,
-                                                                                  ),
+                                                                                fontFamily: 'Readex Pro',
+                                                                                letterSpacing: 0,
+                                                                                fontSize: 14,
+                                                                              ),
                                                                             )
                                                                           ],
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyLarge
                                                                               .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
+                                                                            fontFamily: 'Readex Pro',
+                                                                            fontWeight: FontWeight.normal,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ],
@@ -722,23 +879,23 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                   Flexible(
                                                                     flex: 2,
                                                                     child:
-                                                                        Padding(
+                                                                    Padding(
                                                                       padding: const EdgeInsets
                                                                           .only(
                                                                           left:
-                                                                              20),
+                                                                          20),
                                                                       child:
-                                                                          SizedBox(
+                                                                      SizedBox(
                                                                         width:
-                                                                            400,
+                                                                        400,
                                                                         child:
-                                                                            Column(
+                                                                        Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                          MainAxisSize.max,
                                                                           crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
+                                                                          CrossAxisAlignment.start,
                                                                           mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          MainAxisAlignment.spaceEvenly,
                                                                           children: [
                                                                             RichText(
                                                                               textAlign: TextAlign.start,
@@ -749,24 +906,24 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                   TextSpan(
                                                                                     text: 'Cliente \n ',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 10,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 10,
+                                                                                    ),
                                                                                   ),
                                                                                   TextSpan(
                                                                                     text: '${pedidosRomaneio[index].codCli} - ${pedidosRomaneio[index].cliente}',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 12,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 12,
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                             RichText(
@@ -775,24 +932,24 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                   TextSpan(
                                                                                     text: 'Cidade \n ',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 10,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 10,
+                                                                                    ),
                                                                                   ),
                                                                                   TextSpan(
                                                                                     text: pedidosRomaneio[index].cidade,
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 12,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 12,
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -803,23 +960,23 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                   Flexible(
                                                                     flex: 1,
                                                                     child:
-                                                                        Padding(
+                                                                    Padding(
                                                                       padding: const EdgeInsets
                                                                           .only(
                                                                           left:
-                                                                              20),
+                                                                          20),
                                                                       child:
-                                                                          SizedBox(
+                                                                      SizedBox(
                                                                         width:
-                                                                            400,
+                                                                        400,
                                                                         child:
-                                                                            Column(
+                                                                        Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                          MainAxisSize.max,
                                                                           crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
+                                                                          CrossAxisAlignment.start,
                                                                           mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          MainAxisAlignment.spaceEvenly,
                                                                           children: [
                                                                             RichText(
                                                                               textAlign: TextAlign.start,
@@ -830,24 +987,24 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                   TextSpan(
                                                                                     text: 'Dt. Pedido \n ',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 10,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 10,
+                                                                                    ),
                                                                                   ),
                                                                                   TextSpan(
                                                                                     text: pedidosRomaneio[index].dtPedido != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dtPedido!) : '',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 12,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 12,
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                             RichText(
@@ -856,24 +1013,24 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                                   TextSpan(
                                                                                     text: 'Dt. Faturamento \n ',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 10,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 10,
+                                                                                    ),
                                                                                   ),
                                                                                   TextSpan(
                                                                                     text: pedidosRomaneio[index].dtFat != null ? DateFormat('dd/MM/yyyy').format(pedidosRomaneio[index].dtFat!) : '',
                                                                                     style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                          fontSize: 12,
-                                                                                        ),
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 12,
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      fontWeight: FontWeight.normal,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -884,42 +1041,42 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                   SizedBox(
                                                                     width: 150,
                                                                     child:
-                                                                        Column(
+                                                                    Column(
                                                                       mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
+                                                                      MainAxisSize
+                                                                          .max,
                                                                       crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                       mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                       children: [
                                                                         RichText(
                                                                           text:
-                                                                              TextSpan(
+                                                                          TextSpan(
                                                                             children: [
                                                                               TextSpan(
                                                                                 text: 'R\$ ',
                                                                                 style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                      fontSize: 16,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  letterSpacing: 0,
+                                                                                  fontSize: 16,
+                                                                                ),
                                                                               ),
                                                                               TextSpan(
-                                                                                text: (pedidosRomaneio[index].valor).toString().replaceAll('.', ','),
+                                                                                text: (((NumberFormat('#,##0.0', 'pt_BR').format(pedidosRomaneio[index].valor)).replaceAll('.', ':')).replaceAll('.', ',')).replaceAll(':', '.'),
                                                                                 style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                      fontFamily: 'Readex Pro',
-                                                                                      letterSpacing: 0,
-                                                                                      fontSize: 20,
-                                                                                    ),
+                                                                                  fontFamily: 'Readex Pro',
+                                                                                  letterSpacing: 0,
+                                                                                  fontSize: 20,
+                                                                                ),
                                                                               )
                                                                             ],
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  fontWeight: FontWeight.normal,
-                                                                                ),
+                                                                              fontFamily: 'Readex Pro',
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ],
@@ -935,7 +1092,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                               ),
                                             );
                                           }
-                                          return null;
+                                          return Container();
                                         },
                                       );
                                     } else {

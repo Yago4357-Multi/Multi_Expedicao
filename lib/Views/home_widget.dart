@@ -17,7 +17,6 @@ import 'lista_cancelados.dart';
 import 'lista_faturados.dart';
 import 'lista_palete_widget.dart';
 import 'lista_pedido_widget.dart';
-import 'lista_romaneios.dart';
 import 'reimprimir_palete_widget.dart';
 
 ///Página inicial do Aplicativo
@@ -195,6 +194,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
           ),
         ),
         SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height *
               ((responsiveVisibility(
                   context: context,
@@ -205,14 +205,15 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                   : 0.62),
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const PageScrollPhysics(),
+            primary: true,
             child: Column(
-                mainAxisAlignment: ((responsiveVisibility(
+                mainAxisAlignment: MainAxisAlignment.start ,
+                crossAxisAlignment: ((responsiveVisibility(
                     context: context,
                     phone: false,
                     tablet: false,
-                    desktop: true)) ? MainAxisAlignment.start : MainAxisAlignment.center),
-                crossAxisAlignment: CrossAxisAlignment.center,
+                    desktop: true)) ? CrossAxisAlignment.start : CrossAxisAlignment.center),
             children: [
               Align(
                   alignment: AlignmentDirectional.centerStart,
@@ -235,11 +236,68 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     phone: false,
                     tablet: false,
                     desktop: true))
-                    ? Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    if (acessosCol.contains(acess.acess) ||
-                        acessosADM.contains(acess.acess))
+                    ? SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                      if (acessosCol.contains(acess.acess) ||
+                          acessosADM.contains(acess.acess))
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EscolhaBipagemWidget(acess,
+                                          bd: bd),
+                                ));
+                          },
+                          child: (Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width:
+                              MediaQuery.of(context).size.height *
+                                  0.3,
+                              height:
+                              MediaQuery.of(context).size.height *
+                                  0.2,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(20)),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.space_dashboard,
+                                  ),
+                                  Container(
+                                    height: 20,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    'Conferência',
+                                    style:
+                                    FlutterFlowTheme.of(context)
+                                        .titleLarge,
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              ),
+                            ),
+                          )),
+                        ),
                       InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -251,11 +309,11 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    EscolhaBipagemWidget(acess,
+                                    EscolhaRomaneioWidget(acess,
                                         bd: bd),
                               ));
                         },
-                        child: (Padding(
+                        child: Padding(
                           padding: const EdgeInsets.only(
                               left: 10, right: 10),
                           child: Container(
@@ -275,127 +333,74 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                               mainAxisAlignment:
                               MainAxisAlignment.center,
                               children: [
-                                const Icon(
-                                  Icons.space_dashboard,
-                                ),
+                                const Icon(Icons.list),
                                 Container(
                                   height: 20,
                                   color: Colors.white,
                                 ),
-                                Text(
-                                  'Conferência',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center,
-                                )
+                                Text('Romaneio',
+                                    style:
+                                    FlutterFlowTheme.of(context)
+                                        .titleLarge,
+                                    textAlign: TextAlign.center)
                               ],
                             ),
                           ),
-                        )),
+                        ),
                       ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EscolhaRomaneioWidget(acess,
-                                      bd: bd),
-                            ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.3,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.2,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.list),
-                              Container(
-                                height: 20,
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ListaCarregamentoWidget(acess,
+                                        bd: bd),
+                              ));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width:
+                            MediaQuery.of(context).size.height *
+                                0.3,
+                            height:
+                            MediaQuery.of(context).size.height *
+                                0.2,
+                            decoration: BoxDecoration(
                                 color: Colors.white,
-                              ),
-                              Text('Romaneio',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center)
-                            ],
+                                borderRadius:
+                                BorderRadius.circular(20)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.move_up_outlined),
+                                Container(
+                                  height: 20,
+                                  color: Colors.white,
+                                ),
+                                Text('Carregamento',
+                                    style:
+                                    FlutterFlowTheme.of(context)
+                                        .titleLarge,
+                                    textAlign: TextAlign.center)
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ListaCarregamentoWidget(acess,
-                                      bd: bd),
-                            ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.3,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.2,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.move_up_outlined),
-                              Container(
-                                height: 20,
-                                color: Colors.white,
-                              ),
-                              Text('Carregamento',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center)
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                                        ],
+                                      ),
+                    )
                     : Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -603,275 +608,230 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     phone: false,
                     tablet: false,
                     desktop: true))
-                    ? Row(
-                  children: [
-                    if (acessosPC.contains(acess.acess) ||
-                        acessosADM.contains(acess.acess))
-                      InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ListaPedidoWidget(
-                                        cont: 0, acess, bd: bd),
-                              ));
-                        },
-                        child: (Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width:
-                            MediaQuery.of(context).size.height *
-                                0.3,
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.2,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(20)),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                    Icons.request_page_outlined),
-                                Container(
-                                  height: 20,
-                                  color: Colors.white,
+                    ? SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Row(
+                                          children: [
+                        if (acessosPC.contains(acess.acess) ||
+                            acessosADM.contains(acess.acess))
+                          InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ListaPedidoWidget(
+                                            cont: 0, acess, bd: bd),
+                                  ));
+                            },
+                            child: (Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10),
+                              child: Container(
+                                alignment: Alignment.center,
+                                width:
+                                MediaQuery.of(context).size.height *
+                                    0.3,
+                                height:
+                                MediaQuery.of(context).size.height *
+                                    0.2,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.circular(20)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                        Icons.request_page_outlined),
+                                    Container(
+                                      height: 20,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Pedidos',
+                                      style:
+                                      FlutterFlowTheme.of(context)
+                                          .titleLarge,
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  'Pedidos',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center,
-                                )
-                              ],
-                            ),
-                          ),
-                        )),
-                      ),
-                    if (acessosPC.contains(acess.acess) ||
-                        acessosADM.contains(acess.acess))
-                      InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ListaPaleteWidget(
-                                        cont: 0, acess, bd: bd),
-                              ));
-                        },
-                        child: (Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width:
-                            MediaQuery.of(context).size.height *
-                                0.3,
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.2,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(20)),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment.center,
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.pallet,
-                                  color:
-                                  FlutterFlowTheme.of(context)
-                                      .primaryText,
-                                  size: 24,
-                                ),
-                                Container(
-                                  height: 20,
-                                  color: Colors.white,
-                                ),
-                                Text('Paletes',
-                                    style:
-                                    FlutterFlowTheme.of(context)
-                                        .titleLarge,
-                                    textAlign: TextAlign.center)
-                              ],
-                            ),
-                          ),
-                        )),
-                      ),
-                    if (acessosPC.contains(acess.acess) ||
-                        acessosADM.contains(acess.acess))
-                      InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ListaRomaneiosWidget(acess,
-                                        bd: bd),
-                              ));
-                        },
-                        child: (Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width:
-                            MediaQuery.of(context).size.height *
-                                0.3,
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.2,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(20)),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.history_edu),
-                                Container(
-                                  height: 20,
-                                  color: Colors.white,
-                                ),
-                                Text('Romaneios',
-                                    style:
-                                    FlutterFlowTheme.of(context)
-                                        .titleLarge,
-                                    textAlign: TextAlign.center)
-                              ],
-                            ),
-                          ),
-                        )),
-                      ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ListaFaturadosWidget(acess,
-                                      bd: bd),
-                            ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.3,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.2,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.fact_check_outlined),
-                              Container(
-                                height: 20,
-                                color: Colors.white,
                               ),
-                              Text('Faturados não Bipados',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center)
-                            ],
+                            )),
+                          ),
+                        if (acessosPC.contains(acess.acess) ||
+                            acessosADM.contains(acess.acess))
+                          InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ListaPaleteWidget(
+                                            cont: 0, acess, bd: bd),
+                                  ));
+                            },
+                            child: (Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10),
+                              child: Container(
+                                alignment: Alignment.center,
+                                width:
+                                MediaQuery.of(context).size.height *
+                                    0.3,
+                                height:
+                                MediaQuery.of(context).size.height *
+                                    0.2,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                    BorderRadius.circular(20)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.pallet,
+                                      color:
+                                      FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                      size: 24,
+                                    ),
+                                    Container(
+                                      height: 20,
+                                      color: Colors.white,
+                                    ),
+                                    Text('Paletes',
+                                        style:
+                                        FlutterFlowTheme.of(context)
+                                            .titleLarge,
+                                        textAlign: TextAlign.center)
+                                  ],
+                                ),
+                              ),
+                            )),
+                          ),
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ListaFaturadosWidget(acess,
+                                          bd: bd),
+                                ));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width:
+                              MediaQuery.of(context).size.height *
+                                  0.3,
+                              height:
+                              MediaQuery.of(context).size.height *
+                                  0.2,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(20)),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.fact_check_outlined),
+                                  Container(
+                                    height: 20,
+                                    color: Colors.white,
+                                  ),
+                                  Text('Faturados não Bipados',
+                                      style:
+                                      FlutterFlowTheme.of(context)
+                                          .titleLarge,
+                                      textAlign: TextAlign.center)
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ListaCanceladosWidget(acess,
-                                      bd: bd),
-                            ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width:
-                          MediaQuery.of(context).size.height *
-                              0.3,
-                          height:
-                          MediaQuery.of(context).size.height *
-                              0.2,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.free_cancellation_outlined),
-                              Container(
-                                height: 20,
-                                color: Colors.white,
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ListaCanceladosWidget(acess,
+                                          bd: bd),
+                                ));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width:
+                              MediaQuery.of(context).size.height *
+                                  0.3,
+                              height:
+                              MediaQuery.of(context).size.height *
+                                  0.2,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(20)),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.free_cancellation_outlined),
+                                  Container(
+                                    height: 20,
+                                    color: Colors.white,
+                                  ),
+                                  Text('Cancelados já Bipados',
+                                      style:
+                                      FlutterFlowTheme.of(context)
+                                          .titleLarge,
+                                      textAlign: TextAlign.center)
+                                ],
                               ),
-                              Text('Cancelados já Bipados',
-                                  style:
-                                  FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center)
-                            ],
+                            ),
                           ),
                         ),
+                                          ],
+                                        ),
                       ),
-                    ),
-                  ],
-                )
+                    )
                     : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -988,66 +948,6 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                 ),
                                 Text(
                                   'Paletes',
-                                  style: FlutterFlowTheme.of(context)
-                                      .titleLarge,
-                                  textAlign: TextAlign.center,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )),
-                      ),
-                    if (acessosPC.contains(acess.acess) ||
-                        acessosADM.contains(acess.acess))
-                      InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ListaRomaneiosWidget(acess,
-                                        bd: bd),
-                              ));
-                        },
-                        child: (Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 10, top: 10, right: 20),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width:
-                            MediaQuery.of(context).size.height *
-                                0.8,
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.1,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(20)),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment:
-                              MainAxisAlignment.center,
-                              children: [
-                                Container(width: 20),
-                                const Icon(Icons.history_edu),
-                                Expanded(
-                                  child: Container(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Text(
-                                  'Romaneios',
                                   style: FlutterFlowTheme.of(context)
                                       .titleLarge,
                                   textAlign: TextAlign.center,
@@ -1375,7 +1275,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     ],
                   )),
             ],
-          ),
+                      ),
         ),
       ),
       ],

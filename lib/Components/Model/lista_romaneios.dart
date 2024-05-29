@@ -19,10 +19,14 @@ class ListaRomaneiosModel extends FlutterFlowModel<ListaRomaneiosWidget> {
       choiceChipsValueController?.value = val != null ? [val] : [];
   /// Controlador de Foco do campo de texto
   FocusNode? textFieldFocusNode;
+  FocusNode? textFieldFocusNode2;
   /// Controlar de um campo de text da página
   TextEditingController? textController;
+  TextEditingController? textController2;
   /// Modelo para validar texto de um campo de texto
   String? Function(BuildContext, String?)? textControllerValidator;
+  String? Function(BuildContext, String?)? textControllerValidator2;
+  ExpansionTileController? expansionTileController;
 
   @override
   void initState(BuildContext context) {
@@ -33,6 +37,7 @@ class ListaRomaneiosModel extends FlutterFlowModel<ListaRomaneiosWidget> {
   void dispose() {
     unfocusNode.dispose();
     textFieldFocusNode?.dispose();
+    textFieldFocusNode2?.dispose();
     textController?.dispose();
   }
 }

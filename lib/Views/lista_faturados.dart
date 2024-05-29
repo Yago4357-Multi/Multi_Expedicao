@@ -269,7 +269,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                               width: 300,
                               height: 300,
                               child: SfDateRangePicker(
-                                view: DateRangePickerView.year,
+                                view: DateRangePickerView.month,
                                 navigationDirection:
                                     DateRangePickerNavigationDirection.vertical,
                                 maxDate: getCurrentTimestamp,
@@ -291,8 +291,8 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         PickerDateRange(dtIni, dtFim);
                                     pedidoResposta =
                                         bd.faturadosNBipados(dtIni, dtFim);
-                                    setState(() {});
                                   }
+                                  setState(() {});
                                 },
                                 monthViewSettings:
                                     const DateRangePickerMonthViewSettings(
@@ -471,168 +471,175 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                   var corFundoStatus =
                                       FlutterFlowTheme.of(context).accent2;
                                   var corTextoStatus = Colors.black;
-                                  if (pedidos[index].status == 'Divergente') {
+                                  if (pedidos[index].status == 'Incorreto') {
                                     corStatus = Colors.red.shade100;
                                     corBordaStatus = Colors.red;
                                     corFundoStatus = Colors.red.shade100;
                                     corTextoStatus = Colors.red;
                                   }
-                                  return Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: corStatus,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 12, 16, 12),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                '${pedidos[index].ped}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                '${pedidos[index].nota}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
+                                    return Padding(
+                                      padding:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: corStatus,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(20)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16, 12, 16, 12),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
                                               Expanded(
                                                 flex: 1,
                                                 child: Text(
-                                                  '${pedidos[index].codCli ?? ''}',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
+                                                  '${pedidos[index].ped}',
+                                                  style:
+                                                  FlutterFlowTheme
+                                                      .of(context)
                                                       .bodyMedium
                                                       .override(
-                                                        color: corTextoStatus,
-                                                        fontFamily:
-                                                            'Readex Pro',
-                                                        letterSpacing: 0,
-                                                      ),
+                                                    color: corTextoStatus,
+                                                    fontFamily:
+                                                    'Readex Pro',
+                                                    letterSpacing: 0,
+                                                  ),
                                                 ),
                                               ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 4,
-                                              child: Text(
-                                                pedidos[index].cliente ?? '',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    '${pedidos[index].nota}',
+                                                    style:
+                                                    FlutterFlowTheme
+                                                        .of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                '${pedidos[index].cidade}',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
+                                                      color: corTextoStatus,
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      letterSpacing: 0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    '${pedidos[index].codCli ??
+                                                        ''}',
+                                                    style: FlutterFlowTheme
+                                                        .of(
+                                                        context)
                                                         .bodyMedium
                                                         .override(
-                                                          color: corTextoStatus,
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          letterSpacing: 0,
-                                                        ),
-                                              ),
-                                            ),
+                                                      color: corTextoStatus,
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      letterSpacing: 0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Text(
+                                                    pedidos[index].cliente ??
+                                                        '',
+                                                    style:
+                                                    FlutterFlowTheme
+                                                        .of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                      color: corTextoStatus,
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      letterSpacing: 0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    '${pedidos[index].cidade}',
+                                                    style:
+                                                    FlutterFlowTheme
+                                                        .of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                      color: corTextoStatus,
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      letterSpacing: 0,
+                                                    ),
+                                                  ),
+                                                ),
                                               Expanded(
                                                 flex: 1,
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     color: corFundoStatus,
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
+                                                    BorderRadius.circular(
+                                                        8),
                                                     border: Border.all(
                                                       color: corBordaStatus,
                                                     ),
                                                   ),
                                                   child: Align(
                                                     alignment:
-                                                        const AlignmentDirectional(
-                                                            0, 0),
+                                                    const AlignmentDirectional(
+                                                        0, 0),
                                                     child: Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              8, 4, 8, 4),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          8, 4, 8, 4),
                                                       child: Text(
                                                         '${pedidos[index].vol}',
                                                         style: FlutterFlowTheme
-                                                                .of(context)
+                                                            .of(context)
                                                             .bodySmall
                                                             .override(
-                                                              color:
-                                                                  corTextoStatus,
-                                                              fontFamily:
-                                                                  'Readex Pro',
-                                                              letterSpacing: 0,
-                                                            ),
+                                                          color:
+                                                          corTextoStatus,
+                                                          fontFamily:
+                                                          'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
+                                    );
                                 },
                               );
                             } else {

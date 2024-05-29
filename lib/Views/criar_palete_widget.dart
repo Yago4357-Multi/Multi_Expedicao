@@ -224,6 +224,9 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                                 ));
                           }
                         }
+                        setState(() {
+
+                        });
                       },
                       text: 'Criar Palete e Imprimir Cód.',
                       icon: const Icon(
