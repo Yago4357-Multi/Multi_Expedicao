@@ -137,7 +137,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                       builder: (context2) {
                         if (paleteSelecionadoint.isNotEmpty) {
                           if (pedidosSalvos
-                              .where((element) => element.status == 'Divergente')
+                              .where((element) => element.status == 'Incorreto')
                               .isEmpty) {
                             return CupertinoAlertDialog(
                               title: Text(
@@ -641,7 +641,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Expanded(
                                                             flex: 2,
                                                             child: pw.Text(
-                                                                '${pedidos[index].valor ?? ''}',
+                                                                (((NumberFormat('#.##0,00').format(pedidos[index].valor)).replaceAll('.', ':')).replaceAll('.', ',')).replaceAll(':', '.'),
                                                                 textAlign: pw
                                                                     .TextAlign
                                                                     .center,
@@ -1626,7 +1626,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                         child: Text(
-                                                                                          DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
+                                                                                          DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtInclusao!),
                                                                                           style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                                 fontFamily: 'Readex Pro',
                                                                                                 letterSpacing: 0,
@@ -1650,7 +1650,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                         child: Text(
-                                                                                          DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
+                                                                                          DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtFechamento!),
                                                                                           style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                                 fontFamily: 'Readex Pro',
                                                                                                 letterSpacing: 0,
@@ -1776,7 +1776,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                         child: Text(
-                                                                                          DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtInclusao!),
+                                                                                          DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtInclusao!),
                                                                                           style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                                 fontFamily: 'Readex Pro',
                                                                                                 letterSpacing: 0,
@@ -1800,7 +1800,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                         child: Text(
-                                                                                          DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!),
+                                                                                          DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtFechamento!),
                                                                                           style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                                 fontFamily: 'Readex Pro',
                                                                                                 letterSpacing: 0,
@@ -1926,7 +1926,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                           alignment:
                                               const AlignmentDirectional(0, 0),
                                           child: Text(
-                                            paleteSelecionadoint.join(','),
+                                            paleteSelecionadoint.join(' - '),
                                             textAlign: TextAlign.end,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
@@ -1999,7 +1999,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                           alignment:
                                               const AlignmentDirectional(0, 0),
                                           child: Text(
-                                            paleteSelecionadoint.join(','),
+                                            paleteSelecionadoint.join(' - '),
                                             textAlign: TextAlign.end,
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
@@ -2041,8 +2041,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                               child: FlutterFlowChoiceChips(
                                   options: const [
                                     ChipData('Todos'),
-                                    ChipData('Divergente'),
-                                    ChipData('OK')
+                                    ChipData('Incorretos'),
+                                    ChipData('Corretos')
                                   ],
                                   onChanged: (val) {
                                     setState(() {
@@ -2051,7 +2051,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                       } else {
                                         pedidos = pedidosSalvos
                                             .where((element) =>
-                                                element.status ==
+                                                '${element.status}s' ==
                                                 _model.choiceChipsValue)
                                             .toList();
                                       }
@@ -2546,13 +2546,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       height: 30,
                                                       child: Container(
                                                         decoration: BoxDecoration(
-                                                          color: pedidos[index].status != 'OK' ? Colors.red.shade100 : FlutterFlowTheme.of(context).accent2,
+                                                          color: pedidos[index].status != 'Correto' ? Colors.red.shade100 : FlutterFlowTheme.of(context).accent2,
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                   8),
                                                           border: Border.all(
                                                             width: 1.5,
-                                                            color: pedidos[index].status != 'OK' ? Colors.red : FlutterFlowTheme.of(context).secondary,
+                                                            color: pedidos[index].status != 'Correto' ? Colors.red : FlutterFlowTheme.of(context).secondary,
                                                           ),
                                                         ),
                                                         child: Align(
@@ -2571,7 +2571,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   .bodySmall
                                                                   .override(
                                                                     color:
-                                                                    pedidos[index].status != 'OK' ? Colors.red : FlutterFlowTheme.of(context).secondary,
+                                                                    pedidos[index].status != 'Correto' ? Colors.red : FlutterFlowTheme.of(context).secondary,
                                                                     fontFamily:
                                                                         'Readex Pro',
                                                                     letterSpacing:

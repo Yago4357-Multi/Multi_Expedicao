@@ -52,11 +52,6 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
     _model = createModel(context, ListaRomaneioModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
-    rodarBanco();
-  }
-
-  void rodarBanco() async {
-    pedidosFut = bd.selectAll();
   }
 
   @override
@@ -99,86 +94,8 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: Container(
-                width: 120,
-                height: 50,
-                decoration: BoxDecoration(
-                    color: Colors.green, borderRadius: BorderRadius.circular(20)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      'Salvar',
-                      style: FlutterFlowTheme.of(context).headlineSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          fontSize: 15),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.check_outlined, color: Colors.white),
-                      onPressed: () async {
-                        await showCupertinoModalPopup(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: const Text(
-                                'Verifique todos os pedidos antes de exclui-los',
-                              ),
-                              actions: <CupertinoDialogAction>[
-                                CupertinoDialogAction(
-                                    isDefaultAction: true,
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Voltar')),
-                                CupertinoDialogAction(
-                                    isDestructiveAction: true,
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                      await showCupertinoModalPopup(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (context) {
-                                          return CupertinoAlertDialog(
-                                            title: const Text(
-                                              'Após exclusão todos os pedidos excluídos terão que ser bipados novamente. Deseja continuar??',
-                                            ),
-                                            actions: <CupertinoDialogAction>[
-                                              CupertinoDialogAction(
-                                                  isDefaultAction: true,
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Voltar')),
-                                              CupertinoDialogAction(
-                                                  isDestructiveAction: true,
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    bd.excluiPedido(
-                                                        pedidosExc, usur, 0);
-                                                    pedidosExc = [];
-                                                    setState(() {});
-                                                  },
-                                                  child: const Text('Continuar'))
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const Text('Continuar'))
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                )),
-          ),
+        actions: const [
+
         ],
         centerTitle: true,
         elevation: 2,
@@ -237,21 +154,115 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                     child: TextFormField(
                                       onFieldSubmitted: (value) async {
                                         var codArrumado =
-                                            value.substring(14, 33);
+                                        value.substring(14, 33);
                                         var ped = codArrumado.substring(0, 10);
                                         var cx = codArrumado.substring(14, 16);
-                                        if (pedidosExc.contains(Contagem(
-                                                int.parse(ped),
-                                                0,
-                                                int.parse(cx),
-                                                0)) ==
-                                            false) {
-                                          pedidosExc.add(Contagem(
-                                              int.parse(ped),
-                                              0,
-                                              int.parse(cx),
-                                              0));
+                                        pedidos = await bd.selectPedido(int.parse(ped));
+                                        if (pedidos.isNotEmpty) {
+                                          if (pedidosExc.contains(pedidos.where((element) => element.caixa == int.parse(cx) && element.ped == int.parse(ped)).toList()[0]) ==
+                                              false) {
+                                            pedidosExc.add(pedidos.where((element) => element.caixa == int.parse(cx) && element.ped == int.parse(ped)).toList()[0]);
+                                          }
+                                          if (context.mounted) {
+                                            await showCupertinoModalPopup(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return CupertinoAlertDialog(
+                                                  title: Text(
+                                                    'Confirme a exclusão da Caixa : ${pedidosExc[0]
+                                                        .caixa} do Pedido : ${pedidosExc[0]
+                                                        .ped} do Palete : ${pedidosExc[0]
+                                                        .palete}',
+                                                  ),
+                                                  actions: <
+                                                      CupertinoDialogAction>[
+                                                    CupertinoDialogAction(
+                                                        isDefaultAction: true,
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Voltar')),
+                                                    CupertinoDialogAction(
+                                                        isDestructiveAction: true,
+                                                        onPressed: () async {
+                                                          await showCupertinoModalPopup(
+                                                            context: context,
+                                                            barrierDismissible: false,
+                                                            builder: (context) {
+                                                              return CupertinoAlertDialog(
+                                                                title: const Text(
+                                                                  'Não esqueça de retirar a caixa do palete. Está caixa devera ser novamente bipada na inclusão em outro palete',
+                                                                ),
+                                                                actions: <
+                                                                    CupertinoDialogAction>[
+                                                                  CupertinoDialogAction(
+                                                                      isDefaultAction: true,
+                                                                      onPressed: () {
+                                                                        Navigator
+                                                                            .pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Voltar')),
+                                                                  CupertinoDialogAction(
+                                                                      isDestructiveAction: true,
+                                                                      onPressed: () {
+                                                                        bd.excluiPedido(
+                                                                            pedidosExc,
+                                                                            usur,
+                                                                            0);
+                                                                        pedidosExc =
+                                                                        [];
+                                                                        Navigator
+                                                                            .pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Continuar'))
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Continuar'))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        } else{
+                                          if (context.mounted) {
+                                            await showCupertinoModalPopup(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return CupertinoAlertDialog(
+                                                  title: const Text(
+                                                    'Caixa não bipada anteriormente',
+                                                  ),
+                                                  actions: <
+                                                      CupertinoDialogAction>[
+                                                    CupertinoDialogAction(
+                                                        isDefaultAction: true,
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Voltar')),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
                                         }
+                                        pedidosExc = [];
                                         _model.textController.text = '';
                                         setState(() {});
                                       },
@@ -264,22 +275,22 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                         labelStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                         hintStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
                                             .override(
-                                              fontFamily: 'Readex Pro',
-                                              letterSpacing: 0,
-                                            ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                         enabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
                                             color: corBorda,
                                             width: 2,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                          BorderRadius.circular(12),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -287,7 +298,7 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                             width: 2,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                          BorderRadius.circular(12),
                                         ),
                                         errorBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -296,7 +307,7 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                             width: 2,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                          BorderRadius.circular(12),
                                         ),
                                         focusedErrorBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -305,11 +316,11 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                             width: 2,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                          BorderRadius.circular(12),
                                         ),
                                         contentPadding:
-                                            const EdgeInsetsDirectional
-                                                .fromSTEB(20, 0, 0, 0),
+                                        const EdgeInsetsDirectional
+                                            .fromSTEB(20, 0, 0, 0),
                                         suffixIcon: Icon(
                                           Icons.search_rounded,
                                           color: FlutterFlowTheme.of(context)
@@ -319,11 +330,11 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
+                                        fontFamily: 'Readex Pro',
+                                        letterSpacing: 0,
+                                      ),
                                       cursorColor:
-                                          FlutterFlowTheme.of(context).primary,
+                                      FlutterFlowTheme.of(context).primary,
                                     ),
                                   ),
                                 ),
@@ -344,7 +355,7 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                MainAxisAlignment.spaceAround,
                                 children: [
                                   Expanded(
                                     flex: 3,
@@ -354,9 +365,9 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
+                                        fontFamily: 'Readex Pro',
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                   Expanded(
@@ -367,9 +378,9 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
+                                        fontFamily: 'Readex Pro',
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -386,8 +397,8 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            14, 10, 14, 10),
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        14, 10, 14, 10),
                                     child: Container(
                                       constraints: const BoxConstraints(
                                         maxWidth: 570,
@@ -408,7 +419,7 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceAround,
                                           children: [
                                             Expanded(
                                               flex: 3,
@@ -416,13 +427,13 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                                   textAlign: TextAlign.start,
                                                   '${pedidosExc.isNotEmpty ? pedidosExc[index].ped : 0}',
                                                   style: FlutterFlowTheme.of(
-                                                          context)
+                                                      context)
                                                       .headlineLarge
                                                       .override(
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          color: Colors.red,
-                                                          fontSize: 26)),
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      color: Colors.red,
+                                                      fontSize: 26)),
                                             ),
                                             Expanded(
                                               flex: 1,
@@ -430,8 +441,8 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                                 textAlign: TextAlign.center,
                                                 '${pedidosExc.isNotEmpty ? pedidosExc[index].caixa : 0}',
                                                 style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelMedium,
+                                                FlutterFlowTheme.of(context)
+                                                    .labelMedium,
                                               ),
                                             ),
                                           ],

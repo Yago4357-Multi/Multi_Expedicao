@@ -8,6 +8,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
+import 'lista_romaneios.dart';
 import 'romaneio_widget.dart';
 
 export '../Components/Model/escolha_romaneio_model.dart';
@@ -22,10 +23,10 @@ class EscolhaRomaneioWidget extends StatefulWidget {
 
   ///Construtor da página de escolha do Romaneio
   const EscolhaRomaneioWidget(
-    this.usur, {
-    super.key,
-    required this.bd,
-  });
+      this.usur, {
+        super.key,
+        required this.bd,
+      });
 
   @override
   State<EscolhaRomaneioWidget> createState() =>
@@ -106,9 +107,9 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
           title: Text(
             'Criar Romaneio',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
+              fontFamily: 'Outfit',
+              color: FlutterFlowTheme.of(context).primaryBackground,
+            ),
           ),
           actions: const [],
           centerTitle: true,
@@ -118,100 +119,118 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Align(
-                alignment: const AlignmentDirectional(0, 0),
-                child: FFButtonWidget(
-                  text: 'Continuar Romaneio',
-                  onPressed: () async {
-                    return showModalBottomSheet(
-                      elevation: MediaQuery.of(context).viewInsets.bottom,
-                      useSafeArea: true,
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                (['BI', 'Comercial'].contains(usur.acess)) ?
+                InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur, bd: bd),));
+                  },
+                  child: (Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 10, top: 10, right: 20),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width:
+                      MediaQuery.of(context).size.height *
+                          0.8,
+                      height:
+                      MediaQuery.of(context).size.height *
+                          0.1,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                          BorderRadius.circular(20)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
+                        children: [
+                          Container(width: 20),
+                          Expanded(
+                            child: Container(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Conferir Romaneios',
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+                ) : Container(),
+                InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    return showDialog(
                       context: context,
                       builder: (context) {
-                        return FutureBuilder(
-                          future: romaneios,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              romaneiosLista = snapshot.data as List<Romaneio>;
-                              return Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    16, 12, 16, 12),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        showCursor: true,
-                                        initialValue:
-                                            romaneio != '0' ? romaneio : '',
-                                        controller: _model.textController,
-                                        focusNode: _model.textFieldFocusNode,
-                                        onChanged: (value) {
-                                          romaneio = value;
-                                        },
-                                        onFieldSubmitted: (value) async {
-                                          if (await bd.connected(context) ==
-                                              1) {
-                                            if (context.mounted) {
-                                              if (romaneiosLista
-                                                  .where((element) =>
-                                                      '${element.romaneio}' ==
-                                                      romaneio)
-                                                  .isEmpty) {
-                                                await showCupertinoModalPopup(
-                                                  context: context,
-                                                  barrierDismissible: false,
-                                                  builder: (context2) {
-                                                    return CupertinoAlertDialog(
-                                                      title: const Text(
-                                                          'Romaneio não encontrado'),
-                                                      actions: <CupertinoDialogAction>[
-                                                        CupertinoDialogAction(
-                                                            isDefaultAction:
-                                                                true,
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context2);
-                                                            },
-                                                            child: const Text(
-                                                                'Voltar'))
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                                return;
-                                              }
-                                              if (romaneiosLista
-                                                  .where((element) =>
-                                                      '${element.romaneio}' ==
-                                                          romaneio &&
-                                                      element.dtFechamento ==
-                                                          null)
-                                                  .isEmpty) {
-                                                await showCupertinoModalPopup(
+                        return Dialog(
+                          child: FutureBuilder(
+                            future: romaneios,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                romaneiosLista = snapshot.data as List<Romaneio>;
+                                return Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      16, 12, 16, 12),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          showCursor: true,
+                                          initialValue:
+                                          romaneio != '0' ? romaneio : '',
+                                          controller: _model.textController,
+                                          focusNode: _model.textFieldFocusNode,
+                                          onChanged: (value) {
+                                            romaneio = value;
+                                          },
+                                          onFieldSubmitted: (value) async {
+                                            if (await bd.connected(context) ==
+                                                1) {
+                                              if (context.mounted) {
+                                                if (romaneiosLista
+                                                    .where((element) =>
+                                                '${element.romaneio}' ==
+                                                    romaneio)
+                                                    .isEmpty) {
+                                                  await showCupertinoModalPopup(
+                                                    context: context,
                                                     barrierDismissible: false,
                                                     builder: (context2) {
                                                       return CupertinoAlertDialog(
                                                         title: const Text(
-                                                          'Romaneio finalizado\n',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        content: const Text(
-                                                            'Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                            'Romaneio não encontrado'),
                                                         actions: <CupertinoDialogAction>[
                                                           CupertinoDialogAction(
                                                               isDefaultAction:
-                                                                  true,
+                                                              true,
                                                               onPressed: () {
                                                                 Navigator.pop(
                                                                     context2);
@@ -221,168 +240,164 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                         ],
                                                       );
                                                     },
-                                                    context: context);
-                                                return;
-                                              }
-                                              Navigator.pop(context);
-                                              await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ListaRomaneioWidget(
-                                                              int.parse(
-                                                                  romaneio),
-                                                              usur,
-                                                              bd: bd)));
-                                            }
-                                          }
-                                        },
-                                        autofocus: true,
-                                        obscureText: false,
-                                        decoration: InputDecoration(
-                                          labelText: 'Insira o Romaneio',
-                                          labelStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .labelMedium
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryText,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                          alignLabelWithHint: false,
-                                          hintStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .labelMedium,
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .alternate,
-                                              width: 2,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.green.shade500,
-                                              width: 2,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.green.shade100,
-                                              width: 2,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.green.shade100,
-                                              width: 2,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                        ),
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium,
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(),
-                                        validator: _model
-                                            .textControllerValidator
-                                            .asValidator(context),
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(33),
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Container(
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                                color: Colors.green,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.check,
-                                                  color: Colors.white,
-                                                ),
-                                                onPressed: () async {
-                                                  if (await bd
-                                                          .connected(context) ==
-                                                      1) {
-                                                    if (context.mounted) {
-                                                      if (romaneiosLista
-                                                          .where((element) =>
-                                                              '${element.romaneio}' ==
-                                                              romaneio)
-                                                          .isEmpty) {
-                                                        await showCupertinoModalPopup(
-                                                          context: context,
-                                                          barrierDismissible:
-                                                              false,
-                                                          builder: (context2) {
-                                                            return CupertinoAlertDialog(
-                                                              title: const Text(
-                                                                  'Romaneio não encontrado'),
-                                                              actions: <CupertinoDialogAction>[
-                                                                CupertinoDialogAction(
-                                                                    isDefaultAction:
-                                                                        true,
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context2);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'Voltar'))
-                                                              ],
-                                                            );
-                                                          },
+                                                  );
+                                                  return;
+                                                }
+                                                if (romaneiosLista
+                                                    .where((element) =>
+                                                '${element.romaneio}' ==
+                                                    romaneio &&
+                                                    element.dtFechamento ==
+                                                        null)
+                                                    .isEmpty) {
+                                                  await showCupertinoModalPopup(
+                                                      barrierDismissible: false,
+                                                      builder: (context2) {
+                                                        return CupertinoAlertDialog(
+                                                          title: const Text(
+                                                            'Romaneio finalizado\n',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          ),
+                                                          content: const Text(
+                                                              'Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                          actions: <CupertinoDialogAction>[
+                                                            CupertinoDialogAction(
+                                                                isDefaultAction:
+                                                                true,
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context2);
+                                                                },
+                                                                child: const Text(
+                                                                    'Voltar'))
+                                                          ],
                                                         );
-                                                        return;
-                                                      }
-                                                      if (romaneiosLista
-                                                          .where((element) =>
-                                                              '${element.romaneio}' ==
-                                                                  romaneio &&
-                                                              element.dtFechamento ==
-                                                                  null)
-                                                          .isEmpty) {
-                                                        await showCupertinoModalPopup(
+                                                      },
+                                                      context: context);
+                                                  return;
+                                                }
+                                                Navigator.pop(context);
+                                                await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ListaRomaneioWidget(
+                                                                int.parse(
+                                                                    romaneio),
+                                                                usur,
+                                                                bd: bd)));
+                                              }
+                                            }
+                                          },
+                                          autofocus: true,
+                                          obscureText: false,
+                                          decoration: InputDecoration(
+                                            labelText: 'Insira o Romaneio',
+                                            labelStyle: FlutterFlowTheme.of(
+                                                context)
+                                                .labelMedium
+                                                .override(
+                                              fontFamily: 'Readex Pro',
+                                              color:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondaryText,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            alignLabelWithHint: false,
+                                            hintStyle:
+                                            FlutterFlowTheme.of(context)
+                                                .labelMedium,
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color:
+                                                FlutterFlowTheme.of(context)
+                                                    .alternate,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                              BorderRadius.circular(8),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.green.shade500,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                              BorderRadius.circular(8),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.green.shade100,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                              BorderRadius.circular(8),
+                                            ),
+                                            focusedErrorBorder:
+                                            OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.green.shade100,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                              BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(),
+                                          validator: _model
+                                              .textControllerValidator
+                                              .asValidator(context),
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(33),
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding:
+                                          const EdgeInsets.only(left: 10),
+                                          child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.green,
+                                                  borderRadius:
+                                                  BorderRadius.circular(10)),
+                                              child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.check,
+                                                    color: Colors.white,
+                                                  ),
+                                                  onPressed: () async {
+                                                    if (await bd
+                                                        .connected(context) ==
+                                                        1) {
+                                                      if (context.mounted) {
+                                                        if (romaneiosLista
+                                                            .where((element) =>
+                                                        '${element.romaneio}' ==
+                                                            romaneio)
+                                                            .isEmpty) {
+                                                          await showCupertinoModalPopup(
+                                                            context: context,
                                                             barrierDismissible:
-                                                                false,
-                                                            builder:
-                                                                (context2) {
+                                                            false,
+                                                            builder: (context2) {
                                                               return CupertinoAlertDialog(
-                                                                title:
-                                                                    const Text(
-                                                                  'Romaneio finalizado\n',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                                content: const Text(
-                                                                    'Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                                title: const Text(
+                                                                    'Romaneio não encontrado'),
                                                                 actions: <CupertinoDialogAction>[
                                                                   CupertinoDialogAction(
                                                                       isDefaultAction:
-                                                                          true,
+                                                                      true,
                                                                       onPressed:
                                                                           () {
                                                                         Navigator.pop(
@@ -393,540 +408,557 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                 ],
                                                               );
                                                             },
-                                                            context: context);
-                                                        return;
+                                                          );
+                                                          return;
+                                                        }
+                                                        if (romaneiosLista
+                                                            .where((element) =>
+                                                        '${element.romaneio}' ==
+                                                            romaneio &&
+                                                            element.dtFechamento ==
+                                                                null)
+                                                            .isEmpty) {
+                                                          await showCupertinoModalPopup(
+                                                              barrierDismissible:
+                                                              false,
+                                                              builder:
+                                                                  (context2) {
+                                                                return CupertinoAlertDialog(
+                                                                  title:
+                                                                  const Text(
+                                                                    'Romaneio finalizado\n',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                  ),
+                                                                  content: const Text(
+                                                                      'Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                                  actions: <CupertinoDialogAction>[
+                                                                    CupertinoDialogAction(
+                                                                        isDefaultAction:
+                                                                        true,
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context2);
+                                                                        },
+                                                                        child: const Text(
+                                                                            'Voltar'))
+                                                                  ],
+                                                                );
+                                                              },
+                                                              context: context);
+                                                          return;
+                                                        }
+                                                        Navigator.pop(context);
+                                                        await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ListaRomaneioWidget(
+                                                                        int.parse(
+                                                                            romaneio),
+                                                                        usur,
+                                                                        bd: bd)));
                                                       }
-                                                      Navigator.pop(context);
-                                                      await Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ListaRomaneioWidget(
-                                                                      int.parse(
-                                                                          romaneio),
-                                                                      usur,
-                                                                      bd: bd)));
                                                     }
-                                                  }
-                                                }))),
-                                    Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Container(
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                                color: Colors.green,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: IconButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return StatefulBuilder(
-                                                        builder:
-                                                            (context, setter) {
-                                                          internalSetter =
-                                                              setter;
-                                                          return Dialog(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            child: Stack(
-                                                              children: [
-                                                                Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  children: [
-                                                                    Container(
-                                                                      height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height *
-                                                                          0.1,
-                                                                      width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width,
-                                                                      decoration: const BoxDecoration(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius:
-                                                                              BorderRadiusDirectional.vertical(top: Radius.circular(20))),
-                                                                      child:
-                                                                          Align(
-                                                                        alignment:
-                                                                            Alignment.center,
+                                                  }))),
+                                      Padding(
+                                          padding:
+                                          const EdgeInsets.only(left: 10),
+                                          child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.green,
+                                                  borderRadius:
+                                                  BorderRadius.circular(10)),
+                                              child: IconButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return StatefulBuilder(
+                                                          builder:
+                                                              (context, setter) {
+                                                            internalSetter =
+                                                                setter;
+                                                            return Dialog(
+                                                              backgroundColor:
+                                                              Colors.white,
+                                                              child: Stack(
+                                                                children: [
+                                                                  Column(
+                                                                    mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                    children: [
+                                                                      Container(
+                                                                        height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height *
+                                                                            0.1,
+                                                                        width: MediaQuery.of(
+                                                                            context)
+                                                                            .size
+                                                                            .width,
+                                                                        decoration: const BoxDecoration(
+                                                                            color: Colors
+                                                                                .white,
+                                                                            borderRadius:
+                                                                            BorderRadiusDirectional.vertical(top: Radius.circular(20))),
                                                                         child:
-                                                                            Text(
-                                                                          'Romaneios Abertos',
-                                                                          textAlign:
-                                                                              TextAlign.center,
-                                                                          style: FlutterFlowTheme.of(context)
-                                                                              .headlineMedium
-                                                                              .override(
-                                                                                fontFamily: 'Outfit',
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    Container(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          10),
-                                                                      width: double
-                                                                          .infinity,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryBackground,
-                                                                        boxShadow: const [
-                                                                          BoxShadow(
-                                                                            blurRadius:
-                                                                                0,
-                                                                            color:
-                                                                                Color(0xFFE0E3E7),
-                                                                            offset:
-                                                                                Offset(
-                                                                              0.0,
-                                                                              1,
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(0),
-                                                                        shape: BoxShape
-                                                                            .rectangle,
-                                                                      ),
-                                                                      child:
-                                                                          Container(
-                                                                        width: double
-                                                                            .infinity,
-                                                                        height:
-                                                                            40,
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(12),
-                                                                        ),
-                                                                        alignment: const AlignmentDirectional(
-                                                                            -1,
-                                                                            0),
-                                                                        child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsetsDirectional
-                                                                              .fromSTEB(
-                                                                              16,
-                                                                              0,
-                                                                              0,
-                                                                              0),
+                                                                        Align(
+                                                                          alignment:
+                                                                          Alignment.center,
                                                                           child:
-                                                                              Row(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.max,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.center,
-                                                                            children: [
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                  (responsiveVisibility(
-                                                                                      context: context,
-                                                                                      phone: false,
-                                                                                      tablet: false,
-                                                                                      desktop: true)) ? 'Romaneio' : 'Rom.',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 15,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                              if (responsiveVisibility(
-                                                              context: context,
-                                                              phone: false,
-                                                              tablet: false,
-                                                              desktop: true))(Expanded(
-                                                                                child: Text(
-                                                                                  softWrap: true,
-                                                                                  'Usuário de Abertura',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 15,
-                                                                                      ),
-                                                                                ),
-                                                                              )),
-                                                                              if (responsiveVisibility(
-                                                                                  context: context,
-                                                                                  phone: false,
-                                                                                  tablet: false,
-                                                                                  desktop: true))(
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                  'Dt. de Abertura',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 15,
-                                                                                      ),
-                                                                                ),
-                                                                              )),
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                  'Paletes',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 15,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                (responsiveVisibility(
-                                                                                context: context,
-                                                                                phone: false,
-                                                                                tablet: false,
-                                                                                desktop: true)) ? 'Volumetria' : 'Vol.',
-                                                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: 15,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                            ],
+                                                                          Text(
+                                                                            'Romaneios Abertos',
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                            style: FlutterFlowTheme.of(context)
+                                                                                .headlineMedium
+                                                                                .override(
+                                                                              fontFamily: 'Outfit',
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width,
-                                                                      height: MediaQuery.of(context).size.height * 0.7,
-                                                                      child: ListView
-                                                                          .builder(
-                                                                        shrinkWrap:
-                                                                            true,
-                                                                        physics: const AlwaysScrollableScrollPhysics(),
-                                                                        scrollDirection:
-                                                                        Axis.vertical,
-                                                                        padding:
-                                                                            EdgeInsets
-                                                                                .zero,
-                                                                        itemCount:
-                                                                            romaneiosLista
-                                                                                .length,
-                                                                        itemBuilder:
-                                                                            (context,
-                                                                                index) {
-                                                                          if (romaneiosLista[index].dtFechamento ==
-                                                                              null) {
-                                                                            if (int.parse(romaneio) ==
-                                                                                romaneiosLista[index].romaneio) {
-                                                                              return Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
-                                                                                child: Container(
-                                                                                  width: double.infinity,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: Colors.yellow.shade50,
-                                                                                    boxShadow: const [
-                                                                                      BoxShadow(
-                                                                                        blurRadius: 0,
-                                                                                        color: Color(0xFFE0E3E7),
-                                                                                        offset: Offset(
-                                                                                          0.0,
-                                                                                          1,
-                                                                                        ),
-                                                                                      )
-                                                                                    ],
-                                                                                    borderRadius: BorderRadius.circular(0),
-                                                                                    shape: BoxShape.rectangle,
-                                                                                  ),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      if (await bd.connected(context) == 1) {
-                                                                                        setter(
-                                                                                          () {
-                                                                                            romaneio = '${romaneiosLista[index].romaneio!}';
-                                                                                            setState(() {
-                                                                                              romaneio = '${romaneiosLista[index].romaneio!}';
-                                                                                            });
-                                                                                          },
-                                                                                        );
-                                                                                      }
-                                                                                    },
-                                                                                    child: Padding(
-                                                                                      padding: const EdgeInsets.all(8),
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: [
-                                                                                          Container(
-                                                                                            width: 4,
-                                                                                            height: 50,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: Colors.green.shade400,
-                                                                                              borderRadius: BorderRadius.circular(2),
-                                                                                            ),
-                                                                                          ),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].romaneio}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          if (responsiveVisibility(
-                                                                                              context: context,
-                                                                                              phone: false,
-                                                                                              tablet: false,
-                                                                                              desktop: true))(
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].usurCriacao}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          )),
-                                                                                          if (responsiveVisibility(
-                                                                                              context: context,
-                                                                                              phone: false,
-                                                                                              tablet: false,
-                                                                                              desktop: true))(
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                DateFormat('kk:mm   dd/MM/yyyy').format(romaneiosLista[index].dtRomaneio!),
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          )),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].palete}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].vol}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
+                                                                      Container(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            10),
+                                                                        width: double
+                                                                            .infinity,
+                                                                        decoration:
+                                                                        BoxDecoration(
+                                                                          color: FlutterFlowTheme.of(context)
+                                                                              .primaryBackground,
+                                                                          boxShadow: const [
+                                                                            BoxShadow(
+                                                                              blurRadius:
+                                                                              0,
+                                                                              color:
+                                                                              Color(0xFFE0E3E7),
+                                                                              offset:
+                                                                              Offset(
+                                                                                0.0,
+                                                                                1,
+                                                                              ),
+                                                                            )
+                                                                          ],
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(0),
+                                                                          shape: BoxShape
+                                                                              .rectangle,
+                                                                        ),
+                                                                        child:
+                                                                        Container(
+                                                                          width: double
+                                                                              .infinity,
+                                                                          height:
+                                                                          40,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            color:
+                                                                            FlutterFlowTheme.of(context).primaryBackground,
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(12),
+                                                                          ),
+                                                                          alignment: const AlignmentDirectional(
+                                                                              -1,
+                                                                              0),
+                                                                          child:
+                                                                          Padding(
+                                                                            padding: const EdgeInsetsDirectional
+                                                                                .fromSTEB(
+                                                                                16,
+                                                                                0,
+                                                                                0,
+                                                                                0),
+                                                                            child:
+                                                                            Row(
+                                                                              mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                              crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text(
+                                                                                    (responsiveVisibility(
+                                                                                        context: context,
+                                                                                        phone: false,
+                                                                                        tablet: false,
+                                                                                        desktop: true)) ? 'Romaneio' : 'Rom.',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 15,
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                              );
-                                                                            } else {
-                                                                              return Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
-                                                                                child: Container(
-                                                                                  width: double.infinity,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    boxShadow: const [
-                                                                                      BoxShadow(
-                                                                                        blurRadius: 0,
-                                                                                        color: Color(0xFFE0E3E7),
-                                                                                        offset: Offset(
-                                                                                          0.0,
-                                                                                          1,
-                                                                                        ),
-                                                                                      )
-                                                                                    ],
-                                                                                    borderRadius: BorderRadius.circular(0),
-                                                                                    shape: BoxShape.rectangle,
-                                                                                  ),
-                                                                                  child: InkWell(
-                                                                                    onTap: () async {
-                                                                                      if (await bd.connected(context) == 1) {
-                                                                                        setter(
-                                                                                          () {
-                                                                                            romaneio = '${romaneiosLista[index].romaneio!}';
-                                                                                            setState(() {
-                                                                                              romaneio = '${romaneiosLista[index].romaneio!}';
-                                                                                            });
-                                                                                          },
-                                                                                        );
-                                                                                      }
-                                                                                    },
-                                                                                    child: Padding(
-                                                                                      padding: const EdgeInsets.all(8),
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: [
-                                                                                          Container(
-                                                                                            width: 4,
-                                                                                            height: 50,
-                                                                                            decoration: BoxDecoration(
-                                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                                              borderRadius: BorderRadius.circular(2),
-                                                                                            ),
-                                                                                          ),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].romaneio}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        if (responsiveVisibility(
+                                                                                if (responsiveVisibility(
                                                                                     context: context,
                                                                                     phone: false,
-                                                                                        tablet: false,
-                                                                                        desktop: true))(
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].usurCriacao}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          )),
-                                                                                    if (responsiveVisibility(
-                                                                                context: context,
-                                                                                phone: false,
+                                                                                    tablet: false,
+                                                                                    desktop: true))(Expanded(
+                                                                                  child: Text(
+                                                                                    softWrap: true,
+                                                                                    'Usuário de Abertura',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 15,
+                                                                                    ),
+                                                                                  ),
+                                                                                )),
+                                                                                if (responsiveVisibility(
+                                                                                    context: context,
+                                                                                    phone: false,
                                                                                     tablet: false,
                                                                                     desktop: true))(
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                DateFormat('kk:mm   dd/MM/yyyy').format(romaneiosLista[index].dtRomaneio!),
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          )),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].palete}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          Expanded(
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                              child: Text(
-                                                                                                '${romaneiosLista[index].vol}',
-                                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                                      fontFamily: 'Readex Pro',
-                                                                                                      letterSpacing: 0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ],
+                                                                                    Expanded(
+                                                                                      child: Text(
+                                                                                        'Dt. de Abertura',
+                                                                                        style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                          fontFamily: 'Readex Pro',
+                                                                                          letterSpacing: 0,
+                                                                                          fontSize: 15,
+                                                                                        ),
                                                                                       ),
+                                                                                    )),
+                                                                                Expanded(
+                                                                                  child: Text(
+                                                                                    'Paletes',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 15,
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                              );
-                                                                            }
-                                                                          } else {
-                                                                            return Container();
-                                                                          }
-                                                                        },
+                                                                                Expanded(
+                                                                                  child: Text(
+                                                                                    (responsiveVisibility(
+                                                                                        context: context,
+                                                                                        phone: false,
+                                                                                        tablet: false,
+                                                                                        desktop: true)) ? 'Volumetria' : 'Vol.',
+                                                                                    style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 15,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    Expanded(child: Container(decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),))
-                                                                  ],
-                                                                ),
-                                                                Positioned(
-                                                                    bottom: 10,
-                                                                    right: 10,
-                                                                    child: Container(
-                                                                        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)),
-                                                                        width: 50,
-                                                                        height: 50,
-                                                                        child: IconButton(
-                                                                          onPressed:
-                                                                              () async {
-                                                                            if (await bd.connected(context) ==
-                                                                                1) {
-                                                                              if (context.mounted) {
-                                                                                if (romaneiosLista.where((element) => '${element.romaneio}' == romaneio).isEmpty) {
-                                                                                  await showCupertinoModalPopup(
-                                                                                    context: context,
-                                                                                    barrierDismissible: false,
-                                                                                    builder: (context2) {
-                                                                                      return CupertinoAlertDialog(
-                                                                                        title: const Text('Romaneio não encontrado'),
-                                                                                        actions: <CupertinoDialogAction>[
-                                                                                          CupertinoDialogAction(
-                                                                                              isDefaultAction: true,
-                                                                                              onPressed: () {
-                                                                                                Navigator.pop(context2);
-                                                                                              },
-                                                                                              child: const Text('Voltar'))
-                                                                                        ],
-                                                                                      );
-                                                                                    },
-                                                                                  );
-                                                                                  return;
-                                                                                }
-                                                                                if (romaneiosLista.where((element) => '${element.romaneio}' == romaneio && element.dtFechamento == null).isEmpty) {
-                                                                                  await showCupertinoModalPopup(
+                                                                      SizedBox(
+                                                                        width: MediaQuery.of(context).size.width,
+                                                                        height: MediaQuery.of(context).size.height * 0.7,
+                                                                        child: ListView
+                                                                            .builder(
+                                                                          shrinkWrap:
+                                                                          true,
+                                                                          physics: const AlwaysScrollableScrollPhysics(),
+                                                                          scrollDirection:
+                                                                          Axis.vertical,
+                                                                          padding:
+                                                                          EdgeInsets
+                                                                              .zero,
+                                                                          itemCount:
+                                                                          romaneiosLista
+                                                                              .length,
+                                                                          itemBuilder:
+                                                                              (context,
+                                                                              index) {
+                                                                            if (romaneiosLista[index].dtFechamento ==
+                                                                                null) {
+                                                                              if (int.parse(romaneio) ==
+                                                                                  romaneiosLista[index].romaneio) {
+                                                                                return Padding(
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
+                                                                                  child: Container(
+                                                                                    width: double.infinity,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.yellow.shade50,
+                                                                                      boxShadow: const [
+                                                                                        BoxShadow(
+                                                                                          blurRadius: 0,
+                                                                                          color: Color(0xFFE0E3E7),
+                                                                                          offset: Offset(
+                                                                                            0.0,
+                                                                                            1,
+                                                                                          ),
+                                                                                        )
+                                                                                      ],
+                                                                                      borderRadius: BorderRadius.circular(0),
+                                                                                      shape: BoxShape.rectangle,
+                                                                                    ),
+                                                                                    child: InkWell(
+                                                                                      splashColor: Colors.transparent,
+                                                                                      focusColor: Colors.transparent,
+                                                                                      hoverColor: Colors.transparent,
+                                                                                      highlightColor: Colors.transparent,
+                                                                                      onTap: () async {
+                                                                                        if (await bd.connected(context) == 1) {
+                                                                                          setter(
+                                                                                                () {
+                                                                                              romaneio = '${romaneiosLista[index].romaneio!}';
+                                                                                              setState(() {
+                                                                                                romaneio = '${romaneiosLista[index].romaneio!}';
+                                                                                              });
+                                                                                            },
+                                                                                          );
+                                                                                        }
+                                                                                      },
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.all(8),
+                                                                                        child: Row(
+                                                                                          mainAxisSize: MainAxisSize.max,
+                                                                                          children: [
+                                                                                            Container(
+                                                                                              width: 4,
+                                                                                              height: 50,
+                                                                                              decoration: BoxDecoration(
+                                                                                                color: Colors.green.shade400,
+                                                                                                borderRadius: BorderRadius.circular(2),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].romaneio}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                            if (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                                desktop: true))(
+                                                                                                Expanded(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                    child: Text(
+                                                                                                      '${romaneiosLista[index].usurCriacao}',
+                                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                        fontFamily: 'Readex Pro',
+                                                                                                        letterSpacing: 0,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                )),
+                                                                                            if (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                                desktop: true))(
+                                                                                                Expanded(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                    child: Text(
+                                                                                                      DateFormat('dd/MM/yyyy   kk:mm').format(romaneiosLista[index].dtRomaneio!),
+                                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                        fontFamily: 'Readex Pro',
+                                                                                                        letterSpacing: 0,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                )),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].palete}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].vol}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              } else {
+                                                                                return Padding(
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
+                                                                                  child: Container(
+                                                                                    width: double.infinity,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                      boxShadow: const [
+                                                                                        BoxShadow(
+                                                                                          blurRadius: 0,
+                                                                                          color: Color(0xFFE0E3E7),
+                                                                                          offset: Offset(
+                                                                                            0.0,
+                                                                                            1,
+                                                                                          ),
+                                                                                        )
+                                                                                      ],
+                                                                                      borderRadius: BorderRadius.circular(0),
+                                                                                      shape: BoxShape.rectangle,
+                                                                                    ),
+                                                                                    child: InkWell(
+                                                                                      onTap: () async {
+                                                                                        if (await bd.connected(context) == 1) {
+                                                                                          setter(
+                                                                                                () {
+                                                                                              romaneio = '${romaneiosLista[index].romaneio!}';
+                                                                                              setState(() {
+                                                                                                romaneio = '${romaneiosLista[index].romaneio!}';
+                                                                                              });
+                                                                                            },
+                                                                                          );
+                                                                                        }
+                                                                                      },
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.all(8),
+                                                                                        child: Row(
+                                                                                          mainAxisSize: MainAxisSize.max,
+                                                                                          children: [
+                                                                                            Container(
+                                                                                              width: 4,
+                                                                                              height: 50,
+                                                                                              decoration: BoxDecoration(
+                                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                                borderRadius: BorderRadius.circular(2),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].romaneio}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                            if (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                                desktop: true))(
+                                                                                                Expanded(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                    child: Text(
+                                                                                                      '${romaneiosLista[index].usurCriacao}',
+                                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                        fontFamily: 'Readex Pro',
+                                                                                                        letterSpacing: 0,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                )),
+                                                                                            if (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                                desktop: true))(
+                                                                                                Expanded(
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                    child: Text(
+                                                                                                      DateFormat('dd/MM/yyyy   kk:mm').format(romaneiosLista[index].dtRomaneio!),
+                                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                        fontFamily: 'Readex Pro',
+                                                                                                        letterSpacing: 0,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                )),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].palete}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Expanded(
+                                                                                              child: Padding(
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                                child: Text(
+                                                                                                  '${romaneiosLista[index].vol}',
+                                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                    fontFamily: 'Readex Pro',
+                                                                                                    letterSpacing: 0,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              }
+                                                                            } else {
+                                                                              return Container();
+                                                                            }
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(child: Container(decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),))
+                                                                    ],
+                                                                  ),
+                                                                  Positioned(
+                                                                      bottom: 10,
+                                                                      right: 10,
+                                                                      child: Container(
+                                                                          decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)),
+                                                                          width: 50,
+                                                                          height: 50,
+                                                                          child: IconButton(
+                                                                            onPressed:
+                                                                                () async {
+                                                                              if (await bd.connected(context) ==
+                                                                                  1) {
+                                                                                if (context.mounted) {
+                                                                                  if (romaneiosLista.where((element) => '${element.romaneio}' == romaneio).isEmpty) {
+                                                                                    await showCupertinoModalPopup(
+                                                                                      context: context,
                                                                                       barrierDismissible: false,
                                                                                       builder: (context2) {
                                                                                         return CupertinoAlertDialog(
-                                                                                          title: const Text(
-                                                                                            'Romaneio finalizado\n',
-                                                                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                                                                          ),
-                                                                                          content: const Text('Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                                                          title: const Text('Romaneio não encontrado'),
                                                                                           actions: <CupertinoDialogAction>[
                                                                                             CupertinoDialogAction(
                                                                                                 isDefaultAction: true,
@@ -937,71 +969,117 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                           ],
                                                                                         );
                                                                                       },
-                                                                                      context: context);
-                                                                                  return;
+                                                                                    );
+                                                                                    return;
+                                                                                  }
+                                                                                  if (romaneiosLista.where((element) => '${element.romaneio}' == romaneio && element.dtFechamento == null).isEmpty) {
+                                                                                    await showCupertinoModalPopup(
+                                                                                        barrierDismissible: false,
+                                                                                        builder: (context2) {
+                                                                                          return CupertinoAlertDialog(
+                                                                                            title: const Text(
+                                                                                              'Romaneio finalizado\n',
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                            ),
+                                                                                            content: const Text('Escolha outro Romaneio ou converse com os Desenvolvedores'),
+                                                                                            actions: <CupertinoDialogAction>[
+                                                                                              CupertinoDialogAction(
+                                                                                                  isDefaultAction: true,
+                                                                                                  onPressed: () {
+                                                                                                    Navigator.pop(context2);
+                                                                                                  },
+                                                                                                  child: const Text('Voltar'))
+                                                                                            ],
+                                                                                          );
+                                                                                        },
+                                                                                        context: context);
+                                                                                    return;
+                                                                                  }
+                                                                                  Navigator.pop(context);
+                                                                                  Navigator.pop(context);
+                                                                                  Navigator.pop(context);
+                                                                                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(int.parse(romaneio), usur, bd: bd)));
                                                                                 }
-                                                                                Navigator.pop(context);
-                                                                                Navigator.pop(context);
-                                                                                Navigator.pop(context);
-                                                                                await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneioWidget(int.parse(romaneio), usur, bd: bd)));
                                                                               }
-                                                                            }
-                                                                          },
-                                                                          icon: const Icon(
-                                                                              Icons.check,
-                                                                              color: Colors.white),
-                                                                        )))
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                icon: const Icon(
-                                                    Icons.search_rounded,
-                                                    color: Colors.white))))
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          },
+                                                                            },
+                                                                            icon: const Icon(
+                                                                                Icons.check,
+                                                                                color: Colors.white),
+                                                                          )))
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  icon: const Icon(
+                                                      Icons.search_rounded,
+                                                      color: Colors.white))))
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          ),
                         );
                       },
                     );
                   },
-                  options: FFButtonOptions(
-                    width: 260,
-                    height: 60,
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding:
-                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: Colors.green.shade700,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
+                  child: (Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 10, top: 10, right: 20),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width:
+                      MediaQuery.of(context).size.height *
+                          0.8,
+                      height:
+                      MediaQuery.of(context).size.height *
+                          0.1,
+                      decoration: BoxDecoration(
                           color: Colors.white,
-                          fontSize: 20,
-                          letterSpacing: 0,
-                        ),
-                    elevation: 3,
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
+                          borderRadius:
+                          BorderRadius.circular(20)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
+                        children: [
+                          Container(width: 20),
+                          Expanded(
+                            child: Container(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Continuar Romaneio',
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  )),
                 ),
-              ),
-              (['BI', 'Comercial'].contains(usur.acess)) ?
-              Align(
-                alignment: const AlignmentDirectional(0, 0),
-                child: FFButtonWidget(
-                  onPressed: () async {
+                (['BI', 'Comercial'].contains(usur.acess)) ?
+                InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
                     if (await bd.connected(context) == 1) {
                       bd.createRomaneio(usur);
                       var i = 0;
@@ -1019,30 +1097,50 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                       }
                     }
                   },
-                  text: 'Criar Novo Romaneio',
-                  options: FFButtonOptions(
-                    width: 300,
-                    height: 60,
-                    padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-                    iconPadding:
-                        const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                    color: Colors.orange.shade700,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
+                  child: (Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 10, top: 10, right: 20),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width:
+                      MediaQuery.of(context).size.height *
+                          0.8,
+                      height:
+                      MediaQuery.of(context).size.height *
+                          0.1,
+                      decoration: BoxDecoration(
                           color: Colors.white,
-                          fontSize: 20,
-                          letterSpacing: 0,
-                        ),
-                    elevation: 3,
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
+                          borderRadius:
+                          BorderRadius.circular(20)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
+                        children: [
+                          Container(width: 20),
+                          Expanded(
+                            child: Container(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Criar Novo Romaneio',
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Expanded(
+                            child: Container(
+                              decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20))),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ) : Container()
-            ].divide(const SizedBox(height: 50)),
+                  )),
+                ) : Container(),
+              ].divide(const SizedBox(height: 50)),
+            ),
           ),
         ),
       ),

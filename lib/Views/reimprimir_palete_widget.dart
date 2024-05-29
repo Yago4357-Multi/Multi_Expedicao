@@ -751,7 +751,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtInclusao!),
+                                                                              DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -787,7 +787,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              paletes[index].dtFechamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtFechamento!) : '',
+                                                                              paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -823,7 +823,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                 0),
                                                                             child:
                                                                                 Text(
-                                                                              paletes[index].dtCarregamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtCarregamento!) : '',
+                                                                              paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
                                                                               style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
@@ -935,7 +935,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                             child: Padding(
                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                               child: Text(
-                                                                                DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtInclusao!),
+                                                                                DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
                                                                                 style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                   fontFamily: 'Readex Pro',
                                                                                   letterSpacing: 0,
@@ -959,7 +959,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                             child: Padding(
                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                               child: Text(
-                                                                                paletes[index].dtFechamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtFechamento!) : '',
+                                                                                paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
                                                                                 style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                   fontFamily: 'Readex Pro',
                                                                                   letterSpacing: 0,
@@ -983,7 +983,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                             child: Padding(
                                                                               padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                               child: Text(
-                                                                                paletes[index].dtCarregamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(paletes[index].dtCarregamento!) : '',
+                                                                                paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
                                                                                 style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                   fontFamily: 'Readex Pro',
                                                                                   letterSpacing: 0,

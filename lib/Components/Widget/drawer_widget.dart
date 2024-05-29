@@ -13,7 +13,6 @@ import '../../Views/lista_cancelados.dart';
 import '../../Views/lista_faturados.dart';
 import '../../Views/lista_palete_widget.dart';
 import '../../Views/lista_pedido_widget.dart';
-import '../../Views/lista_romaneios.dart';
 import '../../Views/reimprimir_palete_widget.dart';
 import '../Model/drawer_model.dart';
 
@@ -686,66 +685,29 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           ),
                         ),
                       )),
-                      if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          width: double.infinity,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context).primaryBackground,
-                            borderRadius: BorderRadius.circular(12),
-                            shape: BoxShape.rectangle,
-                          ),
-                          child: Padding(
-                            padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
-                            child: MaterialButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                Navigator.pop(context2);
-                                await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaRomaneiosWidget(usur, bd: bd),));
-                              },
-                              child: InkWell(
-                                splashColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Icon(
-                                      Icons.history_edu,
-                                      color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                      size: 24,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Text(
-                                        'Romaneios',
-                                        style:
-                                        FlutterFlowTheme.of(context).bodyMedium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )),
                     ].divide(const SizedBox(height: 12)),
                   ),
                 ),
               ),
               Expanded(child: Container()),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 20, 4),
-                  child: Align(
-                    alignment: Alignment.centerRight,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: InkWell(
+                      onTap: () async {
+                        showAboutDialog(context: context, applicationVersion: 'Versão : 0.1.1', applicationName: 'MultiExpedição', children: [Text('Dev. : Yago Lima Bortolini \nPMP : Tiago Felsky Silveira', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', fontSize: 14),)]);
+                      },
+                      child: const Icon(
+                        Icons.info_outline,
+                        size: 30,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
                     child: InkWell(
                       onTap: () async {
                         Navigator.pop(context);
@@ -757,7 +719,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         color: Colors.red,
                       ),
                     ),
-                  )),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

@@ -175,514 +175,545 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: FFButtonWidget(
-                                    text: 'Escolher Romaneio',
-                                    onPressed: () async {
-                                      _model.choiceChipsValue = 'Todos';
-                                      return showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return StatefulBuilder(
-                                            builder: (context,
-                                                void Function(void Function())
-                                                    setter) {
-                                              internalSetter = setter;
-                                              return FutureBuilder(
-                                                future: romaneioFin,
-                                                builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.done) {
-                                                    palete =
-                                                        snapshot.data ?? [];
-                                                    return Dialog(
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: FFButtonWidget(
+                                      text: 'Escolher Romaneio',
+                                      onPressed: () async {
+                                        if (await bd.connected(context) == 1) {
+                                        _model.choiceChipsValue = 'Todos';
+                                        return showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return StatefulBuilder(
+                                              builder: (context,
+                                                  void Function(void Function())
+                                                      setter) {
+                                                internalSetter = setter;
+                                                return FutureBuilder(
+                                                  future: romaneioFin,
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      palete =
+                                                          snapshot.data ?? [];
+                                                      return Stack(
                                                         children: [
-                                                          Container(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.12,
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            decoration: const BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius:
-                                                                    BorderRadiusDirectional
-                                                                        .vertical(
-                                                                            top:
-                                                                                Radius.circular(20))),
-                                                            child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Text(
-                                                                'Romaneios Finalizados',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .headlineMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Outfit',
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10),
-                                                            width:
-                                                                double.infinity,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBackground,
-                                                              boxShadow: const [
-                                                                BoxShadow(
-                                                                  blurRadius: 0,
-                                                                  color: Color(
-                                                                      0xFFE0E3E7),
-                                                                  offset:
-                                                                      Offset(
-                                                                    0.0,
-                                                                    1,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          0),
-                                                              shape: BoxShape
-                                                                  .rectangle,
-                                                            ),
-                                                            child: Container(
-                                                              width: double
-                                                                  .infinity,
-                                                              height: 60,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryBackground,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      -1, 0),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        16,
-                                                                        0,
-                                                                        0,
-                                                                        0),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        'Romaneio',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .labelSmall
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              letterSpacing: 0,
-                                                                              fontSize: (responsiveVisibility(
-                                                                                context: context,
-                                                                                phone: false,
-                                                                                tablet: false,
-                                                                              ))
-                                                                                  ? 20
-                                                                                  : 15,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                    if (responsiveVisibility(
-                                                                      context:
-                                                                          context,
-                                                                      phone:
-                                                                          false,
-                                                                      tablet:
-                                                                          false,
-                                                                    ))
-                                                                      Expanded(
-                                                                        child:
-                                                                            Text(
-                                                                          'Data de Fechamento',
-                                                                          style: FlutterFlowTheme.of(context)
-                                                                              .labelSmall
-                                                                              .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                letterSpacing: 0,
-                                                                                fontSize: 20,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        'Volumetria',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .labelSmall
-                                                                            .override(
-                                                                              fontFamily: 'Readex Pro',
-                                                                              letterSpacing: 0,
-                                                                              fontSize: (responsiveVisibility(
-                                                                                context: context,
-                                                                                phone: false,
-                                                                                tablet: false,
-                                                                              ))
-                                                                                  ? 20
-                                                                                  : 15,
-                                                                            ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          ListView.builder(
-                                                            physics:
-                                                                const AlwaysScrollableScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            scrollDirection:
-                                                                Axis.vertical,
-                                                            itemCount:
-                                                                palete.length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              if (romaneioSelecionadoint ==
-                                                                  palete[index]
-                                                                      .romaneio) {
-                                                                return Padding(
-                                                                  padding:
-                                                                      const EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          1),
-                                                                  child:
-                                                                      Container(
-                                                                    width: double
-                                                                        .infinity,
-                                                                    decoration:
-                                                                        BoxDecoration(
+                                                          Dialog(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize.max,
+                                                              children: [
+                                                                Container(
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      0.12,
+                                                                  width:
+                                                                      MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width,
+                                                                  decoration: const BoxDecoration(
                                                                       color: Colors
-                                                                          .yellow
-                                                                          .shade50,
-                                                                      boxShadow: const [
-                                                                        BoxShadow(
-                                                                          blurRadius:
-                                                                              0,
-                                                                          color:
-                                                                              Color(0xFFE0E3E7),
-                                                                          offset:
-                                                                              Offset(
-                                                                            0.0,
-                                                                            1,
-                                                                          ),
-                                                                        )
-                                                                      ],
+                                                                          .white,
                                                                       borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              0),
-                                                                      shape: BoxShape
-                                                                          .rectangle,
-                                                                    ),
-                                                                    child:
-                                                                        InkWell(
-                                                                      splashColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      focusColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      hoverColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      highlightColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (await bd.connected(context) == 1) {
-                                                                          romaneioSelecionadoint =
-                                                                              0;
-                                                                          carregamentoFin =
-                                                                              bd.getCarregamento(romaneioSelecionadoint);
-                                                                          setter(
-                                                                              () {
-                                                                            setState(() {});
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            8),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            Container(
-                                                                              width: 4,
-                                                                              height: 50,
-                                                                              decoration: BoxDecoration(
-                                                                                color: Colors.green.shade400,
-                                                                                borderRadius: BorderRadius.circular(2),
-                                                                              ),
-                                                                            ),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].romaneio}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: (responsiveVisibility(
-                                                                                          context: context,
-                                                                                          phone: false,
-                                                                                          tablet: false,
-                                                                                        ))
-                                                                                            ? 20
-                                                                                            : 15,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            if (responsiveVisibility(
-                                                                              context: context,
-                                                                              phone: false,
-                                                                              tablet: false,
-                                                                            ))
-                                                                              Expanded(
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                  child: Text(
-                                                                                    palete[index].dtFechamento != null ? DateFormat('kk:mm   dd/MM/yyyy').format(palete[index].dtFechamento!) : '',
-                                                                                    style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                        ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].vol}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                        fontSize: (responsiveVisibility(
-                                                                                          context: context,
-                                                                                          phone: false,
-                                                                                          tablet: false,
-                                                                                        ))
-                                                                                            ? 20
-                                                                                            : 15,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
+                                                                          BorderRadiusDirectional
+                                                                              .vertical(
+                                                                                  top:
+                                                                                      Radius.circular(20))),
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                      'Romaneios Finalizados',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .headlineMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Outfit',
+                                                                          ),
                                                                     ),
                                                                   ),
-                                                                );
-                                                              } else {
-                                                                return Padding(
+                                                                ),
+                                                                Container(
                                                                   padding:
-                                                                      const EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          1),
-                                                                  child:
-                                                                      Container(
+                                                                      const EdgeInsets
+                                                                          .all(10),
+                                                                  width:
+                                                                      double.infinity,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: FlutterFlowTheme
+                                                                            .of(context)
+                                                                        .primaryBackground,
+                                                                    boxShadow: const [
+                                                                      BoxShadow(
+                                                                        blurRadius: 0,
+                                                                        color: Color(
+                                                                            0xFFE0E3E7),
+                                                                        offset:
+                                                                            Offset(
+                                                                          0.0,
+                                                                          1,
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                0),
+                                                                    shape: BoxShape
+                                                                        .rectangle,
+                                                                  ),
+                                                                  child: Container(
                                                                     width: double
                                                                         .infinity,
+                                                                    height: 60,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
                                                                           .primaryBackground,
-                                                                      boxShadow: const [
-                                                                        BoxShadow(
-                                                                          blurRadius:
-                                                                              0,
-                                                                          color:
-                                                                              Color(0xFFE0E3E7),
-                                                                          offset:
-                                                                              Offset(
-                                                                            0.0,
-                                                                            1,
-                                                                          ),
-                                                                        )
-                                                                      ],
                                                                       borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              0),
-                                                                      shape: BoxShape
-                                                                          .rectangle,
+                                                                          BorderRadius
+                                                                              .circular(
+                                                                                  12),
                                                                     ),
-                                                                    child:
-                                                                        InkWell(
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (await bd.connected(context) == 1) {
-                                                                          romaneioSelecionadoint =
-                                                                              palete[index].romaneio ?? 0;
-                                                                          carregamentoFin =
-                                                                              bd.getCarregamento(romaneioSelecionadoint);
-                                                                          setter(
-                                                                              () {
-                                                                            setState(() {});
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            8),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            Container(
-                                                                              width: 4,
-                                                                              height: 50,
-                                                                              decoration: BoxDecoration(
-                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                                borderRadius: BorderRadius.circular(2),
-                                                                              ),
-                                                                            ),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].romaneio}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                      ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            if (responsiveVisibility(
-                                                                              context: context,
-                                                                              phone: false,
-                                                                              tablet: false,
-                                                                            ))
-                                                                              Expanded(
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                  child: Text(
-                                                                                    '${palete[index].dtFechamento}',
-                                                                                    style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                          fontFamily: 'Readex Pro',
-                                                                                          letterSpacing: 0,
-                                                                                        ),
+                                                                    alignment:
+                                                                        const AlignmentDirectional(
+                                                                            -1, 0),
+                                                                    child: Padding(
+                                                                      padding:
+                                                                          const EdgeInsetsDirectional
+                                                                              .fromSTEB(
+                                                                              16,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                      child: Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize
+                                                                                .max,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment
+                                                                                .spaceBetween,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment
+                                                                                .center,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text(
+                                                                              'Romaneio',
+                                                                              style: FlutterFlowTheme.of(context)
+                                                                                  .labelSmall
+                                                                                  .override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                    fontSize: (responsiveVisibility(
+                                                                                      context: context,
+                                                                                      phone: false,
+                                                                                      tablet: false,
+                                                                                    ))
+                                                                                        ? 20
+                                                                                        : 15,
                                                                                   ),
-                                                                                ),
-                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          if (responsiveVisibility(
+                                                                            context:
+                                                                                context,
+                                                                            phone:
+                                                                                false,
+                                                                            tablet:
+                                                                                false,
+                                                                          ))
                                                                             Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                                child: Text(
-                                                                                  '${palete[index].vol}',
-                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                        fontFamily: 'Readex Pro',
-                                                                                        letterSpacing: 0,
-                                                                                      ),
-                                                                                ),
+                                                                              child:
+                                                                                  Text(
+                                                                                'Data de Fechamento',
+                                                                                style: FlutterFlowTheme.of(context)
+                                                                                    .labelSmall
+                                                                                    .override(
+                                                                                      fontFamily: 'Readex Pro',
+                                                                                      letterSpacing: 0,
+                                                                                      fontSize: 20,
+                                                                                    ),
                                                                               ),
                                                                             ),
-                                                                          ],
-                                                                        ),
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text(
+                                                                              'Volumetria',
+                                                                              style: FlutterFlowTheme.of(context)
+                                                                                  .labelSmall
+                                                                                  .override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                    fontSize: (responsiveVisibility(
+                                                                                      context: context,
+                                                                                      phone: false,
+                                                                                      tablet: false,
+                                                                                    ))
+                                                                                        ? 20
+                                                                                        : 15,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                );
-                                                              }
-                                                            },
+                                                                ),
+                                                                ListView.builder(
+                                                                  physics:
+                                                                      const AlwaysScrollableScrollPhysics(),
+                                                                  shrinkWrap: true,
+                                                                  padding:
+                                                                      EdgeInsets.zero,
+                                                                  scrollDirection:
+                                                                      Axis.vertical,
+                                                                  itemCount:
+                                                                      palete.length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    if (romaneioSelecionadoint ==
+                                                                        palete[index]
+                                                                            .romaneio) {
+                                                                      return Padding(
+                                                                        padding:
+                                                                            const EdgeInsetsDirectional
+                                                                                .fromSTEB(
+                                                                                0,
+                                                                                0,
+                                                                                0,
+                                                                                1),
+                                                                        child:
+                                                                            Container(
+                                                                          width: double
+                                                                              .infinity,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: Colors
+                                                                                .yellow
+                                                                                .shade50,
+                                                                            boxShadow: const [
+                                                                              BoxShadow(
+                                                                                blurRadius:
+                                                                                    0,
+                                                                                color:
+                                                                                    Color(0xFFE0E3E7),
+                                                                                offset:
+                                                                                    Offset(
+                                                                                  0.0,
+                                                                                  1,
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(
+                                                                                    0),
+                                                                            shape: BoxShape
+                                                                                .rectangle,
+                                                                          ),
+                                                                          child:
+                                                                              InkWell(
+                                                                            splashColor:
+                                                                                Colors
+                                                                                    .transparent,
+                                                                            focusColor:
+                                                                                Colors
+                                                                                    .transparent,
+                                                                            hoverColor:
+                                                                                Colors
+                                                                                    .transparent,
+                                                                            highlightColor:
+                                                                                Colors
+                                                                                    .transparent,
+                                                                            onTap:
+                                                                                () async {
+                                                                              if (await bd.connected(context) == 1) {
+                                                                                romaneioSelecionadoint =
+                                                                                    0;
+                                                                                carregamentoFin =
+                                                                                    bd.getCarregamento(romaneioSelecionadoint);
+                                                                                setter(
+                                                                                    () {
+                                                                                  setState(() {});
+                                                                                });
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets
+                                                                                  .all(
+                                                                                  8),
+                                                                              child:
+                                                                                  Row(
+                                                                                mainAxisSize:
+                                                                                    MainAxisSize.max,
+                                                                                children: [
+                                                                                  Container(
+                                                                                    width: 4,
+                                                                                    height: 50,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: Colors.green.shade400,
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                      child: Text(
+                                                                                        '${palete[index].romaneio}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              letterSpacing: 0,
+                                                                                              fontSize: (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                              ))
+                                                                                                  ? 20
+                                                                                                  : 15,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  if (responsiveVisibility(
+                                                                                    context: context,
+                                                                                    phone: false,
+                                                                                    tablet: false,
+                                                                                  ))
+                                                                                    Expanded(
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                        child: Text(
+                                                                                          palete[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtFechamento!) : '',
+                                                                                          style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                fontFamily: 'Readex Pro',
+                                                                                                letterSpacing: 0,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  Expanded(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                      child: Text(
+                                                                                        '${palete[index].vol}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              letterSpacing: 0,
+                                                                                              fontSize: (responsiveVisibility(
+                                                                                                context: context,
+                                                                                                phone: false,
+                                                                                                tablet: false,
+                                                                                              ))
+                                                                                                  ? 20
+                                                                                                  : 15,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    } else {
+                                                                      return Padding(
+                                                                        padding:
+                                                                            const EdgeInsetsDirectional
+                                                                                .fromSTEB(
+                                                                                0,
+                                                                                0,
+                                                                                0,
+                                                                                1),
+                                                                        child:
+                                                                            Container(
+                                                                          width: double
+                                                                              .infinity,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: FlutterFlowTheme.of(
+                                                                                    context)
+                                                                                .primaryBackground,
+                                                                            boxShadow: const [
+                                                                              BoxShadow(
+                                                                                blurRadius:
+                                                                                    0,
+                                                                                color:
+                                                                                    Color(0xFFE0E3E7),
+                                                                                offset:
+                                                                                    Offset(
+                                                                                  0.0,
+                                                                                  1,
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(
+                                                                                    0),
+                                                                            shape: BoxShape
+                                                                                .rectangle,
+                                                                          ),
+                                                                          child:
+                                                                              InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              if (await bd.connected(context) == 1) {
+                                                                                romaneioSelecionadoint =
+                                                                                    palete[index].romaneio ?? 0;
+                                                                                carregamentoFin =
+                                                                                    bd.getCarregamento(romaneioSelecionadoint);
+                                                                                setter(
+                                                                                    () {
+                                                                                  setState(() {});
+                                                                                });
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets
+                                                                                  .all(
+                                                                                  8),
+                                                                              child:
+                                                                                  Row(
+                                                                                mainAxisSize:
+                                                                                    MainAxisSize.max,
+                                                                                children: [
+                                                                                  Container(
+                                                                                    width: 4,
+                                                                                    height: 50,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: FlutterFlowTheme.of(context).alternate,
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                      child: Text(
+                                                                                        '${palete[index].romaneio}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              letterSpacing: 0,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  if (responsiveVisibility(
+                                                                                    context: context,
+                                                                                    phone: false,
+                                                                                    tablet: false,
+                                                                                  ))
+                                                                                    Expanded(
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                        child: Text(
+                                                                                          '${palete[index].dtFechamento}',
+                                                                                          style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                                fontFamily: 'Readex Pro',
+                                                                                                letterSpacing: 0,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  Expanded(
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                      child: Text(
+                                                                                        '${palete[index].vol}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                              fontFamily: 'Readex Pro',
+                                                                                              letterSpacing: 0,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
+                                                          Positioned(
+                                                              bottom: 40,
+                                                              right: 50,
+                                                              child: Container(
+                                                                  decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)),
+                                                                  width: 50,
+                                                                  height: 50,
+                                                                  child: IconButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      if (await bd.connected(context) ==
+                                                                          1) {
+                                                                        if (context.mounted) {
+                                                                          Navigator
+                                                                              .pop(
+                                                                              context);
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    icon: const Icon(
+                                                                        Icons.check,
+                                                                        color: Colors.white),
+                                                                  )))
                                                         ],
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    return const CircularProgressIndicator();
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                    options: FFButtonOptions(
-                                      height: 40,
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              24, 0, 24, 0),
-                                      iconPadding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 0, 0, 0),
-                                      color: Colors.green.shade700,
-                                      textStyle: FlutterFlowTheme.of(context)
-                                          .titleSmall
-                                          .override(
-                                            fontFamily: 'Readex Pro',
-                                            color: Colors.white,
-                                            letterSpacing: 0,
-                                          ),
-                                      elevation: 3,
-                                      borderSide: const BorderSide(
-                                        color: Colors.transparent,
-                                        width: 1,
+                                                      );
+                                                    } else {
+                                                      return const CircularProgressIndicator();
+                                                    }
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        );}
+                                      },
+                                      options: FFButtonOptions(
+                                        height: 40,
+                                        padding:
+                                            const EdgeInsetsDirectional.fromSTEB(
+                                                24, 0, 24, 0),
+                                        iconPadding:
+                                            const EdgeInsetsDirectional.fromSTEB(
+                                                0, 0, 0, 0),
+                                        color: Colors.green.shade700,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color: Colors.white,
+                                              letterSpacing: 0,
+                                            ),
+                                        elevation: 3,
+                                        borderSide: const BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
                                 ),
