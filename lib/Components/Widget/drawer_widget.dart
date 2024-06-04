@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,15 +95,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const FaIcon(
-                      FontAwesomeIcons.flag,
-                      color: Color(0xFF007000),
-                      size: 32,
-                    ),
+                    SizedBox(width: 80, height: 50, child: Image.asset('assets/images/Multilist_compact.png', fit: BoxFit.contain,)),
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                       child: Text(
-                        'Romaneio',
+                        'MultiExpedição',
                         style: FlutterFlowTheme.of(context).headlineMedium,
                       ),
                     ),

@@ -70,7 +70,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
   }
 
   void rodarBanco() async {
-    getPed = bd.selectPallet(cont);
+    getPed = bd.selectPallet(cont, context);
     getPalete = bd.paleteAll(cont, context);
   }
 
@@ -450,17 +450,29 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                         if (await bd.connected(
                                                                 context) ==
                                                             1) {
+                                                          if (await bd.selectPallet(
+                                                              int.parse(value),
+                                                              context) !=
+                                                              []) {
                                                           cont =
                                                               int.parse(value);
-                                                          getPed =
-                                                              bd.selectPallet(
-                                                                  cont);
                                                           if (context.mounted) {
-                                                            getPalete =
-                                                                bd.paleteAll(
+                                                            getPed =
+                                                                bd.selectPallet(
                                                                     cont,
                                                                     context);
+                                                              if (context
+                                                                  .mounted) {
+                                                                getPalete = bd
+                                                                    .paleteAll(
+                                                                        cont,
+                                                                        context);
+                                                              }
+                                                            setState(() {});
+                                                            }
                                                           }
+                                                        } else{
+                                                          _model.textController!.text = '';
                                                           setState(() {});
                                                         }
                                                         setState(() {});
@@ -1062,16 +1074,19 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                               children: [
                                                                 const Text(
                                                                     'Nº Pedido',
-                                                                    style: TextStyle(
+                                                                    style:
+                                                                        TextStyle(
                                                                       fontFamily:
-                                                                      'Readex Pro',
+                                                                          'Readex Pro',
                                                                       color: Colors
                                                                           .black,
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                      fontSize: 18,
-                                                                      wordSpacing: 0,
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      fontSize:
+                                                                          18,
+                                                                      wordSpacing:
+                                                                          0,
                                                                     )),
                                                                 Container(
                                                                   decoration: BoxDecoration(
@@ -1079,34 +1094,32 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                           .red
                                                                           .shade100,
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                          4)),
+                                                                          BorderRadius.circular(
+                                                                              4)),
                                                                   width: 140,
-                                                                  child: Padding(
-                                                                    padding:
-                                                                    const EdgeInsets
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
                                                                         .only(
                                                                         top: 5),
                                                                     child: Text(
                                                                       '${pedidos[index].ped}',
                                                                       textAlign:
-                                                                      TextAlign
-                                                                          .center,
+                                                                          TextAlign
+                                                                              .center,
                                                                       style: FlutterFlowTheme.of(
-                                                                          context)
+                                                                              context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                        fontFamily:
-                                                                        'Readex Pro',
-                                                                        color: Colors
-                                                                            .red
-                                                                            .shade500,
-                                                                        fontSize:
-                                                                        24,
-                                                                        fontWeight:
-                                                                        FontWeight.w800,
-                                                                      ),
+                                                                            fontFamily:
+                                                                                'Readex Pro',
+                                                                            color:
+                                                                                Colors.red.shade500,
+                                                                            fontSize:
+                                                                                24,
+                                                                            fontWeight:
+                                                                                FontWeight.w800,
+                                                                          ),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -1145,18 +1158,18 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                           ),
                                                           Padding(
                                                               padding:
-                                                              const EdgeInsets
-                                                                  .all(20),
+                                                                  const EdgeInsets
+                                                                      .all(20),
                                                               child: Text(
                                                                 'Caixa será \nexclúida !!',
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
                                                                     .titleLarge
                                                                     .override(
-                                                                    fontFamily:
-                                                                    'Readex Pro',
-                                                                    color: Colors
-                                                                        .red),
+                                                                        fontFamily:
+                                                                            'Readex Pro',
+                                                                        color: Colors
+                                                                            .red),
                                                               )),
                                                           Padding(
                                                             padding:

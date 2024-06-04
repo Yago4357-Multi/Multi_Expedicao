@@ -229,81 +229,81 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                               )),
                                                         ],
                                                       ),
-                                                      pw.Padding(
-                                                        padding: const pw
-                                                            .EdgeInsets.fromLTRB(
-                                                            20, 0, 0, 0),
-                                                        child: pw.Container(
-                                                          width: 160,
-                                                          height: 20,
-                                                          decoration:
-                                                          pw.BoxDecoration(
-                                                            color:
-                                                            const PdfColor
-                                                                .fromInt(
-                                                                0xFFFFFFFF),
-                                                            border:
-                                                            pw.Border.all(
-                                                              width: 2,
-                                                            ),
-                                                          ),
-                                                          child: pw.Row(
-                                                            mainAxisSize: pw
-                                                                .MainAxisSize
-                                                                .max,
-                                                            mainAxisAlignment: pw
-                                                                .MainAxisAlignment
-                                                                .spaceEvenly,
-                                                            children: [
-                                                              pw.Text(
-                                                                  'ROMANEIO Nº',
-                                                                  style: pw
-                                                                      .TextStyle(
-                                                                    fontSize:
-                                                                    11,
-                                                                    fontWeight: pw
-                                                                        .FontWeight
-                                                                        .bold,
-                                                                  )),
-                                                              pw.SizedBox(
-                                                                height: 100,
-                                                                child: pw
-                                                                    .VerticalDivider(
-                                                                  thickness: 2,
-                                                                  color: const PdfColor
-                                                                      .fromInt(
-                                                                      0xCC000000),
+                                                      pw.Column(
+                                                        children: [
+                                                          pw.Padding(
+                                                            padding: const pw
+                                                                .EdgeInsets.fromLTRB(
+                                                                20, 0, 0, 0),
+                                                            child: pw.Container(
+                                                              width: 160,
+                                                              height: 20,
+                                                              decoration:
+                                                              pw.BoxDecoration(
+                                                                color:
+                                                                const PdfColor
+                                                                    .fromInt(
+                                                                    0xFFFFFFFF),
+                                                                border:
+                                                                pw.Border.all(
+                                                                  width: 2,
                                                                 ),
                                                               ),
-                                                              pw.Text(
-                                                                  '$romaneio',
-                                                                  textAlign: pw
-                                                                      .TextAlign
-                                                                      .center,
-                                                                  style: pw
-                                                                      .TextStyle(
-                                                                    fontSize:
-                                                                    11,
-                                                                    fontWeight: pw
-                                                                        .FontWeight
-                                                                        .bold,
-                                                                  )),
-                                                            ],
+                                                              child: pw.Row(
+                                                                mainAxisSize: pw
+                                                                    .MainAxisSize
+                                                                    .max,
+                                                                mainAxisAlignment: pw
+                                                                    .MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                                children: [
+                                                                  pw.Text(
+                                                                      'ROMANEIO Nº',
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        fontSize:
+                                                                        11,
+                                                                        fontWeight: pw
+                                                                            .FontWeight
+                                                                            .bold,
+                                                                      )),
+                                                                  pw.SizedBox(
+                                                                    height: 100,
+                                                                    child: pw
+                                                                        .VerticalDivider(
+                                                                      thickness: 2,
+                                                                      color: const PdfColor
+                                                                          .fromInt(
+                                                                          0xCC000000),
+                                                                    ),
+                                                                  ),
+                                                                  pw.Text(
+                                                                      '$romaneio',
+                                                                      textAlign: pw
+                                                                          .TextAlign
+                                                                          .center,
+                                                                      style: pw
+                                                                          .TextStyle(
+                                                                        fontSize:
+                                                                        11,
+                                                                        fontWeight: pw
+                                                                            .FontWeight
+                                                                            .bold,
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
+                                                          pw.Padding( padding: const pw.EdgeInsets.fromLTRB(
+                                                              20, 10, 0, 0), child: pw.BarcodeWidget(
+                                                              data: '$romaneio',
+                                                              barcode: Barcode.code128(),
+                                                              width: 80,
+                                                              height: 180,
+                                                              color: PdfColors.black,
+                                                              drawText: false,)),
+                                                        ],
                                                       ),
-                                                      pw.Padding( padding: const pw.EdgeInsets.fromLTRB(
-                                                          20, 10, 0, 0), child: pw.BarcodeWidget(
-                                                    data: '$palete',
-                                                    barcode: Barcode.code128(),
-                                                    width: 300,
-                                                    height: 200,
-                                                    color: PdfColors.black,
-                                                    drawText: true,
-                                                    textStyle: const pw.TextStyle(
-                                                      fontSize: 20,
-                                                      letterSpacing: 0,
-                                                    ))),
                                                     ],
                                                   ),
                                                 ),
@@ -641,7 +641,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                           pw.Expanded(
                                                             flex: 2,
                                                             child: pw.Text(
-                                                                (((NumberFormat('#.##0,00').format(pedidos[index].valor)).replaceAll('.', ':')).replaceAll('.', ',')).replaceAll(':', '.'),
+                                                                (((NumberFormat('#,##0.00').format(pedidos[index].valor)).replaceAll(',', ':')).replaceAll('.', ',')).replaceAll(':', '.'),
                                                                 textAlign: pw
                                                                     .TextAlign
                                                                     .center,
@@ -2478,7 +2478,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       ),
                                                       alignment: Alignment.center,
                                                       child: Text(
-                                                        '${pedidos[index].caixas} / ${pedidos[index].vol}',
+                                                        '${pedidos[index].caixas} / ${pedidos[index].volfat}',
                                                         textAlign: TextAlign.center,
                                                         style: FlutterFlowTheme.of(
                                                                 context)

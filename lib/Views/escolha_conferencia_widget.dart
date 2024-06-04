@@ -112,111 +112,113 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                   hoverColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   onTap: () async {
-                    await showDialog(
-                      useSafeArea: true,
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                16, 12, 16, 12),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    showCursor: true,
-                                    controller: _model.textController,
-                                    focusNode: _model.textFieldFocusNode,
-                                    onFieldSubmitted: (value) async {
-                                      if (await bd.connected(context) == 1) {
+                    if (await bd.connected(context) == 1) {
+                      await showDialog(
+                        useSafeArea: true,
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  16, 12, 16, 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      showCursor: true,
+                                      controller: _model.textController,
+                                      focusNode: _model.textFieldFocusNode,
+                                      onFieldSubmitted: (value) async {
+                                        if (await bd.connected(context) == 1) {
                                           bd.paleteExiste(int.parse(value),
                                               context, usur, bd);
-                                      }
-                                      setState(() {});
-                                    },
-                                    autofocus: true,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      labelText: 'Insira o Palete',
-                                      labelStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
-                                        fontFamily: 'Readex Pro',
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryText,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      alignLabelWithHint: false,
-                                      hintStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .alternate,
-                                          width: 2,
+                                        }
+                                        setState(() {});
+                                      },
+                                      autofocus: true,
+                                      obscureText: false,
+                                      decoration: InputDecoration(
+                                        labelText: 'Insira o Palete',
+                                        labelStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                        alignLabelWithHint: false,
+                                        hintStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.green.shade500,
-                                          width: 2,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.green.shade500,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.green.shade100,
-                                          width: 2,
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.green.shade100,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.green.shade100,
-                                          width: 2,
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.green.shade100,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
                                       ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium,
+                                      keyboardType: const TextInputType
+                                          .numberWithOptions(),
+                                      validator: _model.textControllerValidator
+                                          .asValidator(context),
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(33),
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
                                     ),
-                                    style:
-                                    FlutterFlowTheme.of(context).bodyMedium,
-                                    keyboardType:
-                                    const TextInputType.numberWithOptions(),
-                                    validator: _model.textControllerValidator
-                                        .asValidator(context),
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(33),
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        },
+                      );
+                    }
                   },
                   child: (Container(
                     alignment: Alignment.center,
-                    width:
-                    MediaQuery.of(context).size.height *
-                        0.8,
-                    height:
-                    MediaQuery.of(context).size.height *
-                        0.1,
+                    width: MediaQuery.of(context).size.height * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.1,
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                        BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       'Continuar Palete',
-                      style: FlutterFlowTheme.of(context)
-                          .titleLarge,
+                      style: FlutterFlowTheme.of(context).titleLarge,
                       textAlign: TextAlign.center,
                     ),
                   )),
@@ -240,20 +242,14 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                   },
                   child: (Container(
                     alignment: Alignment.center,
-                    width:
-                    MediaQuery.of(context).size.height *
-                        0.8,
-                    height:
-                    MediaQuery.of(context).size.height *
-                        0.1,
+                    width: MediaQuery.of(context).size.height * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.1,
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                        BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       'Criar Novo Palete',
-                      style: FlutterFlowTheme.of(context)
-                          .titleLarge,
+                      style: FlutterFlowTheme.of(context).titleLarge,
                       textAlign: TextAlign.center,
                     ),
                   )),

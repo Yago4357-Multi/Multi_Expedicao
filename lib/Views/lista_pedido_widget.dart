@@ -135,16 +135,10 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                 onPressed: () async {
                                   if (await bd.connected(context) == 1) {
                                     if (pedidosAlt.isNotEmpty) {
-                                      bd.updatePedidoBip(pedidosAlt);
+                                      getPed = bd.updatePedidoBip(pedidosAlt, cont);
                                       pedidosAlt = [];
-                                      getPed = bd.selectPedido(cont);
-                                      setState(() {
-                                        Navigator.pop(context);
-                                      });
                                     }
                                     if (pedidosExc.isNotEmpty) {
-                                      getPed = bd.excluiPedido(
-                                          pedidosExc, usur, cont);
                                       var pedidosSet = pedidos.toSet();
                                       var pedidosSetExc = pedidosExc.toSet();
                                       pedidos = pedidosSet
@@ -153,13 +147,13 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                       if (pedidos.isEmpty) {
                                         cont = 0;
                                       }
+                                      getPed = bd.excluiPedido(
+                                          pedidosExc, usur, cont);
                                       pedidosExc = [];
-                                      setState(() {
-                                        Navigator.pop(context);
-                                      });
                                     }
                                     inicial = true;
                                   }
+                                  Navigator.pop(context);
                                   setState(() {});
                                 },
                                 child: const Text('Continuar')),
@@ -919,32 +913,30 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                         .circular(
                                                                             4)),
                                                             width: 120,
-                                                            child: Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        top: 5),
-                                                                child: Text(
-                                                                  '${pedidos[index].palete}',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Readex Pro',
-                                                                        color: Colors
-                                                                            .red
-                                                                            .shade500,
-                                                                        fontSize:
-                                                                            26,
-                                                                        fontWeight:
-                                                                            FontWeight.w800,
-                                                                      ),
-                                                                ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 5),
+                                                              child: Text(
+                                                                '${pedidos[index].palete}',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Readex Pro',
+                                                                      color: Colors
+                                                                          .red
+                                                                          .shade500,
+                                                                      fontSize:
+                                                                          26,
+                                                                      fontWeight:
+                                                                          FontWeight.w800,
+                                                                    ),
                                                               ),
                                                             ),
                                                           ),

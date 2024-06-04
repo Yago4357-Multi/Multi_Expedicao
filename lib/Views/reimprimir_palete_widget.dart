@@ -11,7 +11,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/palete.dart';
 import '../Models/usur.dart';
-import 'conferencia_widget.dart';
+import 'home_widget.dart';
 
 export '../Components/Model/criar_palete_model.dart';
 
@@ -28,11 +28,11 @@ class ReimprimirPaleteWidget extends StatefulWidget {
 
   ///Construtor da página de criação de novos Paletes
   const ReimprimirPaleteWidget(
-    this.usur,
-    this.palete, {
-    super.key,
-    required this.bd,
-  });
+      this.usur,
+      this.palete, {
+        super.key,
+        required this.bd,
+      });
 
   @override
   State<ReimprimirPaleteWidget> createState() =>
@@ -103,9 +103,9 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
           title: Text(
             'Reimprimir Palete',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
+              fontFamily: 'Outfit',
+              color: FlutterFlowTheme.of(context).primaryBackground,
+            ),
           ),
           actions: const [],
           centerTitle: true,
@@ -152,29 +152,34 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                   paleteText = value;
                                 },
                                 onFieldSubmitted: (value) async {
-                                  if (paletes.where((element) => element.pallet == int.parse(paleteText)).isNotEmpty) {
-                                    palete = int.parse(value);
-                                  } else {
-                                    if (context.mounted) {
-                                      await showCupertinoModalPopup(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (context) {
-                                          return CupertinoAlertDialog(
-                                            title: const Text(
-                                                'Palete não encontrado'),
-                                            actions: <CupertinoDialogAction>[
-                                              CupertinoDialogAction(
-                                                  isDefaultAction: true,
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Voltar'))
-                                            ],
-                                          );
-                                        },
-                                      );
-                                      return;
+                                  if (await bd.connected(context) == 1) {
+                                    if (paletes
+                                        .where((element) =>
+                                    element.pallet == int.parse(paleteText))
+                                        .isNotEmpty) {
+                                      palete = int.parse(value);
+                                    } else {
+                                      if (context.mounted) {
+                                        await showCupertinoModalPopup(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) {
+                                            return CupertinoAlertDialog(
+                                              title: const Text(
+                                                  'Palete não encontrado'),
+                                              actions: <CupertinoDialogAction>[
+                                                CupertinoDialogAction(
+                                                    isDefaultAction: true,
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Voltar'))
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        return;
+                                      }
                                     }
                                   }
                                   setState(() {});
@@ -186,15 +191,15 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                   labelStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                    fontFamily: 'Readex Pro',
+                                    letterSpacing: 0,
+                                  ),
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .labelMedium
                                       .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                    fontFamily: 'Readex Pro',
+                                    letterSpacing: 0,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
                                       color: Colors.green,
@@ -224,17 +229,17 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   contentPadding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          20, 0, 0, 0),
+                                  const EdgeInsetsDirectional.fromSTEB(
+                                      20, 0, 0, 0),
                                 ),
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                  fontFamily: 'Readex Pro',
+                                  letterSpacing: 0,
+                                ),
                                 cursorColor:
-                                    FlutterFlowTheme.of(context).primary,
+                                FlutterFlowTheme.of(context).primary,
                               ),
                             ),
                             Container(
@@ -248,30 +253,36 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                     borderRadius: BorderRadius.circular(10)),
                                 child: IconButton(
                                   onPressed: () async {
-                                    if (paletes
-                                        .where((element) => element.pallet == int.parse(paleteText)).isNotEmpty) {
-                                      palete = int.parse(paleteText);
-                                    } else {
-                                      if (context.mounted) {
-                                        await showCupertinoModalPopup(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (context) {
-                                            return CupertinoAlertDialog(
-                                              title: const Text(
-                                                  'Palete não encontrado'),
-                                              actions: <CupertinoDialogAction>[
-                                                CupertinoDialogAction(
-                                                    isDefaultAction: true,
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Voltar'))
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        return;
+                                    if (await bd.connected(context) == 1) {
+                                      if (paletes
+                                          .where((element) =>
+                                      element.pallet == int.parse(paleteText))
+                                          .isNotEmpty) {
+                                        palete = int.parse(paleteText);
+                                      } else {
+                                        if (context.mounted) {
+                                          await showCupertinoModalPopup(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (context) {
+                                              return CupertinoAlertDialog(
+                                                title: const Text(
+                                                    'Palete não encontrado'),
+                                                actions: <
+                                                    CupertinoDialogAction>[
+                                                  CupertinoDialogAction(
+                                                      isDefaultAction: true,
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                          'Voltar'))
+                                                ],
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        }
                                       }
                                     }
                                     setState(() {});
@@ -290,794 +301,879 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                     borderRadius: BorderRadius.circular(10)),
                                 child: IconButton(
                                   onPressed: () async {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return StatefulBuilder(
-                                          builder: (context, setter) {
-                                            internalSetter = setter;
-                                            return Dialog(
-                                              backgroundColor: Colors.white,
-                                              child: Stack(
-                                                children: [
-                                                  Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Container(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.1,
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        decoration: const BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadiusDirectional.vertical(
-                                                                    top: Radius
-                                                                        .circular(
-                                                                            20))),
-                                                        child: Align(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                            'Lista de Paletes',
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .headlineMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Outfit',
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                        width: double.infinity,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: FlutterFlowTheme
+                                    if (await bd.connected(context) == 1){
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                            builder: (context, setter) {
+                                              internalSetter = setter;
+                                              return Dialog(
+                                                backgroundColor: Colors.white,
+                                                child: Stack(
+                                                  children: [
+                                                    Column(
+                                                      mainAxisSize:
+                                                      MainAxisSize.max,
+                                                      children: [
+                                                        Container(
+                                                          height: MediaQuery.of(
+                                                              context)
+                                                              .size
+                                                              .height *
+                                                              0.1,
+                                                          width: MediaQuery.of(
+                                                              context)
+                                                              .size
+                                                              .width,
+                                                          decoration: const BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius:
+                                                              BorderRadiusDirectional.vertical(
+                                                                  top: Radius
+                                                                      .circular(
+                                                                      20))),
+                                                          child: Align(
+                                                            alignment:
+                                                            Alignment.center,
+                                                            child: Text(
+                                                              'Lista de Paletes',
+                                                              textAlign: TextAlign
+                                                                  .center,
+                                                              style: FlutterFlowTheme
                                                                   .of(context)
-                                                              .primaryBackground,
-                                                          boxShadow: const [
-                                                            BoxShadow(
-                                                              blurRadius: 0,
-                                                              color: Color(
-                                                                  0xFFE0E3E7),
-                                                              offset: Offset(
-                                                                0.0,
-                                                                1,
+                                                                  .headlineMedium
+                                                                  .override(
+                                                                fontFamily:
+                                                                'Outfit',
                                                               ),
-                                                            )
-                                                          ],
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(0),
-                                                          shape: BoxShape
-                                                              .rectangle,
-                                                        ),
-                                                        child: Container(
-                                                          width:
-                                                              double.infinity,
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                          ),
-                                                          alignment:
-                                                              const AlignmentDirectional(
-                                                                  -1, 0),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    16,
-                                                                    0,
-                                                                    0,
-                                                                    0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Palete',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Volumetria',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Romaneio',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    softWrap:
-                                                                        true,
-                                                                    'Usur. de Abert.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Dt. de Abert.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    softWrap:
-                                                                        true,
-                                                                    'Usur. de Fecha.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Dt. de Fecha.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    softWrap:
-                                                                        true,
-                                                                    'Usur. de Carreg.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Dt. de Carreg.',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelSmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          letterSpacing:
-                                                                              0,
-                                                                          fontSize:
-                                                                              20,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              ],
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.7,
-                                                        child: ListView.builder(
-                                                          shrinkWrap: true,
-                                                          physics:
-                                                              const AlwaysScrollableScrollPhysics(),
-                                                          scrollDirection:
-                                                              Axis.vertical,
+                                                        Container(
                                                           padding:
-                                                              EdgeInsets.zero,
-                                                          itemCount:
-                                                              paletes.length,
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            if (palete ==
-                                                                paletes[index].pallet) {
-                                                            return Padding(
+                                                          const EdgeInsets
+                                                              .all(10),
+                                                          width: double.infinity,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                .of(context)
+                                                                .primaryBackground,
+                                                            boxShadow: const [
+                                                              BoxShadow(
+                                                                blurRadius: 0,
+                                                                color: Color(
+                                                                    0xFFE0E3E7),
+                                                                offset: Offset(
+                                                                  0.0,
+                                                                  1,
+                                                                ),
+                                                              )
+                                                            ],
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(0),
+                                                            shape: BoxShape
+                                                                .rectangle,
+                                                          ),
+                                                          child: Container(
+                                                            width:
+                                                            double.infinity,
+                                                            height: 40,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: FlutterFlowTheme
+                                                                  .of(context)
+                                                                  .primaryBackground,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  12),
+                                                            ),
+                                                            alignment:
+                                                            const AlignmentDirectional(
+                                                                -1, 0),
+                                                            child: Padding(
                                                               padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  16,
+                                                                  0,
+                                                                  0,
+                                                                  0),
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      'Palete',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      'Volumetria',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      'Romaneio',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      softWrap:
+                                                                      true,
+                                                                      'Usur. de Abert.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      'Dt. de Abert.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      softWrap:
+                                                                      true,
+                                                                      'Usur. de Fecha.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      'Dt. de Fecha.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      softWrap:
+                                                                      true,
+                                                                      'Usur. de Carreg.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  if (responsiveVisibility(
+                                                                      context: context,
+                                                                      phone: false,
+                                                                      tablet: false,
+                                                                      desktop: true)) Expanded(
+                                                                    child: Text(
+                                                                      'Dt. de Carreg.',
+                                                                      style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                          .labelSmall
+                                                                          .override(
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontSize:
+                                                                        20,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                              context)
+                                                              .size
+                                                              .width,
+                                                          height: MediaQuery.of(
+                                                              context)
+                                                              .size
+                                                              .height *
+                                                              0.7,
+                                                          child: ListView.builder(
+                                                            shrinkWrap: true,
+                                                            physics:
+                                                            const AlwaysScrollableScrollPhysics(),
+                                                            scrollDirection:
+                                                            Axis.vertical,
+                                                            padding:
+                                                            EdgeInsets.zero,
+                                                            itemCount:
+                                                            paletes.length,
+                                                            itemBuilder:
+                                                                (context, index) {
+                                                              if (palete ==
+                                                                  paletes[index].pallet) {
+                                                                return Padding(
+                                                                  padding:
                                                                   const EdgeInsetsDirectional
                                                                       .fromSTEB(
                                                                       0,
                                                                       0,
                                                                       0,
                                                                       1),
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                decoration:
+                                                                  child: Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration:
                                                                     BoxDecoration(
-                                                                  color: Colors
-                                                                      .yellow
-                                                                      .shade50,
-                                                                  boxShadow: const [
-                                                                    BoxShadow(
-                                                                      blurRadius:
+                                                                      color: Colors
+                                                                          .yellow
+                                                                          .shade50,
+                                                                      boxShadow: const [
+                                                                        BoxShadow(
+                                                                          blurRadius:
                                                                           0,
-                                                                      color: Color(
-                                                                          0xFFE0E3E7),
-                                                                      offset:
+                                                                          color: Color(
+                                                                              0xFFE0E3E7),
+                                                                          offset:
                                                                           Offset(
-                                                                        0.0,
-                                                                        1,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                  borderRadius:
+                                                                            0.0,
+                                                                            1,
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                      borderRadius:
                                                                       BorderRadius
                                                                           .circular(
-                                                                              0),
-                                                                  shape: BoxShape
-                                                                      .rectangle,
-                                                                ),
-                                                                child: InkWell(
-                                                                  splashColor:
+                                                                          0),
+                                                                      shape: BoxShape
+                                                                          .rectangle,
+                                                                    ),
+                                                                    child: InkWell(
+                                                                      splashColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  focusColor: Colors
-                                                                      .transparent,
-                                                                  hoverColor: Colors
-                                                                      .transparent,
-                                                                  highlightColor:
+                                                                      focusColor: Colors
+                                                                          .transparent,
+                                                                      hoverColor: Colors
+                                                                          .transparent,
+                                                                      highlightColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  onTap:
-                                                                      () async {
-                                                                    if (await bd
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (await bd
                                                                             .connected(context) ==
-                                                                        1) {
-                                                                      setter(
-                                                                        () {
-                                                                          palete =
+                                                                            1) {
+                                                                          setter(
+                                                                                () {
+                                                                              palete =
                                                                               paletes[index].pallet!;
-                                                                          setState(
-                                                                              () {
-                                                                            palete =
-                                                                                paletes[index].pallet!;
-                                                                          });
-                                                                        },
-                                                                      );
-                                                                    }
-                                                                    setState(() {});
-                                                                  },
-                                                                  child:
+                                                                              setState(
+                                                                                      () {
+                                                                                    palete =
+                                                                                    paletes[index].pallet!;
+                                                                                  });
+                                                                            },
+                                                                          );
+                                                                        }
+                                                                        setState(() {});
+                                                                      },
+                                                                      child:
                                                                       Padding(
-                                                                    padding:
+                                                                        padding:
                                                                         const EdgeInsets
                                                                             .all(
                                                                             8),
-                                                                    child: Row(
-                                                                      mainAxisSize:
+                                                                        child: Row(
+                                                                          mainAxisSize:
                                                                           MainAxisSize
                                                                               .max,
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
+                                                                          children: [
+                                                                            Container(
+                                                                              width:
                                                                               4,
-                                                                          height:
+                                                                              height:
                                                                               50,
-                                                                          decoration:
+                                                                              decoration:
                                                                               BoxDecoration(
-                                                                            color:
+                                                                                color:
                                                                                 Colors.green.shade400,
-                                                                            borderRadius:
+                                                                                borderRadius:
                                                                                 BorderRadius.circular(2),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              '${paletes[index].pallet}',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  '${paletes[index].pallet}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              '${paletes[index].volumetria}',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  '${paletes[index].volumetria}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              '${paletes[index].romaneio ?? ''}',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  '${paletes[index].romaneio ?? ''}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              '${paletes[index].UsurInclusao}',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  '${paletes[index].UsurInclusao}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              paletes[index].UsurFechamento ?? '',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  paletes[index].UsurFechamento ?? '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              paletes[index].UsurCarregamento ?? '',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  paletes[index].UsurCarregamento ?? '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true)) Expanded(
+                                                                              child:
                                                                               Padding(
-                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                                12,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                                    12,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
                                                                                 Text(
-                                                                              paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
-                                                                              style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                  paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                     fontFamily: 'Readex Pro',
                                                                                     letterSpacing: 0,
                                                                                   ),
+                                                                                ),
+                                                                              ),
                                                                             ),
-                                                                          ),
+                                                                          ],
                                                                         ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                            } else {
-                                                              return Padding(
-                                                                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
-                                                                child: Container(
-                                                                  width: double.infinity,
-                                                                  decoration: BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                    boxShadow: const [
-                                                                      BoxShadow(
-                                                                        blurRadius: 0,
-                                                                        color: Color(0xFFE0E3E7),
-                                                                        offset: Offset(
-                                                                          0.0,
-                                                                          1,
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                    borderRadius: BorderRadius.circular(0),
-                                                                    shape: BoxShape.rectangle,
-                                                                  ),
-                                                                  child: InkWell(
-                                                                    onTap: () async {
-                                                                      if (await bd.connected(context) == 1) {
-                                                                        setter(
-                                                                              () {
-                                                                            palete = paletes[index].pallet!;
-                                                                            setState(() {
-                                                                              palete = paletes[index].pallet!;
-                                                                            });
-                                                                          },
-                                                                        );
-                                                                      }
-                                                                      setState(() {});
-                                                                    },
-                                                                    child: Padding(
-                                                                      padding: const EdgeInsets.all(8),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Container(
-                                                                            width: 4,
-                                                                            height: 50,
-                                                                            decoration: BoxDecoration(
-                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                              borderRadius: BorderRadius.circular(2),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                '${paletes[index].pallet}',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                '${paletes[index].volumetria}',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                '${paletes[index].romaneio ?? ''}',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                '${paletes[index].UsurInclusao}',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                paletes[index].UsurFechamento ?? '',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                paletes[index].UsurCarregamento ?? '',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                                                              child: Text(
-                                                                                paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
-                                                                                style: FlutterFlowTheme.of(context).labelLarge.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  letterSpacing: 0,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
+                                                                );
+                                                              } else {
+                                                                return Padding(
+                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 1),
+                                                                  child: Container(
+                                                                    width: double.infinity,
+                                                                    decoration: BoxDecoration(
+                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                      boxShadow: const [
+                                                                        BoxShadow(
+                                                                          blurRadius: 0,
+                                                                          color: Color(0xFFE0E3E7),
+                                                                          offset: Offset(
+                                                                            0.0,
+                                                                            1,
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                      borderRadius: BorderRadius.circular(0),
+                                                                      shape: BoxShape.rectangle,
+                                                                    ),
+                                                                    child: InkWell(
+                                                                      onTap: () async {
+                                                                        if (await bd.connected(context) == 1) {
+                                                                          setter(
+                                                                                () {
+                                                                              palete = paletes[index].pallet!;
+                                                                              setState(() {
+                                                                                palete = paletes[index].pallet!;
+                                                                              });
+                                                                            },
+                                                                          );
+                                                                        }
+                                                                        setState(() {});
+                                                                      },
+                                                                      child: Padding(
+                                                                        padding: const EdgeInsets.all(8),
+                                                                        child: Row(
+                                                                          mainAxisSize: MainAxisSize.max,
+                                                                          children: [
+                                                                            Container(
+                                                                              width: 4,
+                                                                              height: 50,
+                                                                              decoration: BoxDecoration(
+                                                                                color: FlutterFlowTheme.of(context).alternate,
+                                                                                borderRadius: BorderRadius.circular(2),
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  '${paletes[index].pallet}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  '${paletes[index].volumetria}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  '${paletes[index].romaneio ?? ''}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  '${paletes[index].UsurInclusao}',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtInclusao!),
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  paletes[index].UsurFechamento ?? '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  paletes[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtFechamento!) : '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  paletes[index].UsurCarregamento ?? '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                                tablet: false,
+                                                                                desktop: true))Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                                                                child: Text(
+                                                                                  paletes[index].dtCarregamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(paletes[index].dtCarregamento!) : '',
+                                                                                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                    fontFamily: 'Readex Pro',
+                                                                                    letterSpacing: 0,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                          child: Container(
-                                                        decoration: const BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius: BorderRadius.only(
-                                                                bottomLeft: Radius
+                                                        Expanded(
+                                                            child: Container(
+                                                              decoration: const BoxDecoration(
+                                                                  color: Colors.white,
+                                                                  borderRadius: BorderRadius.only(
+                                                                      bottomLeft: Radius
+                                                                          .circular(
+                                                                          20),
+                                                                      bottomRight: Radius
+                                                                          .circular(
+                                                                          20))),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                    Positioned(
+                                                        bottom: 10,
+                                                        right: 10,
+                                                        child: Container(
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                Colors.green,
+                                                                borderRadius:
+                                                                BorderRadius
                                                                     .circular(
-                                                                        20),
-                                                                bottomRight: Radius
-                                                                    .circular(
-                                                                        20))),
-                                                      ))
-                                                    ],
-                                                  ),
-                                                  Positioned(
-                                                      bottom: 10,
-                                                      right: 10,
-                                                      child: Container(
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.green,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
-                                                          width: 50,
-                                                          height: 50,
-                                                          child: IconButton(
-                                                            onPressed:
-                                                                () async {
-                                                                  if (await bd.connected(context) == 1) {
-                                                                    bd.createPalete(usur);
-                                                                    pdf.addPage(pw.Page(
-                                                                      pageFormat: PdfPageFormat.a4,
-                                                                      build: (context2) {
-                                                                        return pw.BarcodeWidget(
+                                                                    10)),
+                                                            width: 50,
+                                                            height: 50,
+                                                            child: IconButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                if (await bd.connected(context) == 1) {
+                                                                  bd.createPalete(usur);
+                                                                  pdf.addPage(pw.Page(
+                                                                    pageFormat: PdfPageFormat.a4,
+                                                                    build: (context2) {
+                                                                      return pw.Container(
+                                                                        width: 107,
+                                                                        height: 45,
+                                                                        child: pw.BarcodeWidget(
                                                                             data: '$palete',
                                                                             barcode: Barcode.code128(),
-                                                                            width: 300,
-                                                                            height: 200,
+                                                                            width: 40,
+                                                                            height: 100,
                                                                             color: PdfColors.black,
                                                                             drawText: true,
                                                                             textStyle: const pw.TextStyle(
                                                                               fontSize: 20,
                                                                               letterSpacing: 0,
-                                                                            ));
-                                                                      },
-                                                                    ));
-                                                                    await Printing.layoutPdf(
-                                                                        onLayout: (format) => pdf.save());
-                                                                    if (context.mounted) {
-                                                                      Navigator.pop(context);
-                                                                      await Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                ListaRomaneioConfWidget(
-                                                                                    palete: palete, usur, bd: bd),
-                                                                          ));
-                                                                    }
+                                                                            )),
+                                                                      );
+                                                                    },
+                                                                  ));
+                                                                  await Printing.layoutPdf(
+                                                                      onLayout: (format) => pdf.save());
+                                                                  if (context.mounted) {
+                                                                    Navigator.pop(context);
+                                                                    await Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              HomeWidget(usur, bd: bd),
+                                                                        ));
                                                                   }
-                                                                  setState(() {});
-                                                                },
-                                                            icon: const Icon(
-                                                                Icons.receipt_long,
-                                                                color: Colors
-                                                                    .white),
-                                                          )))
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
+                                                                }
+                                                                setState(() {});
+                                                              },
+                                                              icon: const Icon(
+                                                                  Icons.receipt_long,
+                                                                  color: Colors
+                                                                      .white),
+                                                            )))
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
                                   icon: const Icon(Icons.search_rounded),
                                   color: Colors.white,
@@ -1121,8 +1217,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                   return pw.BarcodeWidget(
                                       data: '$palete',
                                       barcode: Barcode.code128(),
-                                      width: 300,
-                                      height: 200,
+                                      width: 80,
+                                      height: 180,
                                       color: PdfColors.black,
                                       drawText: true,
                                       textStyle: const pw.TextStyle(
@@ -1139,8 +1235,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          ListaRomaneioConfWidget(
-                                              palete: palete, usur, bd: bd),
+                                          HomeWidget(usur, bd: bd),
                                     ));
                               }
                             }
@@ -1161,10 +1256,10 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
-                                  fontFamily: 'Readex Pro',
-                                  color: Colors.white,
-                                  letterSpacing: 0,
-                                ),
+                              fontFamily: 'Readex Pro',
+                              color: Colors.white,
+                              letterSpacing: 0,
+                            ),
                             elevation: 4,
                             borderSide: const BorderSide(
                               color: Colors.transparent,

@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../Components/Model/home_model.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
-import '../Controls/excel.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
 import 'carregamento_widget.dart';
@@ -35,7 +34,6 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
-  final ExcelClass excel = ExcelClass();
 
   final Usuario acess;
 

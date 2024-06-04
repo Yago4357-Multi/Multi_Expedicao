@@ -436,6 +436,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                       dtFim = (datasRange.endDate ?? dtIni).endOfDay;
                                     }
                                     datasRange = PickerDateRange(dtIni, dtFim);
+                                    datas.selectedRange = datasRange;
                                     romaneioResposta =
                                         bd.romaneiosFinalizados(dtIni, dtFim);
                                     var teste = await romaneioResposta;
@@ -450,7 +451,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                           bd.selectPedidosRomaneio(
                                               romaneiosSelecionadoint);
                                     }
-                                    datas.selectedRange = datasRange;
+
                                     setState(() {
                                       _model.textController?.value = TextEditingValue.empty;
                                       _model.textController2?.value = TextEditingValue.empty;

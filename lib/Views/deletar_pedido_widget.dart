@@ -153,117 +153,134 @@ class _DeletarPedidoWidgetState extends State<DeletarPedidoWidget> {
                                     width: 300,
                                     child: TextFormField(
                                       onFieldSubmitted: (value) async {
-                                        var codArrumado =
-                                        value.substring(14, 33);
-                                        var ped = codArrumado.substring(0, 10);
-                                        var cx = codArrumado.substring(14, 16);
-                                        pedidos = await bd.selectPedido(int.parse(ped));
-                                        if (pedidos.isNotEmpty) {
-                                          if (pedidosExc.contains(pedidos.where((element) => element.caixa == int.parse(cx) && element.ped == int.parse(ped)).toList()[0]) ==
-                                              false) {
-                                            pedidosExc.add(pedidos.where((element) => element.caixa == int.parse(cx) && element.ped == int.parse(ped)).toList()[0]);
+                                        if (await bd.connected(context) == 1) {
+                                          var codArrumado =
+                                          value.substring(14, 33);
+                                          var ped = codArrumado.substring(
+                                              0, 10);
+                                          var cx = codArrumado.substring(
+                                              14, 16);
+                                          pedidos =
+                                          await bd.selectPedido(int.parse(ped));
+                                          if (pedidos.isNotEmpty) {
+                                            if (pedidosExc.contains(
+                                                pedidos.where((element) =>
+                                                element.caixa ==
+                                                    int.parse(cx) &&
+                                                    element.ped ==
+                                                        int.parse(ped))
+                                                    .toList()[0]) ==
+                                                false) {
+                                              pedidosExc.add(pedidos.where((
+                                                  element) =>
+                                              element.caixa == int.parse(cx) &&
+                                                  element.ped == int.parse(ped))
+                                                  .toList()[0]);
+                                            }
+                                            if (context.mounted) {
+                                              await showCupertinoModalPopup(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return CupertinoAlertDialog(
+                                                    title: Text(
+                                                      'Confirme a exclusão da Caixa : ${pedidosExc[0]
+                                                          .caixa} do Pedido : ${pedidosExc[0]
+                                                          .ped} do Palete : ${pedidosExc[0]
+                                                          .palete}',
+                                                    ),
+                                                    actions: <
+                                                        CupertinoDialogAction>[
+                                                      CupertinoDialogAction(
+                                                          isDefaultAction: true,
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Voltar')),
+                                                      CupertinoDialogAction(
+                                                          isDestructiveAction: true,
+                                                          onPressed: () async {
+                                                            await showCupertinoModalPopup(
+                                                              context: context,
+                                                              barrierDismissible: false,
+                                                              builder: (
+                                                                  context) {
+                                                                return CupertinoAlertDialog(
+                                                                  title: const Text(
+                                                                    'Não esqueça de retirar a caixa do palete. Está caixa devera ser novamente bipada na inclusão em outro palete',
+                                                                  ),
+                                                                  actions: <
+                                                                      CupertinoDialogAction>[
+                                                                    CupertinoDialogAction(
+                                                                        isDefaultAction: true,
+                                                                        onPressed: () {
+                                                                          Navigator
+                                                                              .pop(
+                                                                              context);
+                                                                        },
+                                                                        child: const Text(
+                                                                            'Voltar')),
+                                                                    CupertinoDialogAction(
+                                                                        isDestructiveAction: true,
+                                                                        onPressed: () {
+                                                                          bd
+                                                                              .excluiPedido(
+                                                                              pedidosExc,
+                                                                              usur,
+                                                                              0);
+                                                                          pedidosExc =
+                                                                          [];
+                                                                          Navigator
+                                                                              .pop(
+                                                                              context);
+                                                                        },
+                                                                        child: const Text(
+                                                                            'Continuar'))
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Continuar'))
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          } else {
+                                            if (context.mounted) {
+                                              await showCupertinoModalPopup(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return CupertinoAlertDialog(
+                                                    title: const Text(
+                                                      'Caixa não bipada anteriormente',
+                                                    ),
+                                                    actions: <
+                                                        CupertinoDialogAction>[
+                                                      CupertinoDialogAction(
+                                                          isDefaultAction: true,
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Voltar')),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
                                           }
-                                          if (context.mounted) {
-                                            await showCupertinoModalPopup(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text(
-                                                    'Confirme a exclusão da Caixa : ${pedidosExc[0]
-                                                        .caixa} do Pedido : ${pedidosExc[0]
-                                                        .ped} do Palete : ${pedidosExc[0]
-                                                        .palete}',
-                                                  ),
-                                                  actions: <
-                                                      CupertinoDialogAction>[
-                                                    CupertinoDialogAction(
-                                                        isDefaultAction: true,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Voltar')),
-                                                    CupertinoDialogAction(
-                                                        isDestructiveAction: true,
-                                                        onPressed: () async {
-                                                          await showCupertinoModalPopup(
-                                                            context: context,
-                                                            barrierDismissible: false,
-                                                            builder: (context) {
-                                                              return CupertinoAlertDialog(
-                                                                title: const Text(
-                                                                  'Não esqueça de retirar a caixa do palete. Está caixa devera ser novamente bipada na inclusão em outro palete',
-                                                                ),
-                                                                actions: <
-                                                                    CupertinoDialogAction>[
-                                                                  CupertinoDialogAction(
-                                                                      isDefaultAction: true,
-                                                                      onPressed: () {
-                                                                        Navigator
-                                                                            .pop(
-                                                                            context);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Voltar')),
-                                                                  CupertinoDialogAction(
-                                                                      isDestructiveAction: true,
-                                                                      onPressed: () {
-                                                                        bd.excluiPedido(
-                                                                            pedidosExc,
-                                                                            usur,
-                                                                            0);
-                                                                        pedidosExc =
-                                                                        [];
-                                                                        Navigator
-                                                                            .pop(
-                                                                            context);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Continuar'))
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Continuar'))
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        } else{
-                                          if (context.mounted) {
-                                            await showCupertinoModalPopup(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return CupertinoAlertDialog(
-                                                  title: const Text(
-                                                    'Caixa não bipada anteriormente',
-                                                  ),
-                                                  actions: <
-                                                      CupertinoDialogAction>[
-                                                    CupertinoDialogAction(
-                                                        isDefaultAction: true,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Voltar')),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
+                                          pedidosExc = [];
+                                          _model.textController.text = '';
                                         }
-                                        pedidosExc = [];
-                                        _model.textController.text = '';
                                         setState(() {});
                                       },
                                       controller: _model.textController,

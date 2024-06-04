@@ -172,8 +172,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                       BarcodeWidget(
                         data: '$i',
                         barcode: Barcode.code128(),
-                        width: 300,
-                        height: 90,
+                        width: 90,
+                        height: 150,
                         color: FlutterFlowTheme.of(context).primaryText,
                         backgroundColor: Colors.transparent,
                         errorBuilder: (context, error) => const SizedBox(
