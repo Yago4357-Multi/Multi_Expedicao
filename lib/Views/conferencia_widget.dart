@@ -349,8 +349,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                         int? teste2 =
                                             await bd.selectAllPedidos(ped);
                                         print(teste2);
-                                        if (teste2 ==
-                                            0) {
+                                        if (teste2 == 0) {
                                           if (context.mounted) {
                                             teste = bd.insert(
                                                 _model.textController!.text,
@@ -381,26 +380,49 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                               },
                                             );
                                           } else {
-                                            await showCupertinoModalPopup(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return CupertinoAlertDialog(
-                                                  title: const Text(
-                                                      'Pedido não encontrado no Sistema'),
-                                                  actions: <CupertinoDialogAction>[
-                                                    CupertinoDialogAction(
-                                                        isDefaultAction: true,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Voltar'))
-                                                  ],
-                                                );
-                                              },
-                                            );
+                                            if(teste == 2){
+                                              await showCupertinoModalPopup(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return CupertinoAlertDialog(
+                                                    title: const Text(
+                                                        'Pedido não encontrado no Sistema'),
+                                                    actions: <CupertinoDialogAction>[
+                                                      CupertinoDialogAction(
+                                                          isDefaultAction: true,
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Voltar'))
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            } else{
+                                              await showCupertinoModalPopup(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return CupertinoAlertDialog(
+                                                    title: const Text(
+                                                        'Pedido não finalizado no Checkout'),
+                                                    actions: <CupertinoDialogAction>[
+                                                      CupertinoDialogAction(
+                                                          isDefaultAction: true,
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              'Voltar'))
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
                                           }
                                         }
                                       }

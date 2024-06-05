@@ -277,6 +277,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                 view: DateRangePickerView.month,
                                 navigationDirection:
                                 DateRangePickerNavigationDirection.vertical,
+                                maxDate: getCurrentTimestamp,
                                 startRangeSelectionColor: Colors.green.shade700,
                                 initialDisplayDate: dtFim,
                                 onSelectionChanged:
