@@ -106,6 +106,10 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
           },
         ),
         actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
           Padding(
             padding: const EdgeInsets.all(5),
             child: InkWell(
@@ -125,36 +129,64 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                       barrierDismissible: false,
                       builder: (context) {
                         return CupertinoAlertDialog(
-                          title: const Text('Salvar Alterações?'),
+                          title: const Text('Deseja Continuar?'),
                           content: const Text(
-                              'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                              'Para alterações das caixas o ideal é fazer via coletor pela Logística'),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  if (await bd.connected(context) == 1) {
-                                    if (pedidosAlt.isNotEmpty) {
-                                      getPed = bd.updatePedidoBip(pedidosAlt, cont);
-                                      pedidosAlt = [];
-                                    }
-                                    if (pedidosExc.isNotEmpty) {
-                                      var pedidosSet = pedidos.toSet();
-                                      var pedidosSetExc = pedidosExc.toSet();
-                                      pedidos = pedidosSet
-                                          .difference(pedidosSetExc)
-                                          .toList();
-                                      if (pedidos.isEmpty) {
-                                        cont = 0;
-                                      }
-                                      getPed = bd.excluiPedido(
-                                          pedidosExc, usur, cont);
-                                      pedidosExc = [];
-                                    }
-                                    inicial = true;
-                                  }
                                   Navigator.pop(context);
-                                  setState(() {});
+                                  await showCupertinoModalPopup(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                          title: const Text('Salvar Alterações?'),
+                                        content: const Text(
+                                            'Após alteração deve ser alinhado com Logística a parte manual das alterações'),
+                                        actions: <CupertinoDialogAction>[
+                                          CupertinoDialogAction(
+                                              isDefaultAction: true,
+                                              isDestructiveAction: true,
+                                              onPressed: () async {
+                                                if (await bd.connected(context) == 1) {
+                                                  if (pedidosAlt.isNotEmpty) {
+                                                    getPed = bd.updatePedidoBip(pedidosAlt, cont);
+                                                    pedidosAlt = [];
+                                                  }
+                                                  if (pedidosExc.isNotEmpty) {
+                                                    var pedidosSet = pedidos.toSet();
+                                                    var pedidosSetExc = pedidosExc.toSet();
+                                                    pedidos = pedidosSet
+                                                        .difference(pedidosSetExc)
+                                                        .toList();
+                                                    if (pedidos.isEmpty) {
+                                                      cont = 0;
+                                                    }
+                                                    getPed = bd.excluiPedido(
+                                                        pedidosExc, usur, cont);
+                                                    pedidosExc = [];
+                                                  }
+                                                  inicial = true;
+                                                }
+                                                Navigator.pop(context);
+                                                setState(() {});
+                                              },
+                                              child: const Text('Continuar')),
+                                          CupertinoDialogAction(
+                                              isDefaultAction: true,
+                                              onPressed: () {
+                                                setState(() {
+                                                  Navigator.pop(context);
+                                                });
+                                              },
+                                              child: const Text('Voltar'))
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: const Text('Continuar')),
                             CupertinoDialogAction(
@@ -187,29 +219,29 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                   children: [
                     inicial
                         ? Text(
-                            'Editar',
-                            style: FlutterFlowTheme.of(context)
-                                .headlineSmall
-                                .override(
-                                    fontFamily: 'Readex Pro',
-                                    color: Colors.white,
-                                    fontSize: 15),
-                          )
+                      'Editar',
+                      style: FlutterFlowTheme.of(context)
+                          .headlineSmall
+                          .override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 15),
+                    )
                         : Text(
-                            'Salvar',
-                            style: FlutterFlowTheme.of(context)
-                                .headlineSmall
-                                .override(
-                                    fontFamily: 'Readex Pro',
-                                    color: Colors.white,
-                                    fontSize: 15),
-                          ),
+                      'Salvar',
+                      style: FlutterFlowTheme.of(context)
+                          .headlineSmall
+                          .override(
+                          fontFamily: 'Readex Pro',
+                          color: Colors.white,
+                          fontSize: 15),
+                    ),
                     inicial
                         ? const Icon(Icons.edit_outlined, color: Colors.white)
                         : const Icon(
-                            Icons.done,
-                            color: Colors.white,
-                          ),
+                      Icons.done,
+                      color: Colors.white,
+                    ),
                   ],
                 ),
               ),
@@ -218,7 +250,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
           if (!inicial)
             Padding(
               padding:
-                  const EdgeInsets.only(left: 15, top: 5, bottom: 5, right: 5),
+              const EdgeInsets.only(left: 15, top: 5, bottom: 5, right: 5),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -236,7 +268,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                   decoration: BoxDecoration(
                       color: Colors.green.shade700,
                       borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
+                      const BorderRadius.all(Radius.circular(20))),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -245,9 +277,9 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                         style: FlutterFlowTheme.of(context)
                             .headlineSmall
                             .override(
-                                fontFamily: 'Readex Pro',
-                                color: Colors.white,
-                                fontSize: 15),
+                            fontFamily: 'Readex Pro',
+                            color: Colors.white,
+                            fontSize: 15),
                       ),
                       const Icon(
                         Icons.cancel_outlined,
@@ -305,113 +337,113 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                         flex: 2,
                                         child: Align(
                                           alignment:
-                                              const AlignmentDirectional(-1, 0),
+                                          const AlignmentDirectional(-1, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceEvenly,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Align(
                                                 alignment:
-                                                    const AlignmentDirectional(
-                                                        -1, -1),
+                                                const AlignmentDirectional(
+                                                    -1, -1),
                                                 child: Padding(
                                                   padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          10, 20, 0, 0),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      10, 20, 0, 0),
                                                   child: Text(
                                                     'Nº Pedido :',
                                                     textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
-                                                            context)
+                                                        context)
                                                         .headlineMedium
                                                         .override(
-                                                          fontFamily: 'Outfit',
-                                                          fontSize: 20,
-                                                        ),
+                                                      fontFamily: 'Outfit',
+                                                      fontSize: 20,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                               Padding(
                                                 padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(25, 8, 0, 0),
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(25, 8, 0, 0),
                                                 child: TextField(
                                                   textAlignVertical:
-                                                      TextAlignVertical.center,
+                                                  TextAlignVertical.center,
                                                   decoration: InputDecoration(
                                                     hintStyle: FlutterFlowTheme
-                                                            .of(context)
+                                                        .of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontFamily:
-                                                              'Readex Pro',
-                                                          color: const Color(
-                                                              0xFF005200),
-                                                          fontSize: 26,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
+                                                      fontFamily:
+                                                      'Readex Pro',
+                                                      color: const Color(
+                                                          0xFF005200),
+                                                      fontSize: 26,
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                    ),
                                                     hintText: pedidos.isNotEmpty
                                                         ? '${pedidos[0].ped}'
                                                         : 'Pedido não encontrado...',
                                                     enabledBorder:
-                                                        OutlineInputBorder(
+                                                    OutlineInputBorder(
                                                       borderSide: BorderSide(
                                                         color: corBorda,
                                                         width: 2,
                                                       ),
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                      BorderRadius.circular(
+                                                          12),
                                                     ),
                                                     focusedBorder:
-                                                        OutlineInputBorder(
+                                                    OutlineInputBorder(
                                                       borderSide: BorderSide(
                                                         color: corDica,
                                                         width: 2,
                                                       ),
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                      BorderRadius.circular(
+                                                          12),
                                                     ),
                                                     errorBorder:
-                                                        OutlineInputBorder(
+                                                    OutlineInputBorder(
                                                       borderSide: BorderSide(
                                                         color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .error,
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .error,
                                                         width: 2,
                                                       ),
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                      BorderRadius.circular(
+                                                          12),
                                                     ),
                                                     focusedErrorBorder:
-                                                        OutlineInputBorder(
+                                                    OutlineInputBorder(
                                                       borderSide: BorderSide(
                                                         color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .error,
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .error,
                                                         width: 2,
                                                       ),
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                      BorderRadius.circular(
+                                                          12),
                                                     ),
                                                     contentPadding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            20, 0, 0, 0),
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        20, 0, 0, 0),
                                                   ),
                                                   onSubmitted: (value) async {
                                                     if (await bd.connected(
-                                                            context) ==
+                                                        context) ==
                                                         1) {
                                                       setState(() {
                                                         cont = int.parse(
@@ -427,15 +459,15 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                     setState(() {});
                                                   },
                                                   controller:
-                                                      _model.textController,
+                                                  _model.textController,
                                                   textAlign: TextAlign.center,
                                                   style: FlutterFlowTheme.of(
-                                                          context)
+                                                      context)
                                                       .headlineMedium
                                                       .override(
-                                                        fontFamily: 'Outfit',
-                                                        fontSize: 24,
-                                                      ),
+                                                    fontFamily: 'Outfit',
+                                                    fontSize: 24,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -446,172 +478,172 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                       flex: 3,
                                       child: Align(
                                         alignment:
-                                            const AlignmentDirectional(0, 0),
+                                        const AlignmentDirectional(0, 0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                           children: [
                                             Align(
                                               alignment:
-                                                  const AlignmentDirectional(
-                                                      -1, -1),
+                                              const AlignmentDirectional(
+                                                  -1, -1),
                                               child: Padding(
                                                 padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(10, 20, 0, 0),
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(10, 20, 0, 0),
                                                 child: Text(
                                                   (responsiveVisibility(
-                                                          context: context,
-                                                          phone: false,
-                                                          tablet: false,
-                                                          desktop: true))
+                                                      context: context,
+                                                      phone: false,
+                                                      tablet: false,
+                                                      desktop: true))
                                                       ? 'Nº Volumes :'
                                                       : 'Progresso do Pedido',
                                                   textAlign: TextAlign.start,
                                                   style: FlutterFlowTheme.of(
-                                                          context)
+                                                      context)
                                                       .headlineMedium
                                                       .override(
-                                                        fontFamily: 'Outfit',
-                                                        fontSize: 20,
-                                                      ),
+                                                    fontFamily: 'Outfit',
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                             Align(
                                               alignment:
-                                                  const AlignmentDirectional(
-                                                      0, 0),
+                                              const AlignmentDirectional(
+                                                  0, 0),
                                               child: Padding(
                                                 padding:
-                                                    const EdgeInsets.all(10),
+                                                const EdgeInsets.all(10),
                                                 child: (responsiveVisibility(
-                                                        context: context,
-                                                        phone: false,
-                                                        tablet: false,
-                                                        desktop: true))
+                                                    context: context,
+                                                    phone: false,
+                                                    tablet: false,
+                                                    desktop: true))
                                                     ? CircularPercentIndicator(
-                                                        circularStrokeCap:
-                                                            CircularStrokeCap
-                                                                .round,
-                                                        percent: pedidos
-                                                                .isNotEmpty
-                                                            ? ((pedidos.length -
-                                                                            pedidosExc
-                                                                                .length) /
-                                                                        (pedidos[0].vol ??
-                                                                            0)) <=
-                                                                    1
-                                                                ? ((pedidos.length -
-                                                                        pedidosExc
-                                                                            .length) /
-                                                                    (pedidos[0]
-                                                                            .vol ??
-                                                                        0))
-                                                                : 1
-                                                            : 0,
-                                                        radius:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.04,
-                                                        lineWidth: 15,
-                                                        animation: true,
-                                                        animateFromLastPercent:
-                                                            true,
-                                                        progressColor: pedidos
-                                                                .isNotEmpty
-                                                            ? (((pedidos.length) /
-                                                                        (pedidos[0].vol ??
-                                                                            0)) ==
-                                                                    1)
-                                                                ? Colors.green
-                                                                : Colors
-                                                                    .deepOrange
-                                                            : Colors.deepOrange,
-                                                        backgroundColor: pedidos
-                                                                .isNotEmpty
-                                                            ? (pedidosExc
-                                                                        .isNotEmpty &&
-                                                                    (pedidos.length /
-                                                                            (pedidos[0].vol ??
-                                                                                0)) >=
-                                                                        1)
-                                                                ? Colors.red
-                                                                : Colors.grey
-                                                            : Colors.grey,
-                                                        center: Text(
-                                                          '${pedidos.length - pedidosExc.length} / ${pedidos.isNotEmpty ? pedidos[0].vol : 0}',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .headlineSmall
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Outfit',
-                                                                color: pedidos
-                                                                        .isNotEmpty
-                                                                    ? (((pedidos.length - pedidosExc.length) / (pedidos[0].vol ?? 0)) ==
-                                                                            1)
-                                                                        ? Colors
-                                                                            .green
-                                                                        : Colors
-                                                                            .deepOrange
-                                                                    : Colors
-                                                                        .deepOrange,
-                                                                fontSize: 24,
-                                                              ),
-                                                        ),
-                                                      )
+                                                  circularStrokeCap:
+                                                  CircularStrokeCap
+                                                      .round,
+                                                  percent: pedidos
+                                                      .isNotEmpty
+                                                      ? ((pedidos.length -
+                                                      pedidosExc
+                                                          .length) /
+                                                      (pedidos[0].vol ??
+                                                          0)) <=
+                                                      1
+                                                      ? ((pedidos.length -
+                                                      pedidosExc
+                                                          .length) /
+                                                      (pedidos[0]
+                                                          .vol ??
+                                                          0))
+                                                      : 1
+                                                      : 0,
+                                                  radius:
+                                                  MediaQuery.sizeOf(
+                                                      context)
+                                                      .width *
+                                                      0.04,
+                                                  lineWidth: 15,
+                                                  animation: true,
+                                                  animateFromLastPercent:
+                                                  true,
+                                                  progressColor: pedidos
+                                                      .isNotEmpty
+                                                      ? (((pedidos.length) /
+                                                      (pedidos[0].vol ??
+                                                          0)) ==
+                                                      1)
+                                                      ? Colors.green
+                                                      : Colors
+                                                      .deepOrange
+                                                      : Colors.deepOrange,
+                                                  backgroundColor: pedidos
+                                                      .isNotEmpty
+                                                      ? (pedidosExc
+                                                      .isNotEmpty &&
+                                                      (pedidos.length /
+                                                          (pedidos[0].vol ??
+                                                              0)) >=
+                                                          1)
+                                                      ? Colors.red
+                                                      : Colors.grey
+                                                      : Colors.grey,
+                                                  center: Text(
+                                                    '${pedidos.length - pedidosExc.length} / ${pedidos.isNotEmpty ? pedidos[0].vol : 0}',
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                    style: FlutterFlowTheme
+                                                        .of(context)
+                                                        .headlineSmall
+                                                        .override(
+                                                      fontFamily:
+                                                      'Outfit',
+                                                      color: pedidos
+                                                          .isNotEmpty
+                                                          ? (((pedidos.length - pedidosExc.length) / (pedidos[0].vol ?? 0)) ==
+                                                          1)
+                                                          ? Colors
+                                                          .green
+                                                          : Colors
+                                                          .deepOrange
+                                                          : Colors
+                                                          .deepOrange,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                )
                                                     : LinearProgressIndicator(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    20)),
-                                                        minHeight: 10,
-                                                        color: pedidos
-                                                                .isNotEmpty
-                                                            ? (((pedidos.length) /
-                                                                        (pedidos[0].vol ??
-                                                                            0)) ==
-                                                                    1)
-                                                                ? Colors.green
-                                                                : Colors
-                                                                    .deepOrange
-                                                            : Colors.deepOrange,
-                                                        backgroundColor: pedidos
-                                                                .isNotEmpty
-                                                            ? (pedidosExc
-                                                                        .isNotEmpty &&
-                                                                    (pedidos.length /
-                                                                            (pedidos[0].vol ??
-                                                                                0)) >=
-                                                                        1)
-                                                                ? Colors.red
-                                                                : Colors.grey
-                                                            : Colors.grey,
-                                                        value: pedidos
-                                                                .isNotEmpty
-                                                            ? ((pedidos.length -
-                                                                            pedidosExc
-                                                                                .length) /
-                                                                        (pedidos[0].vol ??
-                                                                            0)) <=
-                                                                    1
-                                                                ? ((pedidos.length -
-                                                                        pedidosExc
-                                                                            .length) /
-                                                                    (pedidos[0]
-                                                                            .vol ??
-                                                                        0))
-                                                                : 1
-                                                            : 0,
-                                                      ),
+                                                  borderRadius:
+                                                  const BorderRadius
+                                                      .all(
+                                                      Radius.circular(
+                                                          20)),
+                                                  minHeight: 10,
+                                                  color: pedidos
+                                                      .isNotEmpty
+                                                      ? (((pedidos.length) /
+                                                      (pedidos[0].vol ??
+                                                          0)) ==
+                                                      1)
+                                                      ? Colors.green
+                                                      : Colors
+                                                      .deepOrange
+                                                      : Colors.deepOrange,
+                                                  backgroundColor: pedidos
+                                                      .isNotEmpty
+                                                      ? (pedidosExc
+                                                      .isNotEmpty &&
+                                                      (pedidos.length /
+                                                          (pedidos[0].vol ??
+                                                              0)) >=
+                                                          1)
+                                                      ? Colors.red
+                                                      : Colors.grey
+                                                      : Colors.grey,
+                                                  value: pedidos
+                                                      .isNotEmpty
+                                                      ? ((pedidos.length -
+                                                      pedidosExc
+                                                          .length) /
+                                                      (pedidos[0].vol ??
+                                                          0)) <=
+                                                      1
+                                                      ? ((pedidos.length -
+                                                      pedidosExc
+                                                          .length) /
+                                                      (pedidos[0]
+                                                          .vol ??
+                                                          0))
+                                                      : 1
+                                                      : 0,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -628,7 +660,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                   'Status : ${pedidos.isNotEmpty ? pedidos[0].status ?? 'Desconhecido' : ''}',
                                   textAlign: TextAlign.start,
                                   style:
-                                      FlutterFlowTheme.of(context).labelMedium,
+                                  FlutterFlowTheme.of(context).labelMedium,
                                 ),
                               ),
                               ListView.builder(
@@ -640,8 +672,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                   if (inicial) {
                                     return Padding(
                                       padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              14, 10, 14, 10),
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          14, 10, 14, 10),
                                       child: Container(
                                         constraints: const BoxConstraints(
                                           maxWidth: 570,
@@ -650,7 +682,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                          BorderRadius.circular(8),
                                           border: Border.all(
                                             color: FlutterFlowTheme.of(context)
                                                 .alternate,
@@ -663,85 +695,85 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 flex: 4,
                                                 child: Column(
                                                   mainAxisSize:
-                                                      MainAxisSize.min,
+                                                  MainAxisSize.min,
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     RichText(
                                                       text: TextSpan(
                                                         children: [
                                                           const TextSpan(
                                                               text:
-                                                                  'Palete Localizado\n',
+                                                              'Palete Localizado\n',
                                                               style: TextStyle(
                                                                 fontFamily:
-                                                                    'Readex Pro',
+                                                                'Readex Pro',
                                                                 color: Colors
                                                                     .black,
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
+                                                                FontWeight
+                                                                    .normal,
                                                                 fontSize: 18,
                                                               )),
                                                           TextSpan(
                                                             text:
-                                                                '${pedidos[index].palete}',
+                                                            '${pedidos[index].palete}',
                                                             style:
-                                                                const TextStyle(
+                                                            const TextStyle(
                                                               color: Color(
                                                                   0xFF007000),
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w900,
+                                                              FontWeight
+                                                                  .w900,
                                                               fontSize: 24,
                                                             ),
                                                           )
                                                         ],
                                                         style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .bodyLarge
+                                                            .override(
+                                                          fontFamily:
+                                                          'Readex Pro',
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .normal,
+                                                        ),
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 4, 0, 0),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 4, 0, 0),
                                                       child: Text(
                                                         'Cliente : ${pedidos[index].cliente}',
                                                         style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium,
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .labelMedium,
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 4, 0, 0),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 4, 0, 0),
                                                       child: Text(
                                                         'Cidade : ${pedidos[index].cidade}',
                                                         style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium,
+                                                        FlutterFlowTheme.of(
+                                                            context)
+                                                            .labelMedium,
                                                       ),
                                                     ),
                                                   ],
@@ -749,31 +781,31 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                               ),
                                               Padding(
                                                 padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(0, 4, 0, 0),
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(0, 4, 0, 0),
                                                 child: Container(
                                                   height: 80,
                                                   constraints: BoxConstraints(
                                                     minWidth: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
+                                                        context)
+                                                        .width *
                                                         0.2,
                                                     maxWidth: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
+                                                        context)
+                                                        .width *
                                                         0.3,
                                                     maxHeight:
-                                                        MediaQuery.sizeOf(
-                                                                    context)
-                                                                .height *
-                                                            0.8,
+                                                    MediaQuery.sizeOf(
+                                                        context)
+                                                        .height *
+                                                        0.8,
                                                   ),
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        const Color(0xFF6ABD6A),
+                                                    const Color(0xFF6ABD6A),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
+                                                    BorderRadius.circular(
+                                                        12),
                                                     border: Border.all(
                                                       color: const Color(
                                                           0xFF005200),
@@ -782,58 +814,58 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                   ),
                                                   child: Align(
                                                     alignment:
-                                                        const AlignmentDirectional(
-                                                            0, 0),
+                                                    const AlignmentDirectional(
+                                                        0, 0),
                                                     child: Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              1, 0, 1, 0),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          1, 0, 1, 0),
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
                                                             TextSpan(
                                                               text: 'Vol. :\n',
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    color: const Color(
-                                                                        0xFF005200),
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w800,
-                                                                  ),
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                color: const Color(
+                                                                    0xFF005200),
+                                                                fontSize:
+                                                                18,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w800,
+                                                              ),
                                                             ),
                                                             TextSpan(
                                                               text:
-                                                                  '${pedidos[index].caixa} / ${pedidos[index].vol}',
+                                                              '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                               style:
-                                                                  const TextStyle(
+                                                              const TextStyle(
                                                                 fontSize: 26,
                                                               ),
                                                             )
                                                           ],
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    'Readex Pro',
-                                                                color: const Color(
-                                                                    0xFF005200),
-                                                                fontSize: 24,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w800,
-                                                              ),
+                                                            fontFamily:
+                                                            'Readex Pro',
+                                                            color: const Color(
+                                                                0xFF005200),
+                                                            fontSize: 24,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w800,
+                                                          ),
                                                         ),
                                                         textAlign:
-                                                            TextAlign.center,
+                                                        TextAlign.center,
                                                       ),
                                                     ),
                                                   ),
@@ -860,7 +892,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                    BorderRadius.circular(8),
+                                                BorderRadius.circular(8),
                                                 border: Border.all(
                                                   color: Colors.red,
                                                   width: 4,
@@ -868,38 +900,38 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                               ),
                                               child: Padding(
                                                 padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        10, 12, 12, 12),
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                    10, 12, 12, 12),
                                                 child: Row(
                                                   mainAxisSize:
-                                                      MainAxisSize.max,
+                                                  MainAxisSize.max,
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Expanded(
                                                       flex: 4,
                                                       child: Column(
                                                         mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        MainAxisSize.min,
                                                         mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                        MainAxisAlignment
+                                                            .center,
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           const Text(
                                                               'Palete Localizado',
                                                               style: TextStyle(
                                                                 fontFamily:
-                                                                    'Readex Pro',
+                                                                'Readex Pro',
                                                                 color: Colors
                                                                     .black,
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
+                                                                FontWeight
+                                                                    .normal,
                                                                 fontSize: 18,
                                                                 wordSpacing: 0,
                                                               )),
@@ -909,58 +941,58 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                     .red
                                                                     .shade100,
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4)),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    4)),
                                                             width: 120,
                                                             child: Padding(
                                                               padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      top: 5),
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 5),
                                                               child: Text(
                                                                 '${pedidos[index].palete}',
                                                                 textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                TextAlign
+                                                                    .center,
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: Colors
-                                                                          .red
-                                                                          .shade500,
-                                                                      fontSize:
-                                                                          26,
-                                                                      fontWeight:
-                                                                          FontWeight.w800,
-                                                                    ),
+                                                                  fontFamily:
+                                                                  'Readex Pro',
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade500,
+                                                                  fontSize:
+                                                                  26,
+                                                                  fontWeight:
+                                                                  FontWeight.w800,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                0, 4, 0, 0),
                                                             child: Text(
                                                               'Cliente : ${pedidos[index].cliente}',
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .labelMedium,
                                                             ),
                                                           ),
                                                           Padding(
                                                             padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 4, 0, 0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                0, 4, 0, 0),
                                                             child: Text(
                                                               'Cidade : ${pedidos[index].cidade}',
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .labelMedium,
                                                             ),
                                                           ),
@@ -969,51 +1001,51 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                     ),
                                                     Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .all(20),
+                                                        const EdgeInsets
+                                                            .all(20),
                                                         child: Text(
                                                           'Caixa será \nexclúida !!',
                                                           style: FlutterFlowTheme
-                                                                  .of(context)
+                                                              .of(context)
                                                               .titleLarge
                                                               .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  color: Colors
-                                                                      .red),
+                                                              fontFamily:
+                                                              'Readex Pro',
+                                                              color: Colors
+                                                                  .red),
                                                         )),
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 4, 0, 0),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 4, 0, 0),
                                                       child: Container(
                                                         height: 80,
                                                         constraints:
-                                                            BoxConstraints(
+                                                        BoxConstraints(
                                                           minWidth:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .width *
-                                                                  0.2,
+                                                          MediaQuery.sizeOf(
+                                                              context)
+                                                              .width *
+                                                              0.2,
                                                           maxWidth:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .width *
-                                                                  0.3,
+                                                          MediaQuery.sizeOf(
+                                                              context)
+                                                              .width *
+                                                              0.3,
                                                           maxHeight:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .height *
-                                                                  0.8,
+                                                          MediaQuery.sizeOf(
+                                                              context)
+                                                              .height *
+                                                              0.8,
                                                         ),
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           color: const Color(
                                                               0xFF6ABD6A),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                          BorderRadius
+                                                              .circular(12),
                                                           border: Border.all(
                                                             color: const Color(
                                                                 0xFF005200),
@@ -1022,61 +1054,61 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                         ),
                                                         child: Align(
                                                           alignment:
-                                                              const AlignmentDirectional(
-                                                                  0, 0),
+                                                          const AlignmentDirectional(
+                                                              0, 0),
                                                           child: Padding(
                                                             padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    1, 0, 1, 0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                1, 0, 1, 0),
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Vol. :\n',
+                                                                    'Vol. :\n',
                                                                     style: FlutterFlowTheme.of(
-                                                                            context)
+                                                                        context)
                                                                         .bodyMedium
                                                                         .override(
-                                                                          fontFamily:
-                                                                              'Readex Pro',
-                                                                          color:
-                                                                              const Color(0xFF005200),
-                                                                          fontSize:
-                                                                              18,
-                                                                          fontWeight:
-                                                                              FontWeight.w800,
-                                                                        ),
+                                                                      fontFamily:
+                                                                      'Readex Pro',
+                                                                      color:
+                                                                      const Color(0xFF005200),
+                                                                      fontSize:
+                                                                      18,
+                                                                      fontWeight:
+                                                                      FontWeight.w800,
+                                                                    ),
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${pedidos[index].caixa} / ${pedidos[index].vol}',
+                                                                    '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                     style:
-                                                                        const TextStyle(
+                                                                    const TextStyle(
                                                                       fontSize:
-                                                                          26,
+                                                                      26,
                                                                     ),
                                                                   )
                                                                 ],
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .bodyMedium
                                                                     .override(
-                                                                      fontFamily:
-                                                                          'Readex Pro',
-                                                                      color: const Color(
-                                                                          0xFF005200),
-                                                                      fontSize:
-                                                                          24,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w800,
-                                                                    ),
+                                                                  fontFamily:
+                                                                  'Readex Pro',
+                                                                  color: const Color(
+                                                                      0xFF005200),
+                                                                  fontSize:
+                                                                  24,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                                ),
                                                               ),
                                                               textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              TextAlign
+                                                                  .center,
                                                             ),
                                                           ),
                                                         ),
@@ -1109,72 +1141,72 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                     } else {
                                       if (pedidosAlt
                                           .where((element) =>
-                                              element.caixa ==
-                                              pedidos[index].caixa)
+                                      element.caixa ==
+                                          pedidos[index].caixa)
                                           .isNotEmpty) {
                                         return Stack(
                                           fit: StackFit.passthrough,
                                           children: [
                                             Padding(
                                               padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(14, 10, 14, 10),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(14, 10, 14, 10),
                                               child: Container(
                                                 width: double.infinity,
                                                 constraints:
-                                                    const BoxConstraints(
+                                                const BoxConstraints(
                                                   maxWidth: 570,
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(
-                                                          context)
+                                                      context)
                                                       .secondaryBackground,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                                   border: Border.all(
                                                     color:
-                                                        Colors.orange.shade500,
+                                                    Colors.orange.shade500,
                                                     width: 4,
                                                   ),
                                                 ),
                                                 child: Padding(
                                                   padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          10, 12, 12, 12),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      10, 12, 12, 12),
                                                   child: Row(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                    MainAxisSize.max,
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Expanded(
                                                         flex: 4,
                                                         child: Column(
                                                           mainAxisSize:
-                                                              MainAxisSize.min,
+                                                          MainAxisSize.min,
                                                           mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                          MainAxisAlignment
+                                                              .center,
                                                           crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: [
                                                             const Text(
                                                                 'Palete Localizado',
                                                                 style:
-                                                                    TextStyle(
+                                                                TextStyle(
                                                                   fontFamily:
-                                                                      'Readex Pro',
+                                                                  'Readex Pro',
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
+                                                                  FontWeight
+                                                                      .normal,
                                                                   fontSize: 18,
                                                                   wordSpacing:
-                                                                      0,
+                                                                  0,
                                                                 )),
                                                             Container(
                                                               decoration: BoxDecoration(
@@ -1182,36 +1214,36 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                       .orange
                                                                       .shade100,
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              4)),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      4)),
                                                               width: 120,
                                                               child: Center(
                                                                 child: Row(
                                                                   crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                                   children: [
                                                                     Expanded(
                                                                       child:
-                                                                          Padding(
+                                                                      Padding(
                                                                         padding: const EdgeInsets
                                                                             .only(
                                                                             top:
-                                                                                5),
+                                                                            5),
                                                                         child:
-                                                                            Text(
+                                                                        Text(
                                                                           '${pedidos[index].palete}',
                                                                           textAlign:
-                                                                              TextAlign.center,
+                                                                          TextAlign.center,
                                                                           style: FlutterFlowTheme.of(context)
                                                                               .bodyMedium
                                                                               .override(
-                                                                                fontFamily: 'Readex Pro',
-                                                                                color: Colors.orange.shade500,
-                                                                                fontSize: 26,
-                                                                                fontWeight: FontWeight.w800,
-                                                                              ),
+                                                                            fontFamily: 'Readex Pro',
+                                                                            color: Colors.orange.shade500,
+                                                                            fontSize: 26,
+                                                                            fontWeight: FontWeight.w800,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -1224,46 +1256,46 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                                             ))),
                                                                     Expanded(
                                                                       child:
-                                                                          TextField(
+                                                                      TextField(
                                                                         textAlign:
-                                                                            TextAlign.center,
+                                                                        TextAlign.center,
                                                                         keyboardType:
-                                                                            TextInputType.number,
+                                                                        TextInputType.number,
                                                                         decoration: InputDecoration.collapsed(
                                                                             hintStyle: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Readex Pro',
-                                                                                  color: Colors.orange.shade500,
-                                                                                  fontSize: 26,
-                                                                                  fontWeight: FontWeight.w800,
-                                                                                ),
-                                                                            hintText: '${pedidosAlt.where((element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa).toList()[0].palete}'),
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
                                                                               fontFamily: 'Readex Pro',
                                                                               color: Colors.orange.shade500,
                                                                               fontSize: 26,
                                                                               fontWeight: FontWeight.w800,
                                                                             ),
+                                                                            hintText: '${pedidosAlt.where((element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa).toList()[0].palete}'),
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                          fontFamily: 'Readex Pro',
+                                                                          color: Colors.orange.shade500,
+                                                                          fontSize: 26,
+                                                                          fontWeight: FontWeight.w800,
+                                                                        ),
                                                                         onTapAlwaysCalled:
-                                                                            true,
+                                                                        true,
                                                                         controller:
-                                                                            _model2,
+                                                                        _model2,
                                                                         onSubmitted:
                                                                             (value) {
                                                                           setState(
-                                                                              () {
-                                                                            pedidosAlt.removeWhere(
-                                                                              (element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa,
-                                                                            );
-                                                                            pedidosAlt.add(Contagem(
-                                                                                pedidos[index].ped,
-                                                                                int.parse(value),
-                                                                                pedidos[index].caixa,
-                                                                                pedidos[index].vol));
-                                                                            _model2.text =
+                                                                                  () {
+                                                                                pedidosAlt.removeWhere(
+                                                                                      (element) => element.ped == pedidos[index].ped && element.caixa == pedidos[index].caixa,
+                                                                                );
+                                                                                pedidosAlt.add(Contagem(
+                                                                                    pedidos[index].ped,
+                                                                                    int.parse(value),
+                                                                                    pedidos[index].caixa,
+                                                                                    pedidos[index].vol));
+                                                                                _model2.text =
                                                                                 '';
-                                                                          });
+                                                                              });
                                                                         },
                                                                       ),
                                                                     ),
@@ -1273,31 +1305,31 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0,
+                                                                  4,
+                                                                  0,
+                                                                  0),
                                                               child: Text(
                                                                 'Cliente : ${pedidos[index].cliente}',
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0,
+                                                                  4,
+                                                                  0,
+                                                                  0),
                                                               child: Text(
                                                                 'Cidade : ${pedidos[index].cidade}',
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
@@ -1306,52 +1338,52 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                       ),
                                                       Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .all(20),
+                                                          const EdgeInsets
+                                                              .all(20),
                                                           child: Text(
                                                             'Caixa será \nalterada !!',
                                                             style: FlutterFlowTheme
-                                                                    .of(context)
+                                                                .of(context)
                                                                 .titleLarge
                                                                 .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    color: Colors
-                                                                        .orange),
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                color: Colors
+                                                                    .orange),
                                                           )),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 4, 0, 0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 4, 0, 0),
                                                         child: Container(
                                                           height: 80,
                                                           constraints:
-                                                              BoxConstraints(
+                                                          BoxConstraints(
                                                             minWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
+                                                                .sizeOf(
+                                                                context)
+                                                                .width *
                                                                 0.2,
                                                             maxWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
+                                                                .sizeOf(
+                                                                context)
+                                                                .width *
                                                                 0.3,
                                                             maxHeight: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .height *
+                                                                .sizeOf(
+                                                                context)
+                                                                .height *
                                                                 0.8,
                                                           ),
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             color: const Color(
                                                                 0xFF6ABD6A),
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
+                                                            BorderRadius
+                                                                .circular(
+                                                                12),
                                                             border: Border.all(
                                                               color: const Color(
                                                                   0xFF005200),
@@ -1360,63 +1392,63 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                           ),
                                                           child: Align(
                                                             alignment:
-                                                                const AlignmentDirectional(
-                                                                    0, 0),
+                                                            const AlignmentDirectional(
+                                                                0, 0),
                                                             child: Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      1,
-                                                                      0,
-                                                                      1,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  1,
+                                                                  0,
+                                                                  1,
+                                                                  0),
                                                               child: RichText(
                                                                 text: TextSpan(
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                          'Vol. :\n',
+                                                                      'Vol. :\n',
                                                                       style: FlutterFlowTheme.of(
-                                                                              context)
+                                                                          context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Readex Pro',
-                                                                            color:
-                                                                                const Color(0xFF005200),
-                                                                            fontSize:
-                                                                                18,
-                                                                            fontWeight:
-                                                                                FontWeight.w800,
-                                                                          ),
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        color:
+                                                                        const Color(0xFF005200),
+                                                                        fontSize:
+                                                                        18,
+                                                                        fontWeight:
+                                                                        FontWeight.w800,
+                                                                      ),
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          '${pedidos[index].caixa} / ${pedidos[index].vol}',
+                                                                      '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                       style:
-                                                                          const TextStyle(
+                                                                      const TextStyle(
                                                                         fontSize:
-                                                                            26,
+                                                                        26,
                                                                       ),
                                                                     )
                                                                   ],
                                                                   style: FlutterFlowTheme.of(
-                                                                          context)
+                                                                      context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Readex Pro',
-                                                                        color: const Color(
-                                                                            0xFF005200),
-                                                                        fontSize:
-                                                                            24,
-                                                                        fontWeight:
-                                                                            FontWeight.w800,
-                                                                      ),
+                                                                    fontFamily:
+                                                                    'Readex Pro',
+                                                                    color: const Color(
+                                                                        0xFF005200),
+                                                                    fontSize:
+                                                                    24,
+                                                                    fontWeight:
+                                                                    FontWeight.w800,
+                                                                  ),
                                                                 ),
                                                                 textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                TextAlign
+                                                                    .center,
                                                               ),
                                                             ),
                                                           ),
@@ -1435,8 +1467,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                 onPressed: () {
                                                   setState(() {
                                                     pedidosAlt.removeWhere(
-                                                        (element) =>
-                                                            element.caixa ==
+                                                            (element) =>
+                                                        element.caixa ==
                                                             pedidos[index]
                                                                 .caixa);
                                                     pedidosExc
@@ -1457,103 +1489,103 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                           children: [
                                             Padding(
                                               padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(14, 10, 14, 10),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(14, 10, 14, 10),
                                               child: Container(
                                                 width: double.infinity,
                                                 constraints:
-                                                    const BoxConstraints(
+                                                const BoxConstraints(
                                                   maxWidth: 570,
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(
-                                                          context)
+                                                      context)
                                                       .secondaryBackground,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  BorderRadius.circular(8),
                                                   border: Border.all(
                                                     color: FlutterFlowTheme.of(
-                                                            context)
+                                                        context)
                                                         .alternate,
                                                     width: 2,
                                                   ),
                                                 ),
                                                 child: Padding(
                                                   padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          10, 12, 12, 12),
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      10, 12, 12, 12),
                                                   child: Row(
                                                     mainAxisSize:
-                                                        MainAxisSize.max,
+                                                    MainAxisSize.max,
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Expanded(
                                                         flex: 4,
                                                         child: Column(
                                                           mainAxisSize:
-                                                              MainAxisSize.min,
+                                                          MainAxisSize.min,
                                                           mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                          MainAxisAlignment
+                                                              .center,
                                                           crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: [
                                                             const Text(
                                                                 'Palete Localizado',
                                                                 style:
-                                                                    TextStyle(
+                                                                TextStyle(
                                                                   fontFamily:
-                                                                      'Readex Pro',
+                                                                  'Readex Pro',
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
+                                                                  FontWeight
+                                                                      .normal,
                                                                   fontSize: 18,
                                                                   wordSpacing:
-                                                                      0,
+                                                                  0,
                                                                 )),
                                                             TextField(
                                                               keyboardType:
-                                                                  TextInputType
-                                                                      .number,
+                                                              TextInputType
+                                                                  .number,
                                                               decoration: InputDecoration
                                                                   .collapsed(
-                                                                      hintStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .override(
-                                                                            fontFamily:
-                                                                                'Readex Pro',
-                                                                            color:
-                                                                                const Color(0xFF005200),
-                                                                            fontSize:
-                                                                                26,
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                          ),
-                                                                      hintText:
-                                                                          '${pedidos[index].palete}'),
+                                                                  hintStyle: FlutterFlowTheme.of(
+                                                                      context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                    fontFamily:
+                                                                    'Readex Pro',
+                                                                    color:
+                                                                    const Color(0xFF005200),
+                                                                    fontSize:
+                                                                    26,
+                                                                    fontWeight:
+                                                                    FontWeight.w400,
+                                                                  ),
+                                                                  hintText:
+                                                                  '${pedidos[index].palete}'),
                                                               style: FlutterFlowTheme
-                                                                      .of(context)
+                                                                  .of(context)
                                                                   .bodyMedium
                                                                   .override(
-                                                                    fontFamily:
-                                                                        'Readex Pro',
-                                                                    color: const Color(
-                                                                        0xFF005200),
-                                                                    fontSize:
-                                                                        26,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w800,
-                                                                  ),
+                                                                fontFamily:
+                                                                'Readex Pro',
+                                                                color: const Color(
+                                                                    0xFF005200),
+                                                                fontSize:
+                                                                26,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w800,
+                                                              ),
                                                               onTapAlwaysCalled:
-                                                                  true,
+                                                              true,
                                                               onSubmitted:
                                                                   (value) {
                                                                 setState(() {
@@ -1571,31 +1603,31 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0,
+                                                                  4,
+                                                                  0,
+                                                                  0),
                                                               child: Text(
                                                                 'Cliente : ${pedidos[index].cliente}',
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      4,
-                                                                      0,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0,
+                                                                  4,
+                                                                  0,
+                                                                  0),
                                                               child: Text(
                                                                 'Cidade : ${pedidos[index].cidade}',
                                                                 style: FlutterFlowTheme.of(
-                                                                        context)
+                                                                    context)
                                                                     .labelMedium,
                                                               ),
                                                             ),
@@ -1604,37 +1636,37 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                0, 4, 0, 0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 4, 0, 0),
                                                         child: Container(
                                                           height: 80,
                                                           constraints:
-                                                              BoxConstraints(
+                                                          BoxConstraints(
                                                             minWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
+                                                                .sizeOf(
+                                                                context)
+                                                                .width *
                                                                 0.2,
                                                             maxWidth: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
+                                                                .sizeOf(
+                                                                context)
+                                                                .width *
                                                                 0.3,
                                                             maxHeight: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .height *
+                                                                .sizeOf(
+                                                                context)
+                                                                .height *
                                                                 0.8,
                                                           ),
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             color: const Color(
                                                                 0xFF6ABD6A),
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
+                                                            BorderRadius
+                                                                .circular(
+                                                                12),
                                                             border: Border.all(
                                                               color: const Color(
                                                                   0xFF005200),
@@ -1643,63 +1675,63 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                           ),
                                                           child: Align(
                                                             alignment:
-                                                                const AlignmentDirectional(
-                                                                    0, 0),
+                                                            const AlignmentDirectional(
+                                                                0, 0),
                                                             child: Padding(
                                                               padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      1,
-                                                                      0,
-                                                                      1,
-                                                                      0),
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  1,
+                                                                  0,
+                                                                  1,
+                                                                  0),
                                                               child: RichText(
                                                                 text: TextSpan(
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                          'Vol. :\n',
+                                                                      'Vol. :\n',
                                                                       style: FlutterFlowTheme.of(
-                                                                              context)
+                                                                          context)
                                                                           .bodyMedium
                                                                           .override(
-                                                                            fontFamily:
-                                                                                'Readex Pro',
-                                                                            color:
-                                                                                const Color(0xFF005200),
-                                                                            fontSize:
-                                                                                18,
-                                                                            fontWeight:
-                                                                                FontWeight.w800,
-                                                                          ),
+                                                                        fontFamily:
+                                                                        'Readex Pro',
+                                                                        color:
+                                                                        const Color(0xFF005200),
+                                                                        fontSize:
+                                                                        18,
+                                                                        fontWeight:
+                                                                        FontWeight.w800,
+                                                                      ),
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          '${pedidos[index].caixa} / ${pedidos[index].vol}',
+                                                                      '${pedidos[index].caixa} / ${pedidos[index].vol}',
                                                                       style:
-                                                                          const TextStyle(
+                                                                      const TextStyle(
                                                                         fontSize:
-                                                                            26,
+                                                                        26,
                                                                       ),
                                                                     )
                                                                   ],
                                                                   style: FlutterFlowTheme.of(
-                                                                          context)
+                                                                      context)
                                                                       .bodyMedium
                                                                       .override(
-                                                                        fontFamily:
-                                                                            'Readex Pro',
-                                                                        color: const Color(
-                                                                            0xFF005200),
-                                                                        fontSize:
-                                                                            24,
-                                                                        fontWeight:
-                                                                            FontWeight.w800,
-                                                                      ),
+                                                                    fontFamily:
+                                                                    'Readex Pro',
+                                                                    color: const Color(
+                                                                        0xFF005200),
+                                                                    fontSize:
+                                                                    24,
+                                                                    fontWeight:
+                                                                    FontWeight.w800,
+                                                                  ),
                                                                 ),
                                                                 textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                TextAlign
+                                                                    .center,
                                                               ),
                                                             ),
                                                           ),

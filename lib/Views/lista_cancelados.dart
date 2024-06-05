@@ -105,7 +105,12 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
+        ],
         centerTitle: true,
         elevation: 2,
       ),

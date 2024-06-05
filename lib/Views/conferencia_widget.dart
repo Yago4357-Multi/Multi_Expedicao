@@ -107,6 +107,13 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
           },
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.lock_reset_outlined),
+            onPressed: () {
+              setState(() {});
+            },
+            color: Colors.white,
+          ),
           Padding(
             padding: const EdgeInsets.all(5),
             child: SizedBox(
@@ -136,8 +143,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                         barrierDismissible: false,
                         builder: (context2) {
                           return CupertinoAlertDialog(
-                            title: Text(
-                                'Você deseja finalizar o Palete $palete?'),
+                            title:
+                                Text('Você deseja finalizar o Palete $palete?'),
                             content: const Text(
                                 'Essa ação bloqueará o Palete de alterações Futuras'),
                             actions: <CupertinoDialogAction>[
@@ -153,8 +160,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    HomeWidget(usur,
-                                                        bd: bd)));
+                                                    HomeWidget(usur, bd: bd)));
                                       }
                                     }
                                   },
@@ -221,12 +227,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                           children: [
                             SizedBox(
                               width: (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  desktop: true)) ? MediaQuery.of(context).size.height * 2 : MediaQuery.of(context).size.height * 0.6,
+                                      context: context,
+                                      phone: false,
+                                      tablet: false,
+                                      desktop: true))
+                                  ? MediaQuery.of(context).size.height * 2
+                                  : MediaQuery.of(context).size.height * 0.6,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
@@ -241,8 +250,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsetsDirectional
-                                        .fromSTEB(0, 20, 24, 0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0, 20, 24, 0),
                                     child: Text(
                                       '$palete',
                                       textAlign: TextAlign.end,
@@ -260,12 +270,15 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                             ),
                             SizedBox(
                               width: (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  desktop: true)) ? MediaQuery.of(context).size.height * 2 : MediaQuery.of(context).size.height * 0.6,
+                                      context: context,
+                                      phone: false,
+                                      tablet: false,
+                                      desktop: true))
+                                  ? MediaQuery.of(context).size.height * 2
+                                  : MediaQuery.of(context).size.height * 0.6,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
@@ -303,43 +316,97 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                   16, 12, 16, 0),
                               child: Container(
                                 width: (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                      desktop: true)) ? MediaQuery.of(context).size.height * 2 : MediaQuery.of(context).size.height * 0.55,
+                                        context: context,
+                                        phone: false,
+                                        tablet: false,
+                                        desktop: true))
+                                    ? MediaQuery.of(context).size.height * 2
+                                    : MediaQuery.of(context).size.height * 0.55,
                                 height: 60,
                                 decoration: BoxDecoration(
                                   color: FlutterFlowTheme.of(context)
                                       .primaryBackground,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: FlutterFlowTheme.of(context)
-                                        .alternate,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
                                     width: 1,
                                   ),
                                 ),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          16, 12, 16, 12),
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      16, 12, 16, 12),
                                   child: TextFormField(
                                     cursorWidth: 0,
                                     controller: _model.textController,
                                     focusNode: _model.textFieldFocusNode,
                                     onFieldSubmitted: (value) async {
                                       if (await bd.connected(context) == 1) {
-                                        if (context.mounted) {
-                                          teste = bd.insert(
-                                              _model.textController!.text,
-                                              palete,
-                                              context,
-                                              usur);
+                                        var codArrumado =
+                                            value.substring(14, 33);
+                                        var ped = int.parse(
+                                            codArrumado.substring(0, 10));
+                                        int? teste2 =
+                                            await bd.selectAllPedidos(ped);
+                                        print(teste2);
+                                        if (teste2 ==
+                                            0) {
+                                          if (context.mounted) {
+                                            teste = bd.insert(
+                                                _model.textController!.text,
+                                                palete,
+                                                context,
+                                                usur);
+                                          }
+                                        } else {
+                                          if (teste2 == 1) {
+                                            await showCupertinoModalPopup(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return CupertinoAlertDialog(
+                                                  title: const Text(
+                                                      'O Pedido está cancelado no Sistema'),
+                                                  actions: <CupertinoDialogAction>[
+                                                    CupertinoDialogAction(
+                                                        isDefaultAction: true,
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Voltar'))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            await showCupertinoModalPopup(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) {
+                                                return CupertinoAlertDialog(
+                                                  title: const Text(
+                                                      'Pedido não encontrado no Sistema'),
+                                                  actions: <CupertinoDialogAction>[
+                                                    CupertinoDialogAction(
+                                                        isDefaultAction: true,
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Voltar'))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
                                         }
-
-                                        _model.textController.text = '';
-                                        _model.textFieldFocusNode
-                                            ?.requestFocus();
                                       }
+                                      _model.textController.text = '';
+                                      _model.textFieldFocusNode?.requestFocus();
+
                                       setState(() {});
                                     },
                                     autofocus: true,
@@ -350,9 +417,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                           .labelMedium
                                           .override(
                                             fontFamily: 'Readex Pro',
-                                            color:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryText,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -365,38 +431,34 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                               .alternate,
                                           width: 2,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: Colors.green.shade500,
                                           width: 2,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       errorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: Colors.green.shade100,
                                           width: 2,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                       focusedErrorBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: Colors.green.shade100,
                                           width: 2,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium,
-                                    keyboardType: const TextInputType
-                                        .numberWithOptions(),
+                                    style:
+                                        FlutterFlowTheme.of(context).bodyMedium,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(),
                                     validator: _model.textControllerValidator
                                         .asValidator(context),
                                     inputFormatters: [
@@ -413,25 +475,31 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                               child: Text(
                                 'Últ. Caixa Bip.',
                                 textAlign: TextAlign.start,
-                                style:
-                                    FlutterFlowTheme.of(context).labelLarge,
+                                style: FlutterFlowTheme.of(context).labelLarge,
                               ),
                             ),
                             Padding(
-                                padding: const EdgeInsets.only(left: 20, right: 20),
-                                child: SizedBox(width: (responsiveVisibility(
-                                    context: context,
-                                    phone: false,
-                                    tablet: false,
-                                    desktop: true)) ? MediaQuery.of(context).size.height * 2 : MediaQuery.of(context).size.height * 0.4, child: const Divider())),
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: SizedBox(
+                                    width: (responsiveVisibility(
+                                            context: context,
+                                            phone: false,
+                                            tablet: false,
+                                            desktop: true))
+                                        ? MediaQuery.of(context).size.height * 2
+                                        : MediaQuery.of(context).size.height *
+                                            0.4,
+                                    child: const Divider())),
                             SizedBox(
                               width: (responsiveVisibility(
-                      context: context,
-                      phone: false,
-                      tablet: false,
-                      desktop: true)) ? MediaQuery.of(context).size.height * 2 : MediaQuery.of(context).size.height * 0.6,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.6,
+                                      context: context,
+                                      phone: false,
+                                      tablet: false,
+                                      desktop: true))
+                                  ? MediaQuery.of(context).size.height * 2
+                                  : MediaQuery.of(context).size.height * 0.6,
+                              height: MediaQuery.of(context).size.height * 0.6,
                               child: ListView.builder(
                                   padding: const EdgeInsets.fromLTRB(
                                     0,
@@ -457,9 +525,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ListaPedidoWidget(
-                                                      cont: pedidos[index]
-                                                              .ped ??
-                                                          0,
+                                                      cont:
+                                                          pedidos[index].ped ??
+                                                              0,
                                                       usur,
                                                       bd: bd),
                                             ));
@@ -473,9 +541,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             maxWidth: 570,
                                           ),
                                           decoration: BoxDecoration(
-                                            color:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             border: Border.all(
@@ -486,9 +553,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(10, 12, 12, 12),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(10, 12, 12, 12),
                                             child:
                                                 (responsiveVisibility(
                                                         context: context,
@@ -526,7 +592,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       color: Color(
                                                                           0xFF007000),
                                                                       fontWeight:
-                                                                          FontWeight.w900,
+                                                                          FontWeight
+                                                                              .w900,
                                                                       fontSize:
                                                                           26,
                                                                     ),
@@ -539,7 +606,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       fontFamily:
                                                                           'Readex Pro',
                                                                       fontWeight:
-                                                                          FontWeight.normal,
+                                                                          FontWeight
+                                                                              .normal,
                                                                     ),
                                                               ),
                                                             ),
@@ -548,10 +616,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             padding:
                                                                 const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                    0,
-                                                                    4,
-                                                                    0,
-                                                                    0),
+                                                                    0, 4, 0, 0),
                                                             child: Row(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
@@ -570,22 +635,22 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                     borderRadius:
                                                                         const BorderRadius
                                                                             .only(
-                                                                      topLeft:
-                                                                          Radius.circular(12),
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              12),
                                                                       bottomLeft:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                     ),
                                                                     border:
                                                                         Border
                                                                             .all(
                                                                       color: const Color(
                                                                           0xFF005200),
-                                                                      width:
-                                                                          2,
+                                                                      width: 2,
                                                                     ),
                                                                   ),
-                                                                  child:
-                                                                      Align(
+                                                                  child: Align(
                                                                     alignment:
                                                                         const AlignmentDirectional(
                                                                             0,
@@ -619,7 +684,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                               ),
                                                                             )
                                                                           ],
-                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
                                                                                 fontFamily: 'Readex Pro',
                                                                                 color: const Color(0xFF005200),
                                                                                 fontSize: 24,
@@ -644,21 +711,21 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                         const BorderRadius
                                                                             .only(
                                                                       topRight:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                       bottomRight:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                     ),
                                                                     border:
                                                                         Border
                                                                             .all(
                                                                       color: Colors
                                                                           .indigo,
-                                                                      width:
-                                                                          2,
+                                                                      width: 2,
                                                                     ),
                                                                   ),
-                                                                  child:
-                                                                      Align(
+                                                                  child: Align(
                                                                     alignment:
                                                                         const AlignmentDirectional(
                                                                             0,
@@ -692,7 +759,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                               ),
                                                                             )
                                                                           ],
-                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
                                                                                 fontFamily: 'Readex Pro',
                                                                                 color: Colors.indigo,
                                                                                 fontSize: 24,
@@ -742,7 +811,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       color: Color(
                                                                           0xFF007000),
                                                                       fontWeight:
-                                                                          FontWeight.w900,
+                                                                          FontWeight
+                                                                              .w900,
                                                                       fontSize:
                                                                           26,
                                                                     ),
@@ -755,7 +825,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                       fontFamily:
                                                                           'Readex Pro',
                                                                       fontWeight:
-                                                                          FontWeight.normal,
+                                                                          FontWeight
+                                                                              .normal,
                                                                     ),
                                                               ),
                                                             ),
@@ -764,10 +835,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                             padding:
                                                                 const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                    0,
-                                                                    8,
-                                                                    0,
-                                                                    0),
+                                                                    0, 8, 0, 0),
                                                             child: Row(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
@@ -786,22 +854,22 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                     borderRadius:
                                                                         const BorderRadius
                                                                             .only(
-                                                                      topLeft:
-                                                                          Radius.circular(12),
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              12),
                                                                       bottomLeft:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                     ),
                                                                     border:
                                                                         Border
                                                                             .all(
                                                                       color: const Color(
                                                                           0xFF005200),
-                                                                      width:
-                                                                          2,
+                                                                      width: 2,
                                                                     ),
                                                                   ),
-                                                                  child:
-                                                                      Align(
+                                                                  child: Align(
                                                                     alignment:
                                                                         const AlignmentDirectional(
                                                                             0,
@@ -835,7 +903,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                               ),
                                                                             )
                                                                           ],
-                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
                                                                                 fontFamily: 'Readex Pro',
                                                                                 color: const Color(0xFF005200),
                                                                                 fontSize: 22,
@@ -860,21 +930,21 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                         const BorderRadius
                                                                             .only(
                                                                       topRight:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                       bottomRight:
-                                                                          Radius.circular(12),
+                                                                          Radius.circular(
+                                                                              12),
                                                                     ),
                                                                     border:
                                                                         Border
                                                                             .all(
                                                                       color: Colors
                                                                           .indigo,
-                                                                      width:
-                                                                          2,
+                                                                      width: 2,
                                                                     ),
                                                                   ),
-                                                                  child:
-                                                                      Align(
+                                                                  child: Align(
                                                                     alignment:
                                                                         const AlignmentDirectional(
                                                                             0,
@@ -908,7 +978,9 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                                               ),
                                                                             )
                                                                           ],
-                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                          style: FlutterFlowTheme.of(context)
+                                                                              .bodyMedium
+                                                                              .override(
                                                                                 fontFamily: 'Readex Pro',
                                                                                 color: Colors.indigo,
                                                                                 fontSize: 22,

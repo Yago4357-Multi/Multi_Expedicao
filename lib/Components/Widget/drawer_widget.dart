@@ -12,9 +12,7 @@ import '../../Views/escolha_romaneio_widget.dart';
 import '../../Views/home_widget.dart';
 import '../../Views/lista_cancelados.dart';
 import '../../Views/lista_faturados.dart';
-import '../../Views/lista_palete_widget.dart';
 import '../../Views/lista_pedido_widget.dart';
-import '../../Views/reimprimir_palete_widget.dart';
 import '../Model/drawer_model.dart';
 
 export '../Model/drawer_model.dart';
@@ -440,60 +438,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 Navigator.pop(context);
                                 Navigator.pop(context2);
                                 await Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) =>
-                                        ReimprimirPaleteWidget(usur, 0, bd: bd)));
-                              },
-
-                              child: InkWell(
-                                splashColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Icon(
-                                      Icons.print_rounded,
-                                      color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                      size: 24,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Text(
-                                        'Reimprimir',
-                                        style:
-                                        FlutterFlowTheme.of(context).bodyMedium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          width: double.infinity,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context).primaryBackground,
-                            borderRadius: BorderRadius.circular(12),
-                            shape: BoxShape.rectangle,
-                          ),
-                          child: Padding(
-                            padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
-                            child: MaterialButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                Navigator.pop(context2);
-                                await Navigator.push(context, MaterialPageRoute(
                                   builder: (context) =>
                                       ListaFaturadosWidget(usur, bd: bd),));
                               },
@@ -620,57 +564,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                           12, 0, 0, 0),
                                       child: Text(
                                         'Pedidos',
-                                        style:
-                                        FlutterFlowTheme.of(context).bodyMedium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )),
-                      if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) (Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          width: double.infinity,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context).primaryBackground,
-                            borderRadius: BorderRadius.circular(12),
-                            shape: BoxShape.rectangle,
-                          ),
-                          child: Padding(
-                            padding:
-                            const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
-                            child: MaterialButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                Navigator.pop(context2);
-                                await Navigator.push(context, MaterialPageRoute(builder: (context) => ListaPaleteWidget(cont: 0, usur, bd: bd),));
-                              },
-                              child: InkWell(
-                                splashColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.pallet,
-                                      color:
-                                      FlutterFlowTheme.of(context).primaryText,
-                                      size: 24,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Text(
-                                        'Paletes',
                                         style:
                                         FlutterFlowTheme.of(context).bodyMedium,
                                       ),

@@ -1,3 +1,4 @@
+import 'package:MultiExpedicao/Views/reimprimir_palete_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -7,6 +8,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
 import 'criar_palete_widget.dart';
+import 'lista_palete_widget.dart';
 
 export '../Components/Model/escolha_bipagem_model.dart';
 
@@ -29,6 +31,11 @@ class EscolhaBipagemWidget extends StatefulWidget {
 class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
   late EscolhaBipagemModel _model;
   final Banco bd;
+
+  List<String> acessos = ['BI','Comercial','Logística'];
+  List<String> acessosADM = ['BI'];
+  List<String> acessosCol = ['Logística'];
+  List<String> acessosPC = ['Comercial'];
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -92,7 +99,12 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                   color: FlutterFlowTheme.of(context).primaryBackground,
                 ),
           ),
-          actions: const [],
+          actions: [
+            IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+              setState(() {
+              });
+            }, color: Colors.white,),
+          ],
           centerTitle: true,
           elevation: 2,
         ),
@@ -106,6 +118,59 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) ?
+                (InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            ReimprimirPaleteWidget(usur, 0, bd: bd)));
+                  },
+                  child: (Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.height * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      'Reimprimir Paletes',
+                      style: FlutterFlowTheme.of(context).titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+                )) : Container(),
+                InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    if (await bd.connected(context) == 1) {
+                      Navigator.pop(context);
+                      await Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            ListaPaleteWidget(cont: 0, usur, bd: bd),));
+                    }
+                  },
+                  child: (Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.height * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      'Conferir Paletes',
+                      style: FlutterFlowTheme.of(context).titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+                ),
                 InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,

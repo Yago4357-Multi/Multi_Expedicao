@@ -107,7 +107,12 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
               color: FlutterFlowTheme.of(context).primaryBackground,
             ),
           ),
-          actions: const [],
+          actions: [
+            IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+              setState(() {
+              });
+            }, color: Colors.white,),
+          ],
           centerTitle: true,
           elevation: 2,
         ),
@@ -256,8 +261,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                     if (await bd.connected(context) == 1) {
                                       if (paletes
                                           .where((element) =>
-                                      element.pallet == int.parse(paleteText))
-                                          .isNotEmpty) {
+                                      element.pallet == int.parse(paleteText)).isNotEmpty) {
                                         palete = int.parse(paleteText);
                                       } else {
                                         if (context.mounted) {
@@ -1214,17 +1218,21 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                               pdf.addPage(pw.Page(
                                 pageFormat: PdfPageFormat.a4,
                                 build: (context2) {
-                                  return pw.BarcodeWidget(
-                                      data: '$palete',
-                                      barcode: Barcode.code128(),
-                                      width: 80,
-                                      height: 180,
-                                      color: PdfColors.black,
-                                      drawText: true,
-                                      textStyle: const pw.TextStyle(
-                                        fontSize: 20,
-                                        letterSpacing: 0,
-                                      ));
+                                  return pw.Container(
+                                    width: 107,
+                                    height: 45,
+                                    child: pw.BarcodeWidget(
+                                        data: '$palete',
+                                        barcode: Barcode.code128(),
+                                        width: 40,
+                                        height: 100,
+                                        color: PdfColors.black,
+                                        drawText: true,
+                                        textStyle: const pw.TextStyle(
+                                          fontSize: 20,
+                                          letterSpacing: 0,
+                                        )),
+                                  );
                                 },
                               ));
                               await Printing.layoutPdf(

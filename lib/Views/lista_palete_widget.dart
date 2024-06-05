@@ -116,6 +116,10 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
           },
         ),
         actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
           Padding(
             padding: const EdgeInsets.all(5),
             child: InkWell(
@@ -157,26 +161,53 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                       barrierDismissible: false,
                       builder: (context) {
                         return CupertinoAlertDialog(
-                          title: const Text('Salvar Alterações?'),
+                          title: const Text('Deseja Continuar?'),
                           content: const Text(
-                              'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                              'Para alterações dos paletes o ideal é fazer via coletor pela Logística'),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  if (await bd.connected(context) == 1) {
-                                    if (pedidosExc.isNotEmpty) {
-                                      getPed = bd.excluiPedido(
-                                          pedidosExc, usur, cont);
-                                      pedidosExc = [];
-                                    }
-                                    setState(() {
-                                      inicial = true;
-                                      Navigator.pop(context);
-                                    });
-                                  }
-                                  setState(() {});
+                                  await showCupertinoModalPopup(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        title: const Text('Salvar Alterações?'),
+                                        content: const Text(
+                                            'Após alteração deve ser alinhado com Logística a parte manual das alterações '),
+                                        actions: <CupertinoDialogAction>[
+                                          CupertinoDialogAction(
+                                              isDefaultAction: true,
+                                              isDestructiveAction: true,
+                                              onPressed: () async {
+                                                if (await bd.connected(context) == 1) {
+                                                  if (pedidosExc.isNotEmpty) {
+                                                    getPed = bd.excluiPedido(
+                                                        pedidosExc, usur, cont);
+                                                    pedidosExc = [];
+                                                  }
+                                                  setState(() {
+                                                    inicial = true;
+                                                    Navigator.pop(context);
+                                                  });
+                                                }
+                                                setState(() {});
+                                              },
+                                              child: const Text('Continuar')),
+                                          CupertinoDialogAction(
+                                              isDefaultAction: true,
+                                              onPressed: () {
+                                                setState(() {
+                                                  Navigator.pop(context);
+                                                });
+                                              },
+                                              child: const Text('Voltar'))
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: const Text('Continuar')),
                             CupertinoDialogAction(

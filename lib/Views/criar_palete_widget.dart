@@ -172,8 +172,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                       BarcodeWidget(
                         data: '$i',
                         barcode: Barcode.code128(),
-                        width: 90,
-                        height: 150,
+                        width: 300,
+                        height: 90,
                         color: FlutterFlowTheme.of(context).primaryText,
                         backgroundColor: Colors.transparent,
                         errorBuilder: (context, error) => const SizedBox(
@@ -199,17 +199,21 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                           pdf.addPage(pw.Page(
                             pageFormat: PdfPageFormat.a4,
                             build: (context2) {
-                              return pw.BarcodeWidget(
-                                  data: '$i',
-                                  barcode: Barcode.code128(),
-                                  width: 300,
-                                  height: 200,
-                                  color: PdfColors.black,
-                                  drawText: true,
-                                  textStyle: const pw.TextStyle(
-                                    fontSize: 20,
-                                    letterSpacing: 0,
-                                  ));
+                              return pw.Container(
+                                width: 107,
+                                height: 45,
+                                child: pw.BarcodeWidget(
+                                    data: '$palete',
+                                    barcode: Barcode.code128(),
+                                    width: 40,
+                                    height: 100,
+                                    color: PdfColors.black,
+                                    drawText: true,
+                                    textStyle: const pw.TextStyle(
+                                      fontSize: 20,
+                                      letterSpacing: 0,
+                                    )),
+                              );
                             },
                           ));
                           await Printing.layoutPdf(

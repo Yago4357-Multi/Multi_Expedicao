@@ -124,7 +124,12 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
+        ],
         centerTitle: true,
         elevation: 2,
       ),
@@ -415,9 +420,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) async {
                                   if (await bd.connected(context) == 1) {
-                                    datasRange =
-                                        dateRangePickerSelectionChangedArgs
-                                            .value;
+                                    datasRange = dateRangePickerSelectionChangedArgs.value;
                                     if (datasRange.endDate != null){
                                       if (datasRange.startDate! >=
                                           (dtFim

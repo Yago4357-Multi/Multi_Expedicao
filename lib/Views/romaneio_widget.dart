@@ -124,6 +124,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
           },
         ),
         actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
           (['BI', 'Comercial'].contains(usur.acess))
               ? Padding(
             padding: const EdgeInsets.all(5),
@@ -295,13 +299,17 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             ),
                                                           ),
                                                           pw.Padding( padding: const pw.EdgeInsets.fromLTRB(
-                                                              20, 10, 0, 0), child: pw.BarcodeWidget(
-                                                              data: '$romaneio',
-                                                              barcode: Barcode.code128(),
-                                                              width: 80,
-                                                              height: 180,
-                                                              color: PdfColors.black,
-                                                              drawText: false,)),
+                                                              20, 10, 0, 0), child: pw.SizedBox(
+                                                              width: 150,
+                                                              height: 50,
+                                                                child: pw.BarcodeWidget(
+                                                                data: '$romaneio',
+                                                                barcode: Barcode.code128(),
+                                                                width: 150,
+                                                                height: 50,
+                                                                color: PdfColors.black,
+                                                                drawText: false,),
+                                                              )),
                                                         ],
                                                       ),
                                                     ],

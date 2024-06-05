@@ -38,7 +38,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   String dica = 'Procure um pedido...';
 
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 30))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
   DateTime? dtFim = (getCurrentTimestamp).endOfDay;
   late PickerDateRange datasRange;
 
@@ -66,7 +66,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   }
 
   void rodarBanco() async {
-    pedidoResposta = bd.faturadosNBipados(dtIni, dtFim);
+    pedidoResposta = bd.faturadosNBipados(dtIni, dtFim!);
   }
 
   @override
@@ -108,7 +108,12 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
+        ],
         centerTitle: true,
         elevation: 2,
       ),

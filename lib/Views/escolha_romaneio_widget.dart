@@ -1,3 +1,4 @@
+import 'package:MultiExpedicao/Views/reimprimir_romaneio_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,7 +112,12 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
               color: FlutterFlowTheme.of(context).primaryBackground,
             ),
           ),
-          actions: const [],
+          actions: [
+            IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+              setState(() {
+              });
+            }, color: Colors.white,),
+          ],
           centerTitle: true,
           elevation: 2,
         ),
@@ -125,6 +131,38 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  (['BI', 'Comercial'].contains(usur.acess))
+                      ? InkWell(
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () async {
+                      if (await bd.connected(context) == 1) {
+                        Navigator.pop(context);
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ReimpriprimirRomaneioWidget(usur, 0, bd: bd),
+                            ));
+                      }
+                    },
+                    child: (Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.height * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text(
+                        'Reimprimir Romaneios',
+                        style: FlutterFlowTheme.of(context).titleLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    )),
+                  )
+                      : Container(),
                   (['BI', 'Comercial'].contains(usur.acess))
                       ? InkWell(
                     splashColor: Colors.transparent,

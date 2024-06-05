@@ -131,7 +131,7 @@ class Banco {
               password: 'Multi@bd7',
               port: 5432,
             ),
-            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao;')));
+            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
 
         return 1;
       } catch (e) {
@@ -183,18 +183,9 @@ class Banco {
     } else {
       var codArrumado = cod.substring(14, 33);
       var ped = codArrumado.substring(0, 10);
-      var vol = codArrumado.substring(17, 19);
       var cx = codArrumado.substring(14, 16);
 
       try {
-        try {
-          await conn.execute(
-              'insert into "Pedidos"("NUMPED","VOLUME_TOTAL") values ($ped,$vol) ON CONFLICT ("NUMPED") DO NOTHING;');
-        } on Exception catch (e) {
-          if (kDebugMode) {
-            print(e);
-          }
-        }
         await conn.execute(
             'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
       } on Exception{
@@ -632,6 +623,7 @@ class Banco {
     return teste;
   }
 
+
   ///Função para buscar todas as bipagens dos paletes selecionados para a tela do Romaneio
   Future<List<Pedido>>  selectPalletRomaneio(Future<List<int>> listaPaletes) async {
     var paletes = await listaPaletes;
@@ -642,7 +634,7 @@ class Banco {
     try {
       if (paletes.isNotEmpty) {
         pedidos = await conn.execute(
-            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_NF", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS";');
+            'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes.join(',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS";');
       }
     } on Exception catch (e) {
       if (kDebugMode) {
@@ -659,16 +651,16 @@ class Banco {
       } else {
         status = 'Correto';
       }
-        teste.add(Pedido(element[0] as int, element[1] as String,
-            element[2] as int, element[3] as int, status,
-            cnpj: element[4] as String?,
-            cliente: element[5] as String?,
-            cidade: element[6] as String?,
-            nota: element[7] as int?,
-            valor: element[8] as double?,
-            volfat: (element[3] ?? 0) as int?,
-            codCli: element[9] as int?,
-            situacao: element[10] as String?));
+      teste.add(Pedido(element[0] as int, element[1] as String,
+          element[2] as int, element[3] as int, status,
+          cnpj: element[4] as String?,
+          cliente: element[5] as String?,
+          cidade: element[6] as String?,
+          nota: element[7] as int?,
+          valor: element[8] as double?,
+          volfat: (element[3] ?? 0) as int?,
+          codCli: element[9] as int?,
+          situacao: element[10] as String?));
     }
 
     return teste;
@@ -720,7 +712,7 @@ class Banco {
         for (var element in pedidos) {
           try {
             volumeResponse = await conn.execute(
-                'select "VOLUME_NF", "Clientes"."COD_CLI", "Clientes"."CLIENTE", "Cidades"."CIDADE", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" left join "Clientes" on "Clientes"."COD_CLI" = "Pedidos"."ID_CLI" left join "Cidades" on "COD_CIDADE" = "Cidades"."CODCIDADE" where "NUMPED" = ${element[1]} group by "VOLUME_NF", "Clientes"."COD_CLI","Clientes"."CLIENTE", "Cidades"."CIDADE";');
+                'select "VOLUME_TOTAL", "Clientes"."COD_CLI", "Clientes"."CLIENTE", "Cidades"."CIDADE", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" left join "Clientes" on "Clientes"."COD_CLI" = "Pedidos"."ID_CLI" left join "Cidades" on "COD_CIDADE" = "Cidades"."CODCIDADE" where "NUMPED" = ${element[1]} group by "VOLUME_TOTAL", "Clientes"."COD_CLI","Clientes"."CLIENTE", "Cidades"."CIDADE";');
             for (var element2 in volumeResponse) {
               if (element2[0] != null) {
                 teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -1084,6 +1076,39 @@ class Banco {
     return teste;
   }
 
+  Future<int?> selectAllPedidos(int cod) async {
+    late Result volumeResponse;
+
+    try {
+      volumeResponse = await conn.execute(
+          'select count(*) from "Pedidos" where "NUMPED" = $cod;');
+    }
+    catch(e){
+      print(e);
+    }
+    late int? teste;
+
+    for (var element in volumeResponse){
+      teste = element[0] as int?;
+    }
+
+    if (teste == 0 ){
+      return 2;
+    }else{
+      volumeResponse = await conn.execute(
+          'select count("STATUS") from "Pedidos" where "NUMPED" = $cod and "STATUS" = \'C\';');
+      for (var element in volumeResponse){
+        teste = element[0] as int?;
+      }
+      if (teste != 0){
+        return 1;
+      }else{
+        return 0;
+      }
+    }
+
+  }
+
   Future<List<Romaneio>> romaneiosFinalizados(
       DateTime dtIni, DateTime dtFim) async {
     var teste = <Romaneio>[];
@@ -1095,7 +1120,7 @@ class Banco {
       if (element.isNotEmpty) {
         teste.add(Romaneio(
             element[0] as int,
-            element[2] as int,
+            (element[2] ?? 0) as int,
             element[1] != ''
                 ? DateTime.parse('${element[1]}').toLocal()
                 : null, null , null, null));

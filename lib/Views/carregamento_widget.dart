@@ -113,7 +113,12 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
             scaffoldKey.currentState!.openDrawer();
           },
         ),
-        actions: const [],
+        actions: [
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            setState(() {
+            });
+          }, color: Colors.white,),
+        ],
         centerTitle: true,
         elevation: 2,
       ),
@@ -624,7 +629,7 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                         child: Text(
-                                                                                          '${palete[index].dtFechamento}',
+                                                                                          palete[index].dtFechamento != null ? DateFormat('dd/MM/yyyy   kk:mm').format(palete[index].dtFechamento!) : '',
                                                                                           style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                                 fontFamily: 'Readex Pro',
                                                                                                 letterSpacing: 0,
