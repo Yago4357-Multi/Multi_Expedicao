@@ -109,7 +109,8 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
         actions: [
           IconButton(
             icon: const Icon(Icons.lock_reset_outlined),
-            onPressed: () {
+            onPressed: () async {
+              teste = bd.selectPallet(palete, context);
               setState(() {});
             },
             color: Colors.white,
@@ -388,27 +389,6 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                   return CupertinoAlertDialog(
                                                     title: const Text(
                                                         'Pedido não encontrado no Sistema'),
-                                                    actions: <CupertinoDialogAction>[
-                                                      CupertinoDialogAction(
-                                                          isDefaultAction: true,
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: const Text(
-                                                              'Voltar'))
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            } else{
-                                              await showCupertinoModalPopup(
-                                                context: context,
-                                                barrierDismissible: false,
-                                                builder: (context) {
-                                                  return CupertinoAlertDialog(
-                                                    title: const Text(
-                                                        'Pedido não finalizado no Checkout'),
                                                     actions: <CupertinoDialogAction>[
                                                       CupertinoDialogAction(
                                                           isDefaultAction: true,

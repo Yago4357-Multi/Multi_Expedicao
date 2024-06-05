@@ -631,6 +631,8 @@ class Banco {
     late final Result pedidos;
     var status = 'Correto';
 
+    print(listaPaletes);
+
     if ((await listaPaletes).isNotEmpty) {
       try {
         if (paletes.isNotEmpty) {
@@ -645,7 +647,7 @@ class Banco {
         }
       }
       for (var element in pedidos) {
-        if ((element[2] as int) < (element[3] as int) ||
+        if ((element[2] as int) < (element[3] as int) || element[3] == 0 ||
             !paletes.toString().contains(element[1]
                 .toString()
                 .replaceAll(RegExp(',| '), ', ')) ||
@@ -654,18 +656,25 @@ class Banco {
         } else {
           status = 'Correto';
         }
-        teste.add(Pedido(element[0] as int, element[1] as String,
-            element[2] as int, element[3] as int, status,
-            cnpj: element[4] as String?,
-            cliente: element[5] as String?,
-            cidade: element[6] as String?,
-            nota: element[7] as int?,
-            valor: element[8] as double?,
-            volfat: (element[3] ?? 0) as int?,
-            codCli: element[9] as int?,
-            situacao: element[10] as String?));
+        try {
+          teste.add(Pedido(element[0] as int, element[1] as String,
+              element[2] as int, element[3] as int, status,
+              cnpj: element[4] as String?,
+              cliente: element[5] as String?,
+              cidade: element[6] as String?,
+              nota: element[7] as int?,
+              valor: element[8] as double?,
+              volfat: (element[3] ?? 0) as int?,
+              codCli: element[9] as int?,
+              situacao: element[10] as String?));
+        } catch(e){
+          print(e);
+        }
       }
+      print(teste);
     }
+
+
     return teste;
   }
 
@@ -890,9 +899,27 @@ class Banco {
   }
 
   ///Função para atualizar o romaneio do Palete
-  void updatePalete(int romaneio, List<int> paletes) async {
+  Future<List<int>> updatePalete(int romaneio, List<int> paletes) async {
+    print(paletes);
     await conn.execute(
         'update "Palete" set "ID_ROMANEIO" = $romaneio where "ID" in (${paletes.join(',')});');
+
+    var teste = <int>[];
+    late final Result pedidos;
+    try {
+      pedidos = await conn.execute(
+          'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    if (await pedidos.isNotEmpty) {
+      for (var element in pedidos) {
+        teste.add(element[0] as int);
+      }
+    }
+    return teste;
   }
 
   ///Função para remover o romaneio do palete
@@ -926,7 +953,7 @@ class Banco {
     }
     if (await pedidos.isNotEmpty) {
       for (var element in pedidos) {
-        teste.add(element as int);
+        teste.add(element[0] as int);
       }
     }
     return teste;
@@ -1020,7 +1047,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'$dtIni\' and \'$dtFim\';');
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IGNORAR" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'$dtIni\' and \'$dtFim\';');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1029,7 +1056,9 @@ class Banco {
             cliente: element[3]!.toString(),
             valor: element[4]! as double,
             nota: element[5] as int,
-            cidade: element[6].toString()));
+            cidade: element[6].toString(),
+            ignorar: element[7] as bool?
+        ));
       }
     }
 
@@ -1108,15 +1137,7 @@ class Banco {
       if (teste != 0){
         return 1;
       }else{
-        volumeResponse = await conn.execute('select count(*) from "Pedidos" where "NUMPED" = $cod and "DATA_FIM_CHECKOUT" is not null;');
-        for (var element in volumeResponse){
-          teste = element[0] as int?;
-        }
-        if (teste != 0){
-          return 3;
-        }else{
           return 0;
-        }
       }
     }
 
@@ -1149,7 +1170,7 @@ class Banco {
 
     try {
       volumeResponse = await conn.execute(
-          'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0;');
+          'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "IGNORAR" = false;');
     } catch(e){
       print(e);
     }
@@ -1158,7 +1179,6 @@ class Banco {
         teste = (element[0] ?? 0) as int;
       }
     }
-    print(teste);
 
     return teste;
   }
@@ -1168,7 +1188,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and ("DATA_CANC_PED" IS NOT NULL OR "DATA_CANC_NF" IS NOT NULL) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "NF", "Cidades"."CIDADE";');
+        'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and ("DATA_CANC_PED" IS NOT NULL OR "DATA_CANC_NF" IS NOT NULL) and "IGNORAR" = false group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "NF", "Cidades"."CIDADE";');
     for (var element in volumeResponse) {
       try{
         if (element.isNotEmpty) {
@@ -1180,6 +1200,10 @@ class Banco {
     }
 
     return teste;
+  }
+
+  void updateIgnorar(int ped, bool? value) {
+    conn.execute('update multiexpedicao."Pedidos" set "IGNORAR" = $value where "NUMPED" = $ped;');
   }
 
 

@@ -116,7 +116,9 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            getPed = bd.selectPallet(cont, context);
+            getPalete = bd.paleteAll(cont, context);
             setState(() {
             });
           }, color: Colors.white,),

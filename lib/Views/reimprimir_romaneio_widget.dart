@@ -118,7 +118,9 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
           actions: [
             IconButton(
               icon: const Icon(Icons.lock_reset_outlined),
-              onPressed: () {
+              onPressed: () async {
+                getPaletes = bd.selectRomaneio(palete);
+                pedidoResposta = bd.selectPalletRomaneio(getPaletes);
                 setState(() {});
               },
               color: Colors.white,

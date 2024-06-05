@@ -118,7 +118,6 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) ?
                 (InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -143,7 +142,8 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                       textAlign: TextAlign.center,
                     ),
                   )),
-                )) : Container(),
+                )),
+                (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) ?
                 InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -170,7 +170,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                       textAlign: TextAlign.center,
                     ),
                   )),
-                ),
+                ) : Container(),
                 InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,

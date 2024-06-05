@@ -106,7 +106,8 @@ class _ListaCanceladosWidget extends State<ListaCanceladosWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            pedidoResposta = bd.canceladosBipados();
             setState(() {
             });
           }, color: Colors.white,),

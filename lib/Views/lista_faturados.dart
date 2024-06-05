@@ -62,6 +62,10 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
     _model = createModel(context, ListaFaturadosModel.new);
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
+    _model.choiceChipsValue;
+    _model.choiceChipsValueController = FormFieldController<List<String>>(
+      ['Todos'],
+    );
     rodarBanco();
   }
 
@@ -109,10 +113,14 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
-            setState(() {
-            });
-          }, color: Colors.white,),
+          IconButton(
+            icon: const Icon(Icons.lock_reset_outlined),
+            onPressed: () async {
+              pedidoResposta = bd.faturadosNBipados(dtIni, dtFim!);
+              setState(() {});
+            },
+            color: Colors.white,
+          ),
         ],
         centerTitle: true,
         elevation: 2,
@@ -129,7 +137,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                 child: Container(
                   width: double.infinity,
                   constraints: const BoxConstraints(
-                    maxWidth: 970,
+                    maxWidth: 1000,
                   ),
                   decoration: const BoxDecoration(),
                   child: SingleChildScrollView(
@@ -163,112 +171,180 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                               phone: false,
                               tablet: false,
                             ))
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    16, 40, 0, 40),
-                                child: SizedBox(
-                                  width: 500,
-                                  child: TextFormField(
-                                    canRequestFocus: true,
-                                    onChanged: (value) {
-                                      _model.choiceChipsValue = 'Todos';
-                                      setState(() {
-                                        if (pedidosSalvos.length <
-                                            pedidos.length) {
-                                          pedidosSalvos = pedidos;
-                                        }
-                                        if (value.isNotEmpty) {
-                                          var x =
-                                          pedidosSalvos.where((element) {
-                                            var texto = element.ped.toString();
-                                            texto.startsWith(value);
-                                            return texto.startsWith(value);
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        16, 40, 0, 40),
+                                    child: SizedBox(
+                                      width: 500,
+                                      child: TextFormField(
+                                        canRequestFocus: true,
+                                        onChanged: (value) {
+                                          _model.choiceChipsValue = 'Todos';
+                                          setState(() {
+                                            if (pedidosSalvos.length <
+                                                pedidos.length) {
+                                              pedidosSalvos = pedidos;
+                                            }
+                                            if (value.isNotEmpty) {
+                                              var x =
+                                                  pedidosSalvos.where((element) {
+                                                var texto = element.ped.toString();
+                                                texto.startsWith(value);
+                                                return texto.startsWith(value);
+                                              });
+                                              if (x.isNotEmpty) {
+                                                pedidos = x.toList();
+                                              } else {
+                                                pedidos = [];
+                                                dica = 'Pedido não encontrado';
+                                                corDica = Colors.red.shade400;
+                                                corBorda = Colors.red.shade700;
+                                              }
+                                            } else {
+                                              pedidos = pedidosSalvos;
+                                              dica = 'Procure por um pedido...';
+                                              corDica = Colors.green.shade400;
+                                              corBorda = Colors.green.shade700;
+                                            }
                                           });
-                                          if (x.isNotEmpty) {
-                                            pedidos = x.toList();
-                                          } else {
-                                            pedidos = [];
-                                            dica = 'Pedido não encontrado';
-                                            corDica = Colors.red.shade400;
-                                            corBorda = Colors.red.shade700;
-                                          }
-                                        } else {
-                                          pedidos = pedidosSalvos;
-                                          dica = 'Procure por um pedido...';
-                                          corDica = Colors.green.shade400;
-                                          corBorda = Colors.green.shade700;
-                                        }
-                                      });
-                                    },
-                                    controller: _model.textController,
-                                    focusNode: _model.textFieldFocusNode,
-                                    autofocus: false,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      labelText: dica,
-                                      labelStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
-                                      hintStyle: FlutterFlowTheme.of(context)
-                                          .labelMedium
-                                          .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: corBorda,
-                                          width: 2,
+                                        },
+                                        controller: _model.textController,
+                                        focusNode: _model.textFieldFocusNode,
+                                        autofocus: false,
+                                        obscureText: false,
+                                        decoration: InputDecoration(
+                                          labelText: dica,
+                                          labelStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
+                                                fontFamily: 'Readex Pro',
+                                                letterSpacing: 0,
+                                              ),
+                                          hintStyle: FlutterFlowTheme.of(context)
+                                              .labelMedium
+                                              .override(
+                                                fontFamily: 'Readex Pro',
+                                                letterSpacing: 0,
+                                              ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corBorda,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: corDica,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .error,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsetsDirectional.fromSTEB(
+                                                  20, 0, 0, 0),
+                                          suffixIcon: Icon(
+                                            Icons.search_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: corDica,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .error,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.of(context)
-                                              .error,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      contentPadding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          20, 0, 0, 0),
-                                      suffixIcon: Icon(
-                                        Icons.search_rounded,
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryText,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
+                                        cursorColor:
+                                            FlutterFlowTheme.of(context).primary,
+                                        validator: _model.textControllerValidator
+                                            .asValidator(context),
                                       ),
                                     ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
-                                    cursorColor:
-                                    FlutterFlowTheme.of(context).primary,
-                                    validator: _model.textControllerValidator
-                                        .asValidator(context),
                                   ),
-                                ),
+                                  FlutterFlowChoiceChips(
+                                      options: const [
+                                        ChipData('Todos'),
+                                        ChipData('N Ignorados'),
+                                      ],
+                                      onChanged: (val) {
+                                        setState(() {
+                                          if (_model.choiceChipsValue == 'Todos') {
+                                            pedidos = pedidosSalvos;
+                                          } else {
+                                            pedidos = pedidosSalvos
+                                                .where((element) =>
+                                            element.ignorar ==
+                                                false)
+                                                .toList();
+                                          }
+                                        });
+                                      },
+                                      selectedChipStyle: ChipStyle(
+                                        backgroundColor: Colors.green.shade700,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                          fontFamily: 'Readex Pro',
+                                          color:
+                                          FlutterFlowTheme.of(context).info,
+                                          letterSpacing: 0,
+                                        ),
+                                        iconColor:
+                                        FlutterFlowTheme.of(context).info,
+                                        iconSize: 18,
+                                        elevation: 2,
+                                        borderColor:
+                                        FlutterFlowTheme.of(context).accent1,
+                                        borderWidth: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      unselectedChipStyle: ChipStyle(
+                                        backgroundColor:
+                                        FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                          fontFamily: 'Readex Pro',
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          letterSpacing: 0,
+                                        ),
+                                        iconColor: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        iconSize: 18,
+                                        elevation: 0,
+                                        borderColor:
+                                        FlutterFlowTheme.of(context).alternate,
+                                        borderWidth: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      chipSpacing: 8,
+                                      rowSpacing: 12,
+                                      multiselect: false,
+                                      alignment: WrapAlignment.start,
+                                      controller:
+                                      _model.choiceChipsValueController!),
+                                ],
                               ),
                             SizedBox(
                               width: 300,
@@ -276,7 +352,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                               child: SfDateRangePicker(
                                 view: DateRangePickerView.month,
                                 navigationDirection:
-                                DateRangePickerNavigationDirection.vertical,
+                                    DateRangePickerNavigationDirection.vertical,
                                 maxDate: getCurrentTimestamp,
                                 startRangeSelectionColor: Colors.green.shade700,
                                 initialDisplayDate: dtFim,
@@ -286,22 +362,27 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     datasRange =
                                         dateRangePickerSelectionChangedArgs
                                             .value;
-                                    if (datasRange.endDate != null){
-                                      if (datasRange.startDate! >=
-                                          (dtFim!
-                                              .add(const Duration(days: -7)))) {
-                                        dtIni =
-                                            dtFim!.add(const Duration(days: -7)).startOfDay;
+                                    dtIni = (datasRange.startDate ??
+                                        DateTime.parse('01/01/2000'))
+                                        .startOfDay;
+                                    try {
+
+                                      if (datasRange.endDate != null) {
+                                        if (datasRange.endDate! >=
+                                            (dtIni.add(
+                                                const Duration(days: 7)))) {
+                                          dtFim = dtIni
+                                              .add(const Duration(days: 7))
+                                              .startOfDay;
+                                        } else {
+                                          dtFim = (datasRange.endDate!).endOfDay;
+                                        }
                                       } else {
-                                        dtIni = (datasRange.startDate ??
-                                            DateTime.parse('01/01/2000'))
-                                            .startOfDay;
+                                        dtFim = (datasRange.endDate ?? dtIni)
+                                            .endOfDay;
                                       }
-                                    }else{
-                                      dtIni = (datasRange.startDate ??
-                                          DateTime.parse('01/01/2000'))
-                                          .startOfDay;
-                                      dtFim = (datasRange.endDate ?? dtIni).endOfDay;
+                                    } catch(e){
+                                      print(e);
                                     }
                                     datasRange = PickerDateRange(dtIni, dtFim);
                                     datas.selectedRange = datasRange;
@@ -312,16 +393,16 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                   setState(() {});
                                 },
                                 monthViewSettings:
-                                const DateRangePickerMonthViewSettings(
+                                    const DateRangePickerMonthViewSettings(
                                   weekendDays: [6, 7],
                                   weekNumberStyle:
-                                  DateRangePickerWeekNumberStyle(
-                                      backgroundColor: Colors.grey,
-                                      textStyle: TextStyle(
-                                          fontWeight: FontWeight.w200)),
+                                      DateRangePickerWeekNumberStyle(
+                                          backgroundColor: Colors.grey,
+                                          textStyle: TextStyle(
+                                              fontWeight: FontWeight.w200)),
                                 ),
                                 initialSelectedRange:
-                                PickerDateRange(dtIni, dtFim),
+                                    PickerDateRange(dtIni, dtFim),
                                 headerStyle: const DateRangePickerHeaderStyle(
                                     backgroundColor: Colors.white,
                                     textStyle: TextStyle(
@@ -336,7 +417,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                 selectionColor: Colors.green.shade200,
                                 todayHighlightColor: Colors.green.shade600,
                                 selectionMode:
-                                DateRangePickerSelectionMode.range,
+                                    DateRangePickerSelectionMode.range,
                                 controller: datas,
                               ),
                             )
@@ -347,7 +428,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                           height: 50,
                           decoration: BoxDecoration(
                             color:
-                            FlutterFlowTheme.of(context).primaryBackground,
+                                FlutterFlowTheme.of(context).primaryBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: const AlignmentDirectional(-1, 0),
@@ -365,9 +446,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     style: FlutterFlowTheme.of(context)
                                         .labelSmall
                                         .override(
-                                      fontFamily: 'Readex Pro',
-                                      letterSpacing: 0,
-                                    ),
+                                          fontFamily: 'Readex Pro',
+                                          letterSpacing: 0,
+                                        ),
                                   ),
                                 ),
                                 if (responsiveVisibility(
@@ -382,9 +463,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                 if (responsiveVisibility(
@@ -399,9 +480,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                 if (responsiveVisibility(
@@ -416,9 +497,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                 if (responsiveVisibility(
@@ -433,26 +514,26 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                 Expanded(
                                   flex: 1,
                                   child: Padding(
                                     padding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0, 4, 40, 4),
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0, 4, 40, 4),
                                     child: Text(
                                       'Volumes',
                                       textAlign: TextAlign.center,
                                       style: FlutterFlowTheme.of(context)
                                           .labelSmall
                                           .override(
-                                        fontFamily: 'Readex Pro',
-                                        letterSpacing: 0,
-                                      ),
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -496,165 +577,179 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                   }
                                   return Padding(
                                     padding:
-                                    const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: corStatus,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 12, 16, 12),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                '${pedidos[index].ped}',
-                                                style:
-                                                FlutterFlowTheme
-                                                    .of(context)
-                                                    .bodyMedium
-                                                    .override(
-                                                  color: corTextoStatus,
-                                                  fontFamily:
-                                                  'Readex Pro',
-                                                  letterSpacing: 0,
-                                                ),
-                                              ),
-                                            ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(
-                                                  '${pedidos[index].nota}',
-                                                  style:
-                                                  FlutterFlowTheme
-                                                      .of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 960,
+                                          decoration: BoxDecoration(
+                                            color: corStatus,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(20)),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16, 12, 16, 12),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    '${pedidos[index].ped}',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          color: corTextoStatus,
+                                                          fontFamily:
+                                                              'Readex Pro',
+                                                          letterSpacing: 0,
+                                                        ),
                                                   ),
                                                 ),
-                                              ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                              Expanded(
-                                                flex: 1,
-                                                child: Text(
-                                                  '${pedidos[index].codCli ??
-                                                      ''}',
-                                                  style: FlutterFlowTheme
-                                                      .of(
-                                                      context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
-                                                ),
-                                              ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                              Expanded(
-                                                flex: 4,
-                                                child: Text(
-                                                  pedidos[index].cliente ??
-                                                      '',
-                                                  style:
-                                                  FlutterFlowTheme
-                                                      .of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
-                                                ),
-                                              ),
-                                            if (responsiveVisibility(
-                                              context: context,
-                                              phone: false,
-                                              tablet: false,
-                                            ))
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  '${pedidos[index].cidade}',
-                                                  style:
-                                                  FlutterFlowTheme
-                                                      .of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    color: corTextoStatus,
-                                                    fontFamily:
-                                                    'Readex Pro',
-                                                    letterSpacing: 0,
-                                                  ),
-                                                ),
-                                              ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: corFundoStatus,
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      8),
-                                                  border: Border.all(
-                                                    color: corBordaStatus,
-                                                  ),
-                                                ),
-                                                child: Align(
-                                                  alignment:
-                                                  const AlignmentDirectional(
-                                                      0, 0),
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                        8, 4, 8, 4),
+                                                if (responsiveVisibility(
+                                                  context: context,
+                                                  phone: false,
+                                                  tablet: false,
+                                                ))
+                                                  Expanded(
+                                                    flex: 1,
                                                     child: Text(
-                                                      '${pedidos[index].vol}',
+                                                      '${pedidos[index].nota}',
                                                       style: FlutterFlowTheme
-                                                          .of(context)
-                                                          .bodySmall
+                                                              .of(context)
+                                                          .bodyMedium
                                                           .override(
-                                                        color:
-                                                        corTextoStatus,
-                                                        fontFamily:
-                                                        'Readex Pro',
-                                                        letterSpacing: 0,
+                                                            color:
+                                                                corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                if (responsiveVisibility(
+                                                  context: context,
+                                                  phone: false,
+                                                  tablet: false,
+                                                ))
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                      '${pedidos[index].codCli ?? ''}',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color:
+                                                                corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                if (responsiveVisibility(
+                                                  context: context,
+                                                  phone: false,
+                                                  tablet: false,
+                                                ))
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Text(
+                                                      pedidos[index].cliente ??
+                                                          '',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color:
+                                                                corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                if (responsiveVisibility(
+                                                  context: context,
+                                                  phone: false,
+                                                  tablet: false,
+                                                ))
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      '${pedidos[index].cidade}',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            color:
+                                                                corTextoStatus,
+                                                            fontFamily:
+                                                                'Readex Pro',
+                                                            letterSpacing: 0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: corFundoStatus,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      border: Border.all(
+                                                        color: corBordaStatus,
+                                                      ),
+                                                    ),
+                                                    child: Align(
+                                                      alignment:
+                                                          const AlignmentDirectional(
+                                                              0, 0),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                8, 4, 8, 4),
+                                                        child: Text(
+                                                          '${pedidos[index].vol}',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodySmall
+                                                              .override(
+                                                                color:
+                                                                    corTextoStatus,
+                                                                fontFamily:
+                                                                    'Readex Pro',
+                                                                letterSpacing:
+                                                                    0,
+                                                              ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                        Checkbox(
+                                            value: pedidos[index].ignorar,
+                                            onChanged: (value) async {
+                                              bd.updateIgnorar(
+                                                  pedidos[index].ped, value);
+                                              pedidoResposta =
+                                                  bd.faturadosNBipados(
+                                                      dtIni, dtFim!);
+                                              setState(() {});
+                                            })
+                                      ],
                                     ),
                                   );
                                 },

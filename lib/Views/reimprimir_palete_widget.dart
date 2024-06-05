@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -108,7 +111,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
             ),
           ),
           actions: [
-            IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+            IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+              getPaletes = bd.paletesFull();
               setState(() {
               });
             }, color: Colors.white,),
@@ -1135,18 +1139,19 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                     pageFormat: PdfPageFormat.a4,
                                                                     build: (context2) {
                                                                       return pw.Container(
-                                                                        width: 107,
-                                                                        height: 45,
+                                                                        width: 200,
+                                                                        height: 100,
                                                                         child: pw.BarcodeWidget(
                                                                             data: '$palete',
                                                                             barcode: Barcode.code128(),
-                                                                            width: 40,
-                                                                            height: 100,
+                                                                            width: 160,
+                                                                            height: 60,
                                                                             color: PdfColors.black,
                                                                             drawText: true,
-                                                                            textStyle: const pw.TextStyle(
-                                                                              fontSize: 20,
+                                                                            textStyle: pw.TextStyle(
+                                                                              fontSize: 40,
                                                                               letterSpacing: 0,
+                                                                              fontWeight: pw.FontWeight.bold
                                                                             )),
                                                                       );
                                                                     },
@@ -1198,6 +1203,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                             style: const TextStyle(
                               fontSize: 20,
                               letterSpacing: 0,
+                                fontWeight: FontWeight.bold
                             ),
                             backgroundColor: Colors.transparent,
                             errorBuilder: (context, error) => const SizedBox(
@@ -1219,18 +1225,19 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                 pageFormat: PdfPageFormat.a4,
                                 build: (context2) {
                                   return pw.Container(
-                                    width: 107,
-                                    height: 45,
+                                    width: 200,
+                                    height: 100,
                                     child: pw.BarcodeWidget(
                                         data: '$palete',
                                         barcode: Barcode.code128(),
-                                        width: 40,
-                                        height: 100,
+                                        width: 160,
+                                        height: 60,
                                         color: PdfColors.black,
                                         drawText: true,
-                                        textStyle: const pw.TextStyle(
-                                          fontSize: 20,
+                                        textStyle: pw.TextStyle(
+                                          fontSize: 40,
                                           letterSpacing: 0,
+                                            fontWeight: pw.FontWeight.bold
                                         )),
                                   );
                                 },

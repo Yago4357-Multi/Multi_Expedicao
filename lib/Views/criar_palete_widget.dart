@@ -200,17 +200,17 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                             pageFormat: PdfPageFormat.a4,
                             build: (context2) {
                               return pw.Container(
-                                width: 107,
-                                height: 45,
+                                width: 200,
+                                height: 100,
                                 child: pw.BarcodeWidget(
                                     data: '$palete',
                                     barcode: Barcode.code128(),
-                                    width: 40,
-                                    height: 100,
+                                    width: 160,
+                                    height: 60,
                                     color: PdfColors.black,
                                     drawText: true,
                                     textStyle: const pw.TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 40,
                                       letterSpacing: 0,
                                     )),
                               );

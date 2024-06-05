@@ -114,7 +114,9 @@ class _ListaCarregamentoWidgetState extends State<ListaCarregamentoWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            romaneioFin = bd.romaneioFinalizado();
+            carregamentoFin = bd.getCarregamento(romaneioSelecionadoint);
             setState(() {
             });
           }, color: Colors.white,),

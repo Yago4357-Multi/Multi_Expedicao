@@ -125,7 +125,13 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            romaneioResposta = bd.romaneiosFinalizados(dtIni, dtFim);
+            var teste = await romaneioResposta;
+            for (var i in teste) {
+              romaneiosSelecionadoint.add(i.romaneio!);
+            }
+            pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
             setState(() {
             });
           }, color: Colors.white,),
@@ -420,26 +426,28 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) async {
                                   if (await bd.connected(context) == 1) {
-                                    datasRange = dateRangePickerSelectionChangedArgs.value;
-                                    if (datasRange.endDate != null){
-                                      if (datasRange.startDate! >=
-                                          (dtFim
-                                              .add(const Duration(days: -7)))) {
-                                        dtIni =
-                                            dtFim.add(const Duration(days: -7)).startOfDay;
+                                    dtIni = (datasRange.startDate ??
+                                        DateTime.parse('01/01/2000'))
+                                        .startOfDay;
+                                    try {
+
+                                      if (datasRange.endDate != null) {
+                                        if (datasRange.endDate! >=
+                                            (dtIni.add(
+                                                const Duration(days: 7)))) {
+                                          dtFim = dtIni
+                                              .add(const Duration(days: 7))
+                                              .startOfDay;
+                                        } else {
+                                          dtFim = (datasRange.endDate!).endOfDay;
+                                        }
                                       } else {
-                                        dtIni = (datasRange.startDate ??
-                                            DateTime.parse('01/01/2000'))
-                                            .startOfDay;
+                                        dtFim = (datasRange.endDate ?? dtIni)
+                                            .endOfDay;
                                       }
-                                    }else{
-                                      dtIni = (datasRange.startDate ??
-                                          DateTime.parse('01/01/2000'))
-                                          .startOfDay;
-                                      dtFim = (datasRange.endDate ?? dtIni).endOfDay;
+                                    } catch(e){
+                                      print(e);
                                     }
-                                    datasRange = PickerDateRange(dtIni, dtFim);
-                                    datas.selectedRange = datasRange;
                                     romaneioResposta =
                                         bd.romaneiosFinalizados(dtIni, dtFim);
                                     var teste = await romaneioResposta;

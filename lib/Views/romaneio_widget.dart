@@ -134,6 +134,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
           },
         ),
         actions: [
+          if (responsiveVisibility(
+            context: context,
+            phone: false,
+            tablet: false,
+          ))
           FutureBuilder(
             future: qtdFatFut,
             builder: (context, snapshot) {
@@ -144,6 +149,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                     ListaFaturadosWidget(usur, bd: bd),));}, icon: const Icon(Icons.assignment_late, color: Colors.red,),)])));
             },
           ),
+          if (responsiveVisibility(
+            context: context,
+            phone: false,
+            tablet: false,
+          ))
           FutureBuilder(future: qtdCancFut, builder: (context, snapshot) {
             qtdCanc = snapshot.data ?? 0;
             return Padding(padding: const EdgeInsets.only(right: 20),child: SizedBox(width:120 , height: 50,child: Row(children: [Text('Canc. : $qtdCanc', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', fontSize: 16, color: Colors.orange)), IconButton(onPressed: ()async {Navigator.pop(context);
@@ -151,7 +161,12 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
               builder: (context) =>
                   ListaCanceladosWidget(usur, bd: bd),)); }, icon: const Icon(Icons.assignment_late, color: Colors.orange,),)]))
             );}),
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            paletesFin = bd.paleteFinalizado();
+            getPaletes = bd.selectRomaneio(romaneio);
+            pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+            qtdCancFut = bd.qtdCanc();
+            qtdFatFut = bd.qtdFat();
             setState(() {
             });
           }, color: Colors.white,),
@@ -1683,6 +1698,12 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
+                                                                                    if (responsiveVisibility(
+                                                                                      context: context,
+                                                                                      phone: true,
+                                                                                      tablet: true,
+                                                                                      desktop: false,
+                                                                                    ))
                                                                                     Expanded(
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -1754,15 +1775,16 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   () async {
                                                                                 if (await bd.connected(context) ==
                                                                                     1) {
-                                                                                  setter(() {
                                                                                     paleteSelecionadoint.add(palete[index].pallet ?? 0);
                                                                                     paleteSelecionadoint.sort(
                                                                                           (a, b) => a.compareTo(b),
                                                                                     );
-                                                                                    bd.updatePalete(romaneio, paleteSelecionadoint);
-                                                                                    getPaletes = bd.selectRomaneio(romaneio);
+                                                                                    getPaletes =  bd.updatePalete(romaneio, paleteSelecionadoint);
+                                                                                    print(await getPaletes);
+                                                                                    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+                                                                                    setter(() {
                                                                                     setState(() {
-                                                                                      pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+
                                                                                     });
                                                                                   });
                                                                                 }
@@ -1834,6 +1856,12 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
+                                                                                    if (responsiveVisibility(
+                                                                                      context: context,
+                                                                                      phone: true,
+                                                                                      tablet: true,
+                                                                                      desktop: false,
+                                                                                    ))
                                                                                     Expanded(
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
@@ -2502,13 +2530,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     height: 30,
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                        color: pedidos[index].caixas < pedidos[index].vol ? Colors.red.shade100 : Colors.transparent,
+                                                        color: pedidos[index].caixas != pedidos[index].vol ? Colors.red.shade100 : Colors.transparent,
                                                         borderRadius:
                                                         BorderRadius.circular(
                                                             8),
                                                         border: Border.all(
                                                           width: 1.5,
-                                                          color: pedidos[index].caixas < pedidos[index].vol ? Colors.red : Colors.transparent,
+                                                          color: pedidos[index].caixas != pedidos[index].vol ? Colors.red : Colors.transparent,
                                                         ),
                                                       ),
                                                       alignment: Alignment.center,
@@ -2519,7 +2547,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                             context)
                                                             .bodyMedium
                                                             .override(
-                                                          color: pedidos[index].caixas < pedidos[index].vol ? Colors.red : Colors.black,
+                                                          color: pedidos[index].caixas != pedidos[index].vol ? Colors.red : Colors.black,
                                                           fontFamily:
                                                           'Readex Pro',
                                                           letterSpacing: 0,

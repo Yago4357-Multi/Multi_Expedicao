@@ -106,7 +106,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
           },
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
+          IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
+            getPed = bd.selectPedido(cont);
             setState(() {
             });
           }, color: Colors.white,),
