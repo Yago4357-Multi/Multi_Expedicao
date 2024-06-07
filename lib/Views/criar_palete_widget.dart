@@ -53,6 +53,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
     _model = createModel(context, CriarPaleteModel.new);
   }
 
+  var i = 0;
+
   void rodarBanco() async {
       getPalete = bd.getPalete();
   }
@@ -117,12 +119,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
           child: FutureBuilder(
             future: getPalete,
             builder: (context, snapshot) {
-              var i = 0;
-              if (palete == 0) {
-                i = snapshot.data ?? 0;
-              } else {
-                i = palete;
-              }
+                i = snapshot.data!;
               return Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

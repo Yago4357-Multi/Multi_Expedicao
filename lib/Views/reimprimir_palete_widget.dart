@@ -1134,7 +1134,6 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                               onPressed:
                                                                   () async {
                                                                 if (await bd.connected(context) == 1) {
-                                                                  bd.createPalete(usur);
                                                                   pdf.addPage(pw.Page(
                                                                     pageFormat: PdfPageFormat.a4,
                                                                     build: (context2) {

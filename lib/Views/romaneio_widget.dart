@@ -2355,6 +2355,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                     ),
                                   ),
                                 ),
+                                if (responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                  tablet: false,
+                                ))
                                 Expanded(
                                   child: Text(
                                     'Situação',
@@ -2399,6 +2404,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 ConnectionState.done) {
                               if (pedidosSalvos != snapshot.data) {
                                 pedidos = snapshot.data ?? [];
+                                pedidos.sort((a, b) {
+                                    return a.nota?.compareTo((b.nota ?? 0)) ?? 0;
+                                },);
                                 pedidosSalvos = pedidos;
                               }
                               return ListView.builder(
@@ -2557,6 +2565,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   ),
                                                 ),
                                               ),
+                                              if (responsiveVisibility(
+                                                context: context,
+                                                phone: false,
+                                                tablet: false,
+                                              ))
                                               Expanded(
                                                 child: Align(
                                                   child: SizedBox(

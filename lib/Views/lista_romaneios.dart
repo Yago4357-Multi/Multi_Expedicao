@@ -426,6 +426,9 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) async {
                                   if (await bd.connected(context) == 1) {
+                                    datasRange =
+                                        dateRangePickerSelectionChangedArgs
+                                            .value;
                                     dtIni = (datasRange.startDate ??
                                         DateTime.parse('01/01/2000'))
                                         .startOfDay;
@@ -448,6 +451,8 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                     } catch(e){
                                       print(e);
                                     }
+                                    datasRange = PickerDateRange(dtIni, dtFim);
+                                    datas.selectedRange = datasRange;
                                     romaneioResposta =
                                         bd.romaneiosFinalizados(dtIni, dtFim);
                                     var teste = await romaneioResposta;

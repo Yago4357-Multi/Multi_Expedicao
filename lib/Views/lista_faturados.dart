@@ -358,6 +358,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                 initialDisplayDate: dtFim,
                                 onSelectionChanged:
                                     (dateRangePickerSelectionChangedArgs) async {
+                                      _model.choiceChipsValueController?.value = ['Todos'];
                                   if (await bd.connected(context) == 1) {
                                     datasRange =
                                         dateRangePickerSelectionChangedArgs

@@ -349,7 +349,6 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             codArrumado.substring(0, 10));
                                         int? teste2 =
                                             await bd.selectAllPedidos(ped);
-                                        print(teste2);
                                         if (teste2 == 0) {
                                           if (context.mounted) {
                                             teste = bd.insert(

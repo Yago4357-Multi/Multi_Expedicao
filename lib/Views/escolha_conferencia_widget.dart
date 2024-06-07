@@ -8,6 +8,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
 import 'criar_palete_widget.dart';
+import 'declaracoes.dart';
 import 'lista_palete_widget.dart';
 
 export '../Components/Model/escolha_bipagem_model.dart';
@@ -143,7 +144,6 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                     ),
                   )),
                 )),
-                (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess)) ?
                 InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -170,7 +170,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                       textAlign: TextAlign.center,
                     ),
                   )),
-                ) : Container(),
+                ),
                 InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -314,6 +314,37 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                         borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       'Criar Novo Palete',
+                      style: FlutterFlowTheme.of(context).titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+                ),
+                if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess))
+                InkWell(
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    if (await bd.connected(context) == 1) {
+                      Navigator.pop(context);
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DeclaracoesWidget(usur, bd: bd),
+                          ));
+                    }
+                  },
+                  child: (Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.height * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      'Declarações',
                       style: FlutterFlowTheme.of(context).titleLarge,
                       textAlign: TextAlign.center,
                     ),

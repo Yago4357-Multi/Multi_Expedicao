@@ -151,6 +151,9 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     pedidos = (snapshot.data ?? []);
+                    pedidos.sort((a, b) {
+                      return a.nota?.compareTo(b.nota ?? 0) ?? 0;
+                    },);
                     return Center(
                       widthFactor: double.infinity,
                       heightFactor: double.infinity,

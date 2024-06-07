@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/carregamento.dart';
+import '../Models/cliente.dart';
 import '../Models/contagem.dart';
+import '../Models/declaracao.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
@@ -227,7 +229,7 @@ class Banco {
       for (var element in pedidos) {
         try {
           volumeResponse = await conn.execute(
-              'select "VOLUME_TOTAL", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" where "NUMPED" = ${element[1]} group by "VOLUME_TOTAL";');
+              'select "VOLUME_TOTAL", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" where "NUMPED" = ${element[1]} and "PALETE" = $pallet group by "VOLUME_TOTAL";');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
               teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -724,7 +726,7 @@ class Banco {
         for (var element in pedidos) {
           try {
             volumeResponse = await conn.execute(
-                'select "VOLUME_TOTAL", "Clientes"."COD_CLI", "Clientes"."CLIENTE", "Cidades"."CIDADE", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" left join "Clientes" on "Clientes"."COD_CLI" = "Pedidos"."ID_CLI" left join "Cidades" on "COD_CIDADE" = "Cidades"."CODCIDADE" where "NUMPED" = ${element[1]} group by "VOLUME_TOTAL", "Clientes"."COD_CLI","Clientes"."CLIENTE", "Cidades"."CIDADE";');
+                'select "VOLUME_TOTAL", "Clientes"."COD_CLI", "Clientes"."CLIENTE", "Cidades"."CIDADE", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" left join "Clientes" on "Clientes"."COD_CLI" = "Pedidos"."ID_CLI" left join "Cidades" on "COD_CIDADE" = "Cidades"."CODCIDADE" where "NUMPED" = ${element[1]} and "PALETE" = $palete group by "VOLUME_TOTAL", "Clientes"."COD_CLI","Clientes"."CLIENTE", "Cidades"."CIDADE";');
             for (var element2 in volumeResponse) {
               if (element2[0] != null) {
                 teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -1037,7 +1039,33 @@ class Banco {
         }
       }
     }
-      return teste;
+    return teste;
+  }
+
+  ///Busca as declarações na tabela de Pedidos
+  Future<List<Pedido>> allDeclaracoes(dtIni, dtFim) async {
+    var teste = <Pedido>[];
+    late Result volumeResponse;
+    volumeResponse = await conn.execute(
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Pedidos"."TIPO" like \'D\' and "DATA_PEDIDO" between \'$dtIni\' and \'$dtFim\' group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+    for (var element in volumeResponse) {
+      if (element.isNotEmpty) {
+        teste.add(Pedido(
+          element[0]! as int,
+          element[10] as String,
+          0,
+          element[1]! as int, 'Correto',
+          codCli: element[2]! as int,
+          cliente: element[3]!.toString(),
+          valor: element[4]! as double,
+          nota: element[5] as int,
+          cidade: element[6].toString(),
+          romaneio: element[7] as int?,
+          dtFat: element[8] as DateTime?,
+          dtPedido: element[9] as DateTime?,));
+      }
+    }
+    return teste;
   }
 
   ///Busca pedidos não bipados que foram faturados
@@ -1095,7 +1123,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO", count("Bipagem"."ID") from "Palete" left join "Usuarios" Cri on Cri."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" left join "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" left join "Bipagem" on "PALETE" = "Palete"."ID" group by "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO"');
+        'select "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO", count("Bipagem"."ID") from "Palete" left join "Usuarios" Cri on Cri."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" left join "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" left join "Bipagem" on "PALETE" = "Palete"."ID" where "DATA_CARREGAMENTO" is null group by "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO"');
     for (var element in volumeResponse) {
       teste.add(Paletes(element[0] as int?, element[2] as String?,
           (element[3] as DateTime).toLocal(), element[8] as int?,
@@ -1137,7 +1165,7 @@ class Banco {
       if (teste != 0){
         return 1;
       }else{
-          return 0;
+        return 0;
       }
     }
 
@@ -1204,6 +1232,72 @@ class Banco {
 
   void updateIgnorar(int ped, bool? value) {
     conn.execute('update multiexpedicao."Pedidos" set "IGNORAR" = $value where "NUMPED" = $ped;');
+  }
+
+  ///Seleciona o número da última declaração criada
+  Future<int> ultDec() async {
+    var teste = 0;
+    late final Result pedidos;
+
+    try {
+      pedidos =
+      await conn.execute('select COALESCE(MAX("NUMPED"),0) from "Pedidos" where "TIPO" = \'D\';');
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      teste = (element[0] ?? 0) as int;
+    }
+
+    return teste + 1;
+  }
+
+  Future<Cliente> selectCliente(int cod) async {
+    late var cli = Cliente(0, 0, '', '', '', '');
+    late Result volumeResponse;
+    volumeResponse = await conn.execute('select "CLIENTE", "CNPJ", concat("CIDADE",\',\',"UF"), "BAIRRO", "CEP", "ENDERECO", "TELEFONE_COMERCIAL" from "Clientes" left join "Cidades" ON "CODCIDADE" = "COD_CIDADE" where "COD_CLI" = $cod');
+
+    if (cod != 0) {
+      for (var element in volumeResponse) {
+        cli = Cliente(
+            cod, 0, element[0] as String?, '', element[1] as String?, '',
+            cidade: element[2] as String?, bairro: element[3] as String?, cep: '${element[4]}' as String?, endereco: element[5] as String?, telefone_celular: element[6] as String?);
+      }
+
+    }
+
+    return cli;
+
+  }
+
+  Future<List<Pedido>> createDeclaracao(Declaracao dec, DateTime dtIni, DateTime dtFim) async {
+    await conn.execute('INSERT INTO "Pedidos"("NUMPED", "VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI", "STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "VOLUME_NF", "DATA_FIM_CHECKOUT", "TIPO", "MOTIVO")VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
+
+    var teste = <Pedido>[];
+    late Result volumeResponse;
+    volumeResponse = await conn.execute(
+        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Pedidos"."TIPO" like \'D\' and "DATA_PEDIDO" between \'$dtIni\' and \'$dtFim\' group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+    for (var element in volumeResponse) {
+      if (element.isNotEmpty) {
+        teste.add(Pedido(
+          element[0]! as int,
+          element[10] as String,
+          0,
+          element[1]! as int, 'Correto',
+          codCli: element[2]! as int,
+          cliente: element[3]!.toString(),
+          valor: element[4]! as double,
+          nota: element[5] as int,
+          cidade: element[6].toString(),
+          romaneio: element[7] as int?,
+          dtFat: element[8] as DateTime?,
+          dtPedido: element[9] as DateTime?,));
+      }
+    }
+
+    return teste;
   }
 
 
