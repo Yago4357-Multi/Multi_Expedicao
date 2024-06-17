@@ -743,7 +743,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         Checkbox(
                                             value: pedidos[index].ignorar,
                                             onChanged: (value) async {
-                                              bd.updateIgnorar(
+                                              await bd.updateIgnorar(
                                                   pedidos[index].ped, value);
                                               pedidoResposta =
                                                   bd.faturadosNBipados(

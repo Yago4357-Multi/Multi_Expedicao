@@ -1410,10 +1410,10 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (await bd.connected(context) == 1) {
-                        bd.createRomaneio(usur);
+                        bd.createromaneio(usur);
                         var i = 0;
                         if (context.mounted) {
-                          i = await bd.getRomaneio(context) ?? 0;
+                          i = await bd.getromaneio(context) ?? 0;
                         }
                         if (context.mounted) {
                           Navigator.pop(context);
