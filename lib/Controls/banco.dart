@@ -32,10 +32,10 @@ class Banco {
     try {
       conn = await Connection.open(
           Endpoint(
-            host: '192.168.17.104',
-            database: 'postgres',
-            username: 'postgres',
-            password: 'Multi@bd7',
+            host: '192.168.1.183',
+            database: 'Teste',
+            username: 'BI',
+            password: '123456',
             port: 5432,
           ),
           settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
@@ -70,10 +70,10 @@ class Banco {
       } else {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.17.104',
-              database: 'postgres',
-              username: 'postgres',
-              password: 'Multi@bd7',
+              host: '192.168.1.183',
+              database: 'Teste',
+              username: 'BI',
+              password: '123456',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
@@ -127,10 +127,10 @@ class Banco {
       try {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.17.104',
-              database: 'postgres',
-              username: 'postgres',
-              password: 'Multi@bd7',
+              host: '192.168.1.183',
+              database: 'Teste',
+              username: 'BI',
+              password: '123456',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
@@ -189,7 +189,7 @@ class Banco {
 
       try {
         await conn.execute(
-            'insert into "Bipagem"("PEDIDO","PALETE","DATA_BIPAGEM","VOLUME_CAIXA","COD_BARRA","ID_USER_BIPAGEM") values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
+            'insert into bipagem(PEDIDO,PALETE,DATA_BIPAGEM,VOLUME_CAIXA,COD_BARRA,ID_USER_BIPAGEM) values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
       } on Exception{
         if (a.mounted) {
           await showCupertinoModalPopup(
@@ -219,7 +219,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PALETE" = $pallet order by "ID" desc;');
+          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PALETE = $pallet order by ID desc;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -229,7 +229,7 @@ class Banco {
       for (var element in pedidos) {
         try {
           volumeResponse = await conn.execute(
-              'select "VOLUME_TOTAL", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" where "NUMPED" = ${element[1]} and "PALETE" = $pallet group by "VOLUME_TOTAL";');
+              'select VOLUME_TOTAL, count(ID) from pedidos left join bipagem on PEDIDO = NUMPED where NUMPED = ${element[1]} and PALETE = $pallet group by VOLUME_TOTAL;');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
               teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -253,13 +253,13 @@ class Banco {
 
   }
 
-  ///Função para criar novos Paletes
-  void createPalete(Usuario usur) async {
+  ///Função para criar novos paletes
+  void createpalete(Usuario usur) async {
     await conn.execute(
-        'insert into "Palete" ("DATA_INCLUSAO","ID_USUR_CRIACAO") values (current_timestamp,${usur.id});');
+        'insert into palete (DATA_INCLUSAO,ID_USUR_CRIACAO) values (current_timestamp,${usur.id});');
   }
 
-  ///Função para verificar se o Palete já existe
+  ///Função para verificar se o palete já existe
   void paleteExiste(int palete, BuildContext a, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
@@ -269,7 +269,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select "ID","DATA_FECHAMENTO" from "Palete" where "ID" = $palete;');
+          'select ID,DATA_FECHAMENTO from palete where ID = $palete;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -286,7 +286,7 @@ class Banco {
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
-              title: const Text('Palete não encontrado'),
+              title: const Text('palete não encontrado'),
               actions: <CupertinoDialogAction>[
                 CupertinoDialogAction(
                     isDefaultAction: true,
@@ -335,7 +335,7 @@ class Banco {
     }
   }
 
-  ///Função para puxar todos os Romaneios
+  ///Função para puxar todos os romaneios
   Future<List<Romaneio>> romaneioExiste() async {
     var teste = <Romaneio>[];
 
@@ -344,7 +344,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select "Romaneio"."ID","Romaneio"."DATA_FECHAMENTO", "Romaneio"."DATA_ROMANEIO", "Usuarios"."NOME", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\'), count("Bipagem"."ID") from "Romaneio" left join "Palete" on "Palete"."ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "Palete"."ID" = "Bipagem"."PALETE" left join "Usuarios" on "Usuarios"."ID" = "Romaneio"."ID_USUR" group by "Romaneio"."ID", "Romaneio"."DATA_FECHAMENTO", "Romaneio"."DATA_ROMANEIO", "Usuarios"."NOME", "Usuarios"."NOME";');
+          'select romaneio.ID,romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\'), count(bipagem.ID) from romaneio left join palete on palete.ID_ROMANEIO = romaneio.ID left join bipagem on palete.ID = bipagem.PALETE left join usuarios on usuarios.ID = romaneio.ID_USUR group by romaneio.ID, romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, usuarios.NOME;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -356,14 +356,14 @@ class Banco {
     return teste;
   }
 
-  ///Função para buscar o último Romaneio do Banco
-  Future<int> getPalete() async {
+  ///Função para buscar o último romaneio do Banco
+  Future<int> getpalete() async {
     var teste = 0;
     late final Result pedidos;
 
     try {
       pedidos =
-      await conn.execute('select COALESCE(MAX("ID"),0) from "Palete";');
+      await conn.execute('select COALESCE(MAX(ID),0) from palete;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -383,7 +383,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" as Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" as Fech on Fech."ID" = "ID_USUR_FECHAMENTO" where "Palete"."DATA_FECHAMENTO" is not null and "Romaneio"."DATA_FECHAMENTO" is null group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO" order by "ID";');
+          'select palete.ID,Bip.NOME,DATA_INCLUSAO,count(bipagem.PEDIDO),Fech.NOME,palete.DATA_FECHAMENTO from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID left join usuarios as Bip on Bip.ID = ID_USUR_CRIACAO left join usuarios as Fech on Fech.ID = ID_USUR_FECHAMENTO where palete.DATA_FECHAMENTO is not null and romaneio.DATA_FECHAMENTO is null group by palete.ID, Bip.NOME, DATA_INCLUSAO, Fech.NOME, palete.DATA_FECHAMENTO order by ID;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -423,7 +423,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select "Romaneio"."ID", count("Bipagem"."PEDIDO"),"Romaneio"."DATA_FECHAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join (select "Palete"."ID" from "Palete" left join "Romaneio" on "Romaneio"."ID" = "ID_ROMANEIO" where "Palete"."DATA_CARREGAMENTO" is null) as "Palete2" on "Palete2"."ID" = "Palete"."ID" where "Romaneio"."DATA_FECHAMENTO" is not null and "Palete2"."ID" is not null group by "Romaneio"."ID", "Romaneio"."ID_USUR", "Romaneio"."DATA_FECHAMENTO" order by "ID"');
+          'select romaneio.ID, count(bipagem.PEDIDO),romaneio.DATA_FECHAMENTO from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID left join (select palete.ID from palete left join romaneio on romaneio.ID = ID_ROMANEIO where palete.DATA_CARREGAMENTO is null) as palete2 on palete2.ID = palete.ID where romaneio.DATA_FECHAMENTO is not null and palete2.ID is not null group by romaneio.ID, romaneio.ID_USUR, romaneio.DATA_FECHAMENTO order by ID');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -444,7 +444,7 @@ class Banco {
 
     try {
       pedidos = await conn.execute(
-          'select "Palete"."ID",Bip."NOME","DATA_INCLUSAO",count("Bipagem"."PEDIDO"),Fech."NOME","Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO"  from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" left join "Usuarios" Bip on Bip."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" LEFT JOIN "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" where "Palete"."ID" = $palete group by "Palete"."ID", Bip."NOME", "DATA_INCLUSAO", Fech."NOME", "Palete"."DATA_FECHAMENTO", Car."NOME","Palete"."DATA_CARREGAMENTO" order by "ID";');
+          'select palete.ID,Bip.NOME,DATA_INCLUSAO,count(bipagem.PEDIDO),Fech.NOME,palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO  from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID left join usuarios Bip on Bip.ID = ID_USUR_CRIACAO left join usuarios Fech on Fech.ID = ID_USUR_FECHAMENTO LEFT JOIN usuarios Car on Car.ID = ID_USUR_CARREGAMENTO where palete.ID = $palete group by palete.ID, Bip.NOME, DATA_INCLUSAO, Fech.NOME, palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO order by ID;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -495,32 +495,32 @@ class Banco {
     return teste;
   }
 
-  ///Função para finalizar Paletes
-  void endPalete(int palete, Usuario usur) async {
+  ///Função para finalizar paletes
+  void endpalete(int palete, Usuario usur) async {
     await conn.execute(
-        'update "Palete" set "DATA_FECHAMENTO" = current_timestamp, "ID_USUR_FECHAMENTO" = ${usur.id} where "ID" = $palete');
+        'update palete set DATA_FECHAMENTO = current_timestamp, ID_USUR_FECHAMENTO = ${usur.id} where ID = $palete');
   }
 
-  ///Função para criar novos Romaneios
-  void createRomaneio(Usuario usur) async {
+  ///Função para criar novos romaneios
+  void createromaneio(Usuario usur) async {
     await conn.execute(
-        'insert into "Romaneio" ("DATA_ROMANEIO","ID_USUR") values (current_timestamp,${usur.id});');
+        'insert into romaneio (DATA_ROMANEIO,ID_USUR) values (current_timestamp,${usur.id});');
   }
 
   ///Função para atualizar dados do Carregamento
   void updateCarregamento(int palete, Usuario usur) async {
     await conn.execute(
-        'update "Palete" set "DATA_CARREGAMENTO" = current_timestamp, "ID_USUR_CARREGAMENTO" = ${usur.id} where "ID" = $palete;');
+        'update palete set DATA_CARREGAMENTO = current_timestamp, ID_USUR_CARREGAMENTO = ${usur.id} where ID = $palete;');
   }
 
-  ///Pegar palete baseado no Romaneio
+  ///Pegar palete baseado no romaneio
   Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
 
     try {
       pedidos = await conn.execute(
-          'select "Palete"."ID", count("Bipagem"."PEDIDO"), "DATA_CARREGAMENTO" from "Palete" left join "Romaneio" on "ID_ROMANEIO" = "Romaneio"."ID" left join "Bipagem" on "PALETE" = "Palete"."ID" where "Romaneio"."ID" = $romaneio group by "Palete"."ID", "DATA_CARREGAMENTO" order by "Palete"."ID";');
+          'select palete.ID, count(bipagem.PEDIDO), DATA_CARREGAMENTO from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID where romaneio.ID = $romaneio group by palete.ID, DATA_CARREGAMENTO order by palete.ID;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -539,14 +539,14 @@ class Banco {
     return carregamento;
   }
 
-  ///Função para buscar o último Romaneio do Banco
-  Future<int?> getRomaneio(BuildContext a) async {
+  ///Função para buscar o último romaneio do Banco
+  Future<int?> getromaneio(BuildContext a) async {
     int? teste;
     late final Result pedidos;
 
     try {
       pedidos = await conn.execute(
-          'select COALESCE(MAX("ID"),0) from "Romaneio" where "DATA_FECHAMENTO" IS NULL;');
+          'select COALESCE(MAX(ID),0) from romaneio where DATA_FECHAMENTO IS NULL;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -561,7 +561,7 @@ class Banco {
             barrierDismissible: false,
             builder: (context) {
               return CupertinoAlertDialog(
-                title: const Text('Nenhum Romaneio em Aberto'),
+                title: const Text('Nenhum romaneio em Aberto'),
                 actions: <CupertinoDialogAction>[
                   CupertinoDialogAction(
                       isDefaultAction: true,
@@ -581,14 +581,14 @@ class Banco {
     return 0;
   }
 
-  ///Funlção para finalizar Romaneio
-  void endRomaneio(int romaneio, List<Pedido> pedidos) async {
+  ///Funlção para finalizar romaneio
+  void endromaneio(int romaneio, List<Pedido> pedidos) async {
     for (var i in pedidos) {
       await conn.execute(
-          'update "Pedidos" set "IDROMANEIO" = $romaneio where "NUMPED" = ${i.ped}');
+          'update pedidos set IDROMANEIO = $romaneio where NUMPED = ${i.ped}');
     }
     await conn.execute(
-        'update "Romaneio" set "DATA_FECHAMENTO" = current_timestamp where "ID" = $romaneio;');
+        'update romaneio set DATA_FECHAMENTO = current_timestamp where ID = $romaneio;');
   }
 
   ///Função para Buscar todas as bipagens do Banco
@@ -598,7 +598,7 @@ class Banco {
     late Result volumeResponse;
 
     try {
-      pedidos = await conn.execute('Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem";');
+      pedidos = await conn.execute('Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -608,7 +608,7 @@ class Banco {
     for (var element in pedidos) {
       try {
         volumeResponse = (await conn.execute(
-            'select "VOLUME_TOTAL" from "Pedidos" where "NUMPED" = ${element[1]};'));
+            'select VOLUME_TOTAL from pedidos where NUMPED = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -626,35 +626,28 @@ class Banco {
   }
 
 
-  ///Função para buscar todas as bipagens dos paletes selecionados para a tela do Romaneio
-  Future<List<Pedido>>  selectPalletRomaneio(Future<List<int>> listaPaletes) async {
-    var paletes = await listaPaletes;
+  ///Função para buscar todas as bipagens dos paletes selecionados para a tela do romaneio
+  Future<List<Pedido>>  selectPalletromaneio(Future<List<int>> listapaletes) async {
+    var paletes = await listapaletes;
     var teste = <Pedido>[];
     late final Result pedidos;
     var status = 'Correto';
 
-    print(listaPaletes);
-
-    if ((await listaPaletes).isNotEmpty) {
+    if ((await listapaletes).isNotEmpty) {
       try {
         if (paletes.isNotEmpty) {
           pedidos = await conn.execute(
-              'select P."NUMPED", COALESCE(string_agg(distinct cast(B."PALETE" as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B."PEDIDO"),0) as CAIXAS, P."VOLUME_TOTAL", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS" from "Pedidos" as P left join "Bipagem" as B on P."NUMPED" = B."PEDIDO" left join "Clientes" as C on C."COD_CLI" = P."ID_CLI" left join "Cidades" as CID on CID."CODCIDADE" = C."COD_CIDADE" where B."PEDIDO" in (Select "PEDIDO" from "Bipagem" where "PALETE" in (${paletes
+              'select P.NUMPED, COALESCE(string_agg(distinct cast(B.PALETE as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B.PEDIDO),0) as CAIXAS, P.VOLUME_TOTAL, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.COD_CLI, P.STATUS from pedidos as P left join bipagem as B on P.NUMPED = B.PEDIDO left join clientes as C on C.COD_CLI = P.ID_CLI left join cidades as CID on CID.CODCIDADE = C.COD_CIDADE where B.PEDIDO in (Select PEDIDO from bipagem where PALETE in (${paletes
                   .join(
-                  ',')})) group by P."NUMPED", C."CNPJ", C."CLIENTE", CID."CIDADE", P."NF", P."VLTOTAL", C."COD_CLI", P."STATUS";');
+                  ',')})) group by P.NUMPED, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.COD_CLI, P.STATUS;');
         }
       } on Exception catch (e) {
         if (kDebugMode) {
           print(e);
         }
       }
-      List<int> teste3 = [];
+      var teste3 = <int>[];
       for (var element in pedidos) {
-        print('TESTEEEEE ${
-            element[1]
-                .toString()
-                .replaceAll(RegExp(',| '), ', ')
-        }');
         if ((element[2] as int) < (element[3] as int) || element[3] == 0 ||
             !paletes.toSet().containsAll(teste3.toSet()) ||
             (element[10] != 'F')) {
@@ -674,10 +667,11 @@ class Banco {
               codCli: element[9] as int?,
               situacao: element[10] as String?));
         } catch(e){
-          print(e);
+          if (kDebugMode) {
+            print(e);
+          }
         }
       }
-      print(teste);
     }
 
 
@@ -691,7 +685,7 @@ class Banco {
     late Result volumeResponse;
     late Result response2;
     late int teste2;
-    response2 = await conn.execute('select count(*) from "Palete" where "ID" = $palete');
+    response2 = await conn.execute('select count(*) from palete where ID = $palete');
     for (var element in response2){
       teste2 = element[0] as int;
     }
@@ -703,7 +697,7 @@ class Banco {
           builder: (context) {
             return CupertinoAlertDialog(
               title: const Text(
-                'Palete Inválido',
+                'palete Inválido',
               ),
               actions: <CupertinoDialogAction>[
                 CupertinoDialogAction(
@@ -720,7 +714,7 @@ class Banco {
     }else{
       try {
         pedidos = await conn.execute(
-            'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PALETE" = $palete order by "ID" desc;');
+            'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PALETE = $palete order by ID desc;');
       } on Exception catch (e) {
         if (kDebugMode) {
           print(e);
@@ -730,7 +724,7 @@ class Banco {
         for (var element in pedidos) {
           try {
             volumeResponse = await conn.execute(
-                'select "VOLUME_TOTAL", "Clientes"."COD_CLI", "Clientes"."CLIENTE", "Cidades"."CIDADE", count("ID") from "Pedidos" left join "Bipagem" on "PEDIDO" = "NUMPED" left join "Clientes" on "Clientes"."COD_CLI" = "Pedidos"."ID_CLI" left join "Cidades" on "COD_CIDADE" = "Cidades"."CODCIDADE" where "NUMPED" = ${element[1]} and "PALETE" = $palete group by "VOLUME_TOTAL", "Clientes"."COD_CLI","Clientes"."CLIENTE", "Cidades"."CIDADE";');
+                'select VOLUME_TOTAL, clientes.COD_CLI, clientes.CLIENTE, cidades.CIDADE, count(ID) from pedidos left join bipagem on PEDIDO = NUMPED left join clientes on clientes.COD_CLI = pedidos.ID_CLI left join cidades on COD_CIDADE = cidades.CODCIDADE where NUMPED = ${element[1]} and PALETE = $palete group by VOLUME_TOTAL, clientes.COD_CLI,clientes.CLIENTE, cidades.CIDADE;');
             for (var element2 in volumeResponse) {
               if (element2[0] != null) {
                 teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -754,14 +748,14 @@ class Banco {
     return teste;
   }
 
-  ///Buscar Bipagem pelo número do Pedido
+  ///Buscar bipagem pelo número do Pedido
   Future<List<Contagem>> selectPedido(int cod) async {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
     try {
       pedidos = await conn.execute(
-          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = $cod order by VOLUME_CAIXA;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -770,7 +764,7 @@ class Banco {
     for (var element in pedidos) {
       try {
         volumeResponse = (await conn.execute(
-            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -781,6 +775,7 @@ class Banco {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
                   'L' => 'Libearado',
+                  'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
                   Object() => throw UnimplementedError(),
                 }));
@@ -800,7 +795,7 @@ class Banco {
   Future<List<Contagem>> updatePedidoBip(List<Contagem> pedidos, cod) async {
     for (var element in pedidos) {
       await conn.execute(
-          'update "Bipagem" set "PALETE" = ${element.palete} where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
+          'update bipagem set PALETE = ${element.palete} where PEDIDO = ${element.ped} and VOLUME_CAIXA = ${element.caixa};');
     }
     var teste = <Contagem>[];
     late final Result pedidos2;
@@ -808,7 +803,7 @@ class Banco {
 
     try {
       pedidos2 = await conn.execute(
-          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = $cod order by VOLUME_CAIXA;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -817,7 +812,7 @@ class Banco {
     for (var element in pedidos2) {
       try {
         volumeResponse = (await conn.execute(
-            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -828,6 +823,7 @@ class Banco {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
                   'L' => 'Libearado',
+                  'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
                   Object() => throw UnimplementedError(),
                 }));
@@ -849,13 +845,13 @@ class Banco {
     for (var element in pedidos) {
       try {
         pedidosResponse = await conn.execute(
-            'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa} order by "VOLUME_CAIXA";');
+            'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = ${element.ped} and VOLUME_CAIXA = ${element.caixa} order by VOLUME_CAIXA;');
 
         await conn.execute(
-            'delete from "Bipagem" where "PEDIDO" = ${element.ped} and "VOLUME_CAIXA" = ${element.caixa};');
+            'delete from bipagem where PEDIDO = ${element.ped} and VOLUME_CAIXA = ${element.caixa};');
         for (var element2 in pedidosResponse) {
           await conn.execute(
-              "insert into \"Bipagem_Excluida\" values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
+              "insert into bipagem_excluida values (${element2[0]},${element2[1]},to_timestamp('${element2[2]}','YYYY-MM-DD HH24:MI:SS'),${element2[3]},${element2[4]},${element2[5]},${element2[6]},current_timestamp,${usur.id});");
         }
       } on Exception catch (e) {
         if (kDebugMode) {
@@ -870,7 +866,7 @@ class Banco {
 
     try {
       pedidos2 = await conn.execute(
-          'Select "ID", "PEDIDO", "DATA_BIPAGEM", "COD_BARRA", "VOLUME_CAIXA", "PALETE", "ID_USER_BIPAGEM" from "Bipagem" where "PEDIDO" = $cod order by "VOLUME_CAIXA";');
+          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = $cod order by VOLUME_CAIXA;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -879,7 +875,7 @@ class Banco {
     for (var element in pedidos2) {
       try {
         volumeResponse = (await conn.execute(
-            'select "VOLUME_TOTAL", "VLTOTAL", "CLIENTE", "Cidades"."CIDADE", "STATUS" from "Pedidos" left join "Clientes" on "COD_CLI" = "ID_CLI" LEFT JOIN "Cidades" on "COD_CIDADE" = "CODCIDADE" where "NUMPED" = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -890,6 +886,7 @@ class Banco {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
                   'L' => 'Libearado',
+                  'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
                   Object() => throw UnimplementedError(),
                 }));
@@ -904,23 +901,22 @@ class Banco {
     return teste;
   }
 
-  ///Função para atualizar o romaneio do Palete
-  Future<List<int>> updatePalete(int romaneio, List<int> paletes) async {
-    print(paletes);
+  ///Função para atualizar o romaneio do palete
+  Future<List<int>> updatepalete(int romaneio, List<int> paletes) async {
     await conn.execute(
-        'update "Palete" set "ID_ROMANEIO" = $romaneio where "ID" in (${paletes.join(',')});');
+        'update palete set ID_ROMANEIO = $romaneio where ID in (${paletes.join(',')});');
 
     var teste = <int>[];
     late final Result pedidos;
     try {
       pedidos = await conn.execute(
-          'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
+          'select ID from palete where ID_ROMANEIO = $romaneio;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-    if (await pedidos.isNotEmpty) {
+    if (pedidos.isNotEmpty) {
       for (var element in pedidos) {
         teste.add(element[0] as int);
       }
@@ -929,35 +925,35 @@ class Banco {
   }
 
   ///Função para remover o romaneio do palete
-  void removePalete(int romaneio, List<int> paletes) async {
+  void removepalete(int romaneio, List<int> paletes) async {
     if (paletes.isNotEmpty) {
       await conn.execute(
-          'update "Palete" set "ID_ROMANEIO" = null where "ID" not in (${paletes.join(',')}) and "ID_ROMANEIO" = $romaneio;');
+          'update palete set ID_ROMANEIO = null where ID not in (${paletes.join(',')}) and ID_ROMANEIO = $romaneio;');
     } else {
       await conn.execute(
-          'update "Palete" set "ID_ROMANEIO" = null where "ID_ROMANEIO" = $romaneio;');
+          'update palete set ID_ROMANEIO = null where ID_ROMANEIO = $romaneio;');
     }
   }
 
   ///Função para reabrir o palete no Banco
-  void reabrirPalete(int palete) async {
+  void reabrirpalete(int palete) async {
     await conn.execute(
-        'update "Palete" set "DATA_FECHAMENTO" = null, "ID_USUR_FECHAMENTO" = null, "ID_ROMANEIO" = null where "ID" = $palete;');
+        'update palete set DATA_FECHAMENTO = null, ID_USUR_FECHAMENTO = null, ID_ROMANEIO = null where ID = $palete;');
   }
 
   ///Função para puxar os paletes que estão no romaneio
-  Future<List<int>> selectRomaneio(int romaneio) async {
+  Future<List<int>> selectromaneio(int romaneio) async {
     var teste = <int>[];
     late final Result pedidos;
     try {
       pedidos = await conn.execute(
-          'select "ID" from "Palete" where "ID_ROMANEIO" = $romaneio;');
+          'select ID from palete where ID_ROMANEIO = $romaneio;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-    if (await pedidos.isNotEmpty) {
+    if (pedidos.isNotEmpty) {
       for (var element in pedidos) {
         teste.add(element[0] as int);
       }
@@ -971,7 +967,7 @@ class Banco {
     late final Result pedidos;
     try {
       pedidos = await conn.execute(
-          "select \"ID\", \"SETOR\", \"NOME\" from \"Usuarios\" where upper(\"APELIDO\") like upper('$login') and \"SENHA\" like '$senha';");
+          "select ID, SETOR, NOME from usuarios where upper(APELIDO) like upper('$login') and SENHA like '$senha'");
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -1017,14 +1013,14 @@ class Banco {
   }
 
   ///Busca pedidos do Banco por Roameneio
-  Future<List<Pedido>> selectPedidosRomaneio(List<int> cods) async {
+  Future<List<Pedido>> selectpedidosromaneio(List<int> cods) async {
     var teste = <Pedido>[];
     if (cods.isNotEmpty) {
       late Result volumeResponse;
       volumeResponse = await conn.execute(
-          'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "IDROMANEIO" in (${cods
+          'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where IDROMANEIO in (${cods
               .join(
-              ',')}) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+              ',')}) group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
       for (var element in volumeResponse) {
         if (element.isNotEmpty) {
           teste.add(Pedido(
@@ -1046,12 +1042,12 @@ class Banco {
     return teste;
   }
 
-  ///Busca as declarações na tabela de Pedidos
+  ///Busca as declarações na tabela de pedidos
   Future<List<Pedido>> allDeclaracoes(dtIni, dtFim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Pedidos"."TIPO" like \'D\' and "DATA_PEDIDO" between \'$dtIni\' and \'$dtFim\' group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1079,7 +1075,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IGNORAR" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "DATA_FATURAMENTO" between \'$dtIni\' and \'$dtFim\';');
+        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IGNORAR from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and DATA_FATURAMENTO between \'$dtIni\' and \'$dtFim\';');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1103,7 +1099,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", count("Bipagem"."ID"), "NF", "Cidades"."CIDADE" from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and ("DATA_CANC_PED" IS NOT NULL OR "DATA_CANC_NF" IS NOT NULL) group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "NF", "Cidades"."CIDADE";');
+        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, count(bipagem.ID), NF, cidades.CIDADE from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, NF, cidades.CIDADE;');
     for (var element in volumeResponse) {
       try{
         if (element.isNotEmpty) {
@@ -1127,7 +1123,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO", count("Bipagem"."ID") from "Palete" left join "Usuarios" Cri on Cri."ID" = "ID_USUR_CRIACAO" left join "Usuarios" Fech on Fech."ID" = "ID_USUR_FECHAMENTO" left join "Usuarios" Car on Car."ID" = "ID_USUR_CARREGAMENTO" left join "Bipagem" on "PALETE" = "Palete"."ID" where "DATA_CARREGAMENTO" is null group by "Palete"."ID", "ID_ROMANEIO",Cri."NOME", "DATA_INCLUSAO",Fech."NOME", "DATA_FECHAMENTO",Car."NOME", "DATA_CARREGAMENTO"');
+        'select palete.ID, ID_ROMANEIO,Cri.NOME, DATA_INCLUSAO,Fech.NOME, DATA_FECHAMENTO,Car.NOME, DATA_CARREGAMENTO, count(bipagem.ID) from palete left join usuarios Cri on Cri.ID = ID_USUR_CRIACAO left join usuarios Fech on Fech.ID = ID_USUR_FECHAMENTO left join usuarios Car on Car.ID = ID_USUR_CARREGAMENTO left join bipagem on PALETE = palete.ID where DATA_CARREGAMENTO is null group by palete.ID, ID_ROMANEIO,Cri.NOME, DATA_INCLUSAO,Fech.NOME, DATA_FECHAMENTO,Car.NOME, DATA_CARREGAMENTO');
     for (var element in volumeResponse) {
       teste.add(Paletes(element[0] as int?, element[2] as String?,
           (element[3] as DateTime).toLocal(), element[8] as int?,
@@ -1142,12 +1138,12 @@ class Banco {
     return teste;
   }
 
-  Future<int?> selectAllPedidos(int cod) async {
+  Future<int?> selectAllpedidos(int cod) async {
     late Result volumeResponse;
 
     try {
       volumeResponse = await conn.execute(
-          'select count(*) from "Pedidos" where "NUMPED" = $cod;');
+          'select count(*) from pedidos where NUMPED = $cod;');
     }
     catch(e){
       print(e);
@@ -1162,7 +1158,7 @@ class Banco {
       return 2;
     }else{
       volumeResponse = await conn.execute(
-          'select count("STATUS") from "Pedidos" where "NUMPED" = $cod and "STATUS" = \'C\';');
+          'select count(STATUS) from pedidos where NUMPED = $cod and STATUS = \'C\';');
       for (var element in volumeResponse){
         teste = element[0] as int?;
       }
@@ -1181,7 +1177,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select "Romaneio"."ID", "DATA_FECHAMENTO", sum("VOLUME_TOTAL") from "Romaneio" left join "Pedidos" on "IDROMANEIO" = "Romaneio"."ID" where "DATA_FECHAMENTO" is not null and "DATA_FECHAMENTO" between \'$dtIni\' and \'$dtFim\' group by "Romaneio"."ID", "DATA_FECHAMENTO" order by "DATA_FECHAMENTO"');
+        'select romaneio.ID, DATA_FECHAMENTO, sum(VOLUME_TOTAL) from romaneio left join pedidos on IDROMANEIO = romaneio.ID where DATA_FECHAMENTO is not null and DATA_FECHAMENTO between \'$dtIni\' and \'$dtFim\' group by romaneio.ID, DATA_FECHAMENTO order by DATA_FECHAMENTO');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Romaneio(
@@ -1202,7 +1198,7 @@ class Banco {
 
     try {
       volumeResponse = await conn.execute(
-          'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is null and "STATUS" like \'F\' and "VOLUME_TOTAL" <> 0 and "IGNORAR" = false;');
+          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
     } catch(e){
       print(e);
     }
@@ -1220,7 +1216,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select count(*) from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Bipagem"."PEDIDO" is not null and ("DATA_CANC_PED" IS NOT NULL OR "DATA_CANC_NF" IS NOT NULL) and "IGNORAR" = false group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "NF", "Cidades"."CIDADE";');
+        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, NF, cidades.CIDADE;');
     for (var element in volumeResponse) {
       try{
         if (element.isNotEmpty) {
@@ -1234,8 +1230,8 @@ class Banco {
     return teste;
   }
 
-  void updateIgnorar(int ped, bool? value) {
-    conn.execute('update multiexpedicao."Pedidos" set "IGNORAR" = $value where "NUMPED" = $ped;');
+  Future<void> updateIgnorar(int ped, bool? value) async {
+    await conn.execute('update multiexpedicao.pedidos set IGNORAR = $value where NUMPED = $ped;');
   }
 
   ///Seleciona o número da última declaração criada
@@ -1245,7 +1241,7 @@ class Banco {
 
     try {
       pedidos =
-      await conn.execute('select COALESCE(MAX("NUMPED"),0) from "Pedidos" where "TIPO" = \'D\';');
+      await conn.execute('select COALESCE(MAX(NUMPED),0) from pedidos where TIPO = \'D\';');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -1261,7 +1257,7 @@ class Banco {
   Future<Cliente> selectCliente(int cod) async {
     late var cli = Cliente(0, 0, '', '', '', '');
     late Result volumeResponse;
-    volumeResponse = await conn.execute('select "CLIENTE", "CNPJ", concat("CIDADE",\',\',"UF"), "BAIRRO", "CEP", "ENDERECO", "TELEFONE_COMERCIAL" from "Clientes" left join "Cidades" ON "CODCIDADE" = "COD_CIDADE" where "COD_CLI" = $cod');
+    volumeResponse = await conn.execute('select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON CODCIDADE = COD_CIDADE where COD_CLI = $cod');
 
     if (cod != 0) {
       for (var element in volumeResponse) {
@@ -1277,12 +1273,12 @@ class Banco {
   }
 
   Future<List<Pedido>> createDeclaracao(Declaracao dec, DateTime dtIni, DateTime dtFim) async {
-    await conn.execute('INSERT INTO "Pedidos"("NUMPED", "VOLUME_TOTAL", "DATA_FATURAMENTO", "VLTOTAL", "ID_CLI", "STATUS", "NF", "COND_VENDA", "DATA_PEDIDO", "VOLUME_NF", "DATA_FIM_CHECKOUT", "TIPO", "MOTIVO")VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
+    await conn.execute('INSERT INTO pedidos(NUMPED, VOLUME_TOTAL, DATA_FATURAMENTO, VLTOTAL, ID_CLI, STATUS, NF, COND_VENDA, DATA_PEDIDO, VOLUME_NF, DATA_FIM_CHECKOUT, TIPO, MOTIVO)VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
 
     var teste = <Pedido>[];
     late Result volumeResponse;
     volumeResponse = await conn.execute(
-        'select "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO", COALESCE(string_agg(distinct cast("Palete"."ID" as varchar) , \', \' ),\'0\') from "Pedidos" left join "Bipagem" on "Bipagem"."PEDIDO" = "Pedidos"."NUMPED" left join "Palete" on "Bipagem"."PALETE" = "Palete"."ID" left join "Clientes" on "COD_CLI" = "ID_CLI" left join "Cidades" on "CODCIDADE" = "COD_CIDADE" where "Pedidos"."TIPO" like \'D\' and "DATA_PEDIDO" between \'$dtIni\' and \'$dtFim\' group by "Pedidos"."NUMPED", "VOLUME_TOTAL", "COD_CLI", "CLIENTE", "VLTOTAL", "NF", "Cidades"."CIDADE", "IDROMANEIO", "DATA_FATURAMENTO", "DATA_PEDIDO";');
+        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(

@@ -729,7 +729,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                         onPressed: () async {
                                                                                           if (await bd.connected(context) == 1) {
                                                                                             setState(() {
-                                                                                              bd.reabrirPalete(cont);
+                                                                                              bd.reabrirpalete(cont);
                                                                                               getPalete = bd.paleteAll(cont, context);
                                                                                               Navigator.pop(context);
                                                                                             });

@@ -1219,7 +1219,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                         child: FFButtonWidget(
                           onPressed: () async {
                             if (await bd.connected(context) == 1) {
-                              bd.createPalete(usur);
+                              bd.createpalete(usur);
                               pdf.addPage(pw.Page(
                                 pageFormat: PdfPageFormat.a4,
                                 build: (context2) {

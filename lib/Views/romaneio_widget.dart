@@ -88,8 +88,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
 
   void rodarBanco() async {
     paletesFin = bd.paleteFinalizado();
-    getPaletes = bd.selectRomaneio(romaneio);
-    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+    getPaletes = bd.selectromaneio(romaneio);
+    pedidoResposta = bd.selectPalletromaneio(getPaletes);
     qtdCancFut = bd.qtdCanc();
     qtdFatFut = bd.qtdFat();
   }
@@ -163,8 +163,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
             );}),
           IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () async {
             paletesFin = bd.paleteFinalizado();
-            getPaletes = bd.selectRomaneio(romaneio);
-            pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+            getPaletes = bd.selectromaneio(romaneio);
+            pedidoResposta = bd.selectPalletromaneio(getPaletes);
             qtdCancFut = bd.qtdCanc();
             qtdFatFut = bd.qtdFat();
             setState(() {
@@ -200,7 +200,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                         for (var ped in pedidos) {
                                           vol += ped.vol;
                                         }
-                                        bd.endRomaneio(romaneio, pedidos);
+                                        bd.endromaneio(romaneio, pedidos);
                                         pdf.addPage(pw.MultiPage(
                                             margin: const pw.EdgeInsets.all(20),
                                             build: (context) {
@@ -1623,10 +1623,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                     1) {
                                                                                   setter(() {
                                                                                     paleteSelecionadoint.remove(palete[index].pallet);
-                                                                                    bd.removePalete(romaneio, paleteSelecionadoint);
-                                                                                    getPaletes = bd.selectRomaneio(romaneio);
+                                                                                    bd.removepalete(romaneio, paleteSelecionadoint);
+                                                                                    getPaletes = bd.selectromaneio(romaneio);
                                                                                     setState(() {
-                                                                                      pedidoResposta = (bd.selectPalletRomaneio(getPaletes));
+                                                                                      pedidoResposta = (bd.selectPalletromaneio(getPaletes));
                                                                                     });
                                                                                   });
                                                                                 }
@@ -1779,8 +1779,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                     paleteSelecionadoint.sort(
                                                                                           (a, b) => a.compareTo(b),
                                                                                     );
-                                                                                    getPaletes =  bd.updatePalete(romaneio, paleteSelecionadoint);
-                                                                                    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
+                                                                                    getPaletes =  bd.updatepalete(romaneio, paleteSelecionadoint);
+                                                                                    pedidoResposta = bd.selectPalletromaneio(getPaletes);
                                                                                     setter(() {
                                                                                     setState(() {
 
