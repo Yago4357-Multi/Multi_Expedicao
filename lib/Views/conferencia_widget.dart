@@ -154,7 +154,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                   isDestructiveAction: true,
                                   onPressed: () async {
                                     if (await bd.connected(context) == 1) {
-                                      bd.endpalete(palete, usur);
+                                      bd.endPalete(palete, usur);
                                       if (context.mounted) {
                                         Navigator.pop(context);
                                         await Navigator.push(
@@ -348,7 +348,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                         var ped = int.parse(
                                             codArrumado.substring(0, 10));
                                         var teste2 =
-                                            await bd.selectAllpedidos(ped);
+                                            await bd.selectAllPedidos(ped);
                                         if (teste2 == 0) {
                                           if (context.mounted) {
                                             teste = bd.insert(

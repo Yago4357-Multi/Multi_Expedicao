@@ -72,8 +72,8 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
   }
 
   void rodarBanco() async {
-    getPaletes = bd.selectromaneio(palete);
-    pedidoResposta = bd.selectPalletromaneio(getPaletes);
+    getPaletes = bd.selectRomaneio(palete);
+    pedidoResposta = bd.selectPalletRomaneio(getPaletes);
   }
 
   @override
@@ -119,8 +119,8 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
             IconButton(
               icon: const Icon(Icons.lock_reset_outlined),
               onPressed: () async {
-                getPaletes = bd.selectromaneio(palete);
-                pedidoResposta = bd.selectPalletromaneio(getPaletes);
+                getPaletes = bd.selectRomaneio(palete);
+                pedidoResposta = bd.selectPalletRomaneio(getPaletes);
                 setState(() {});
               },
               color: Colors.white,
@@ -178,8 +178,8 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                     onFieldSubmitted: (value) async {
                                       paleteText = value;
                                       palete = int.parse(value);
-                                      getPaletes = bd.selectromaneio(palete);
-                                      pedidoResposta = bd.selectPalletromaneio(getPaletes);
+                                      getPaletes = bd.selectRomaneio(palete);
+                                      pedidoResposta = bd.selectPalletRomaneio(getPaletes);
                                       setState(() {});
                                     },
                                     autofocus: false,

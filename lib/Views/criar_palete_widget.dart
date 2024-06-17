@@ -56,7 +56,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   var i = 0;
 
   void rodarBanco() async {
-      getPalete = bd.getpalete();
+      getPalete = bd.getPalete();
   }
 
   @override
@@ -192,7 +192,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
                     child: FFButtonWidget(
                       onPressed: () async {
                         if (await bd.connected(context) == 1) {
-                          bd.createpalete(usur);
+                          bd.createPalete(usur);
                           pdf.addPage(pw.Page(
                             pageFormat: PdfPageFormat.a4,
                             build: (context2) {

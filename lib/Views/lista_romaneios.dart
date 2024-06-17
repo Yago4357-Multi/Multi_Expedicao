@@ -82,7 +82,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
     for (var i in teste) {
       romaneiosSelecionadoint.add(i.romaneio!);
     }
-          pedidosResposta = bd.selectpedidosromaneio(romaneiosSelecionadoint);
+          pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
   }
 
   @override
@@ -131,7 +131,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
             for (var i in teste) {
               romaneiosSelecionadoint.add(i.romaneio!);
             }
-            pedidosResposta = bd.selectpedidosromaneio(romaneiosSelecionadoint);
+            pedidosResposta = bd.selectPedidosRomaneio(romaneiosSelecionadoint);
             setState(() {
             });
           }, color: Colors.white,),
@@ -464,7 +464,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                         }
                                       }
                                       pedidosResposta =
-                                          bd.selectpedidosromaneio(
+                                          bd.selectPedidosRomaneio(
                                               romaneiosSelecionadoint);
                                     }
 
