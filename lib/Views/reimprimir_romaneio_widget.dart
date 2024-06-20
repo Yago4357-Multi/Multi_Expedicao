@@ -1,5 +1,4 @@
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
@@ -958,7 +957,6 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                         ));
                                   }
                                 }
-                                setState(() {});
                               },
                               text: 'Reimprimir Romaneio',
                               icon: const Icon(

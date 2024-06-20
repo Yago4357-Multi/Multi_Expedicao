@@ -1352,7 +1352,6 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                                                                         bd: bd)));
                                                                                       }
                                                                                     }
-                                                                                    setState(() {});
                                                                                   },
                                                                                   icon: const Icon(
                                                                                       Icons

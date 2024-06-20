@@ -440,7 +440,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                 const Duration(days: 7)))) {
                                           dtFim = dtIni
                                               .add(const Duration(days: 7))
-                                              .startOfDay;
+                                              .endOfDay;
                                         } else {
                                           dtFim = (datasRange.endDate!).endOfDay;
                                         }

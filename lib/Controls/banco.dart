@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/carregamento.dart';
@@ -32,13 +33,13 @@ class Banco {
     try {
       conn = await Connection.open(
           Endpoint(
-            host: '192.168.1.183',
-            database: 'Teste',
-            username: 'BI',
-            password: '123456',
+            host: '192.168.17.104',
+            database: 'multiexpedicao',
+            username: 'multi',
+            password: '@#Multi4785',
             port: 5432,
           ),
-          settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
+          settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
     } on SocketException {
       if (context.mounted) {
         await showCupertinoModalPopup(
@@ -70,13 +71,13 @@ class Banco {
       } else {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.1.183',
-              database: 'Teste',
-              username: 'BI',
-              password: '123456',
+              host: '192.168.17.104',
+              database: 'multiexpedicao',
+              username: 'multi',
+              password: '@#Multi4785',
               port: 5432,
             ),
-            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
+            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
         if (conn.isOpen) {
           return 1;
         }
@@ -127,13 +128,13 @@ class Banco {
       try {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.1.183',
-              database: 'Teste',
-              username: 'BI',
-              password: '123456',
+              host: '192.168.17.104',
+              database: 'multiexpedicao',
+              username: 'multi',
+              password: '@#Multi4785',
               port: 5432,
             ),
-            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO multiexpedicao'),));
+            settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
 
         return 1;
       } catch (e) {
@@ -229,7 +230,7 @@ class Banco {
       for (var element in pedidos) {
         try {
           volumeResponse = await conn.execute(
-              'select VOLUME_TOTAL, count(ID) from pedidos left join bipagem on PEDIDO = NUMPED where NUMPED = ${element[1]} and PALETE = $pallet group by VOLUME_TOTAL;');
+              'select VOLUME_TOTAL, count(ID) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido where pedidos.pedido = ${element[1]} and PALETE = $pallet group by VOLUME_TOTAL;');
           for (var element2 in volumeResponse) {
             if (element2[0] != null) {
               teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -585,7 +586,7 @@ class Banco {
   void endromaneio(int romaneio, List<Pedido> pedidos) async {
     for (var i in pedidos) {
       await conn.execute(
-          'update pedidos set IDROMANEIO = $romaneio where NUMPED = ${i.ped}');
+          'update pedidos set id_romaneio = $romaneio where pedido = ${i.ped}');
     }
     await conn.execute(
         'update romaneio set DATA_FECHAMENTO = current_timestamp where ID = $romaneio;');
@@ -608,7 +609,7 @@ class Banco {
     for (var element in pedidos) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL from pedidos where NUMPED = ${element[1]};'));
+            'select VOLUME_TOTAL from pedidos where pedidos.pedido = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -637,9 +638,9 @@ class Banco {
       try {
         if (paletes.isNotEmpty) {
           pedidos = await conn.execute(
-              'select P.NUMPED, COALESCE(string_agg(distinct cast(B.PALETE as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B.PEDIDO),0) as CAIXAS, P.VOLUME_TOTAL, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.COD_CLI, P.STATUS from pedidos as P left join bipagem as B on P.NUMPED = B.PEDIDO left join clientes as C on C.COD_CLI = P.ID_CLI left join cidades as CID on CID.CODCIDADE = C.COD_CIDADE where B.PEDIDO in (Select PEDIDO from bipagem where PALETE in (${paletes
+              'select P.pedido, COALESCE(string_agg(distinct cast(B.PALETE as varchar) , \',\' ),\'0\') as PALETES, COALESCE(count(B.PEDIDO),0) as CAIXAS, P.VOLUME_TOTAL, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.cod_cli, P.STATUS from pedidos as P left join bipagem as B on P.pedido = B.PEDIDO left join clientes as C on C.cod_cli = P.cod_cli left join cidades as CID on CID.COD_CIDADE = C.COD_CIDADE where B.PEDIDO in (Select PEDIDO from bipagem where PALETE in (${paletes
                   .join(
-                  ',')})) group by P.NUMPED, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.COD_CLI, P.STATUS;');
+                  ',')})) group by P.pedido, C.CNPJ, C.CLIENTE, CID.CIDADE, P.NF, P.VLTOTAL, C.cod_cli, P.STATUS;');
         }
       } on Exception catch (e) {
         if (kDebugMode) {
@@ -724,7 +725,7 @@ class Banco {
         for (var element in pedidos) {
           try {
             volumeResponse = await conn.execute(
-                'select VOLUME_TOTAL, clientes.COD_CLI, clientes.CLIENTE, cidades.CIDADE, count(ID) from pedidos left join bipagem on PEDIDO = NUMPED left join clientes on clientes.COD_CLI = pedidos.ID_CLI left join cidades on COD_CIDADE = cidades.CODCIDADE where NUMPED = ${element[1]} and PALETE = $palete group by VOLUME_TOTAL, clientes.COD_CLI,clientes.CLIENTE, cidades.CIDADE;');
+                'select VOLUME_TOTAL, clientes.cod_cli, clientes.CLIENTE, cidades.CIDADE, count(ID) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]} and PALETE = $palete group by VOLUME_TOTAL, clientes.cod_cli,clientes.CLIENTE, cidades.CIDADE;');
             for (var element2 in volumeResponse) {
               if (element2[0] != null) {
                 teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -764,7 +765,7 @@ class Banco {
     for (var element in pedidos) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -774,10 +775,11 @@ class Banco {
                 status: switch (element2[4] ?? 'D') {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
-                  'L' => 'Libearado',
+                  'L' => 'Liberado',
                   'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
-                  Object() => throw UnimplementedError(),
+                  'M' => 'Montado',
+                  Object() => 'Diversos',
                 }));
           }
         }
@@ -812,7 +814,7 @@ class Banco {
     for (var element in pedidos2) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -822,10 +824,11 @@ class Banco {
                 status: switch (element2[4] ?? 'D') {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
-                  'L' => 'Libearado',
+                  'L' => 'Liberado',
                   'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
-                  Object() => throw UnimplementedError(),
+                  'M' => 'Montado',
+                  Object() => 'Diversos',
                 }));
           }
         }
@@ -875,7 +878,7 @@ class Banco {
     for (var element in pedidos2) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on COD_CLI = ID_CLI LEFT JOIN cidades on COD_CIDADE = CODCIDADE where NUMPED = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -885,10 +888,11 @@ class Banco {
                 status: switch (element2[4] ?? 'D') {
                   'F' => 'Faturado',
                   'C' => 'Cancelado',
-                  'L' => 'Libearado',
+                  'L' => 'Liberado',
                   'B' => 'Bloqueado',
                   'D' => 'Desconhecido',
-                  Object() => throw UnimplementedError(),
+                  'M' => 'Montado',
+                  Object() => 'Diversos',
                 }));
           }
         }
@@ -1018,9 +1022,9 @@ class Banco {
     if (cods.isNotEmpty) {
       late Result volumeResponse;
       volumeResponse = await conn.execute(
-          'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where IDROMANEIO in (${cods
+          'select pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join palete on bipagem.PALETE = palete.ID left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where pedidos.id_romaneio in (${cods
               .join(
-              ',')}) group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
+              ',')}) group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO;');
       for (var element in volumeResponse) {
         if (element.isNotEmpty) {
           teste.add(Pedido(
@@ -1047,7 +1051,7 @@ class Banco {
     var teste = <Pedido>[];
     late Result volumeResponse;
     volumeResponse = await conn.execute(
-        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
+        'select pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join palete on bipagem.PALETE = palete.ID left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO;');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1075,7 +1079,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IGNORAR from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and DATA_FATURAMENTO between \'$dtIni\' and \'$dtFim\';');
+        'select pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IGNORAR from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and DATA_FATURAMENTO between \'$dtIni\' and \'$dtFim\';');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(
@@ -1099,7 +1103,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, count(bipagem.ID), NF, cidades.CIDADE from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, NF, cidades.CIDADE;');
+        'select pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, count(bipagem.ID), NF, cidades.CIDADE from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
     for (var element in volumeResponse) {
       try{
         if (element.isNotEmpty) {
@@ -1143,7 +1147,7 @@ class Banco {
 
     try {
       volumeResponse = await conn.execute(
-          'select count(*) from pedidos where NUMPED = $cod;');
+          'select count(*) from pedidos where pedidos.pedido = $cod;');
     }
     catch(e){
       print(e);
@@ -1158,7 +1162,7 @@ class Banco {
       return 2;
     }else{
       volumeResponse = await conn.execute(
-          'select count(STATUS) from pedidos where NUMPED = $cod and STATUS = \'C\';');
+          'select count(STATUS) from pedidos where pedidos.pedido = $cod and STATUS = \'C\';');
       for (var element in volumeResponse){
         teste = element[0] as int?;
       }
@@ -1177,7 +1181,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select romaneio.ID, DATA_FECHAMENTO, sum(VOLUME_TOTAL) from romaneio left join pedidos on IDROMANEIO = romaneio.ID where DATA_FECHAMENTO is not null and DATA_FECHAMENTO between \'$dtIni\' and \'$dtFim\' group by romaneio.ID, DATA_FECHAMENTO order by DATA_FECHAMENTO');
+        'select romaneio.ID, DATA_FECHAMENTO, sum(VOLUME_TOTAL) from romaneio left join pedidos on pedidos.id_romaneio = romaneio.ID where DATA_FECHAMENTO is not null and DATA_FECHAMENTO between \'$dtIni\' and \'$dtFim\' group by romaneio.ID, DATA_FECHAMENTO order by DATA_FECHAMENTO');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Romaneio(
@@ -1198,7 +1202,7 @@ class Banco {
 
     try {
       volumeResponse = await conn.execute(
-          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
+          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
     } catch(e){
       print(e);
     }
@@ -1216,7 +1220,7 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, NF, cidades.CIDADE;');
+        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
     for (var element in volumeResponse) {
       try{
         if (element.isNotEmpty) {
@@ -1231,7 +1235,7 @@ class Banco {
   }
 
   Future<void> updateIgnorar(int ped, bool? value) async {
-    await conn.execute('update multiexpedicao.pedidos set IGNORAR = $value where NUMPED = $ped;');
+    await conn.execute('update pedidos set IGNORAR = $value where pedidos.pedido = $ped;');
   }
 
   ///Seleciona o número da última declaração criada
@@ -1241,7 +1245,7 @@ class Banco {
 
     try {
       pedidos =
-      await conn.execute('select COALESCE(MAX(NUMPED),0) from pedidos where TIPO = \'D\';');
+      await conn.execute('select COALESCE(MAX(pedidos.pedido),0) from pedidos where TIPO = \'D\';');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
@@ -1254,10 +1258,70 @@ class Banco {
     return teste + 1;
   }
 
+  Future<DateTime?> ultAttget() async {
+    late DateTime? ultAtt;
+    late Result volumeResponse;
+    volumeResponse = await conn.execute('Select data_ult_atualizacao from public.atualizacao');
+
+    for (var element in volumeResponse){
+      ultAtt = element[0] as DateTime?;
+    }
+
+    return ultAtt;
+  }
+
+  ///Função para forçar atualização do Banco
+  void atualizar(DateTime? ultAtt, BuildContext context) async{
+
+    if (DateTime.now().difference(ultAtt!.toLocal()) >= const Duration(minutes: 5)) {
+      if (context.mounted) {
+        await showCupertinoModalPopup(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Dados irão ser atualizados, por favor aguarde'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+      await conn.execute('update atualizacao set atualizar = true');
+    }else{
+      if (context.mounted) {
+        await showCupertinoModalPopup(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Dados atualizados a menos de 5 minutos'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+  
+  ///Código para selecionar o Cliente no banco para mostrar os dados
   Future<Cliente> selectCliente(int cod) async {
     late var cli = Cliente(0, 0, '', '', '', '');
     late Result volumeResponse;
-    volumeResponse = await conn.execute('select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON CODCIDADE = COD_CIDADE where COD_CLI = $cod');
+    volumeResponse = await conn.execute('select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON cidades.COD_CIDADE = clientes.COD_CIDADE where clientes.cod_cli = $cod');
 
     if (cod != 0) {
       for (var element in volumeResponse) {
@@ -1273,12 +1337,12 @@ class Banco {
   }
 
   Future<List<Pedido>> createDeclaracao(Declaracao dec, DateTime dtIni, DateTime dtFim) async {
-    await conn.execute('INSERT INTO pedidos(NUMPED, VOLUME_TOTAL, DATA_FATURAMENTO, VLTOTAL, ID_CLI, STATUS, NF, COND_VENDA, DATA_PEDIDO, VOLUME_NF, DATA_FIM_CHECKOUT, TIPO, MOTIVO)VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
+    await conn.execute('INSERT INTO pedidos(pedido, VOLUME_TOTAL, DATA_FATURAMENTO, VLTOTAL, cod_cli, STATUS, NF, COND_VENDA, DATA_PEDIDO, VOLUME_NF, DATA_FIM_CHECKOUT, TIPO, MOTIVO)VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
 
     var teste = <Pedido>[];
     late Result volumeResponse;
     volumeResponse = await conn.execute(
-        'select pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.NUMPED left join palete on bipagem.PALETE = palete.ID left join clientes on COD_CLI = ID_CLI left join cidades on CODCIDADE = COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.NUMPED, VOLUME_TOTAL, COD_CLI, CLIENTE, VLTOTAL, NF, cidades.CIDADE, IDROMANEIO, DATA_FATURAMENTO, DATA_PEDIDO;');
+        'select pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\') from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join palete on bipagem.PALETE = palete.ID left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where pedidos.TIPO like \'D\' and DATA_PEDIDO between \'$dtIni\' and \'$dtFim\' group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, VLTOTAL, NF, cidades.CIDADE, pedidos.id_romaneio, DATA_FATURAMENTO, DATA_PEDIDO;');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Pedido(

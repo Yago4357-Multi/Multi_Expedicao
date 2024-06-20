@@ -374,7 +374,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 const Duration(days: 7)))) {
                                           dtFim = dtIni
                                               .add(const Duration(days: 7))
-                                              .startOfDay;
+                                              .endOfDay;
                                         } else {
                                           dtFim = (datasRange.endDate!).endOfDay;
                                         }
@@ -743,7 +743,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         Checkbox(
                                             value: pedidos[index].ignorar,
                                             onChanged: (value) async {
-                                              bd.updateIgnorar(
+                                              await bd.updateIgnorar(
                                                   pedidos[index].ped, value);
                                               pedidoResposta =
                                                   bd.faturadosNBipados(

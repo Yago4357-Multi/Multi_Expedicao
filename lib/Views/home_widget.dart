@@ -8,6 +8,7 @@ import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
+import 'atualizar.dart';
 import 'carregamento_widget.dart';
 import 'declaracoes.dart';
 import 'deletar_pedido_widget.dart';
@@ -1197,6 +1198,55 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                 ),
                                 Text(
                                   'Declarações',
+                                  style: FlutterFlowTheme.of(context)
+                                      .titleLarge,
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AtualizarWidget(acess, bd: bd)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width:
+                            MediaQuery.of(context).size.height *
+                                0.3,
+                            height:
+                            MediaQuery.of(context).size.height *
+                                0.2,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                BorderRadius.circular(20)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.refresh),
+                                Container(
+                                  height: 20,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'Atualizar',
                                   style: FlutterFlowTheme.of(context)
                                       .titleLarge,
                                   textAlign: TextAlign.center,
