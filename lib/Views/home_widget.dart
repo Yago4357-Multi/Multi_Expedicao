@@ -1207,7 +1207,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
-                      InkWell(
+                      if (acessosPC.contains(acess.acess) || acessosADM.contains(acess.acess)) (InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
                         hoverColor: Colors.transparent,
@@ -1255,7 +1255,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-                      ),
+                      )),
                     ],
                   ) :
                   Column(

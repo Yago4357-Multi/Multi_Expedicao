@@ -1,14 +1,13 @@
 
-///Objeto para manter padrão do Pedido
+///Objeto para manter padrão do Romaneio
 class Romaneio{
 
   ///Variáveis inicials do Romaneio
-  late int? romaneio, vol;
+  late int? romaneio, vol, codTrans;
   ///Variáveis inicials do Romaneio
   late String? usurCriacao, palete;
   ///Variáveis inicias do Romaneio
   late DateTime? dtFechamento, dtRomaneio;
-
 
 
   ///Construtor para a classe do Romaneio

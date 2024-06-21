@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:postgres/postgres.dart';
 
 import '../Models/carregamento.dart';
@@ -14,6 +13,7 @@ import '../Models/declaracao.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
+import '../Models/transportadora.dart';
 import '../Models/usur.dart';
 import '../Views/conferencia_widget.dart';
 import '../Views/home_widget.dart';
@@ -583,13 +583,13 @@ class Banco {
   }
 
   ///Funlção para finalizar romaneio
-  void endromaneio(int romaneio, List<Pedido> pedidos) async {
+  void endromaneio(int romaneio, List<Pedido> pedidos, int trans) async {
     for (var i in pedidos) {
       await conn.execute(
           'update pedidos set id_romaneio = $romaneio where pedido = ${i.ped}');
     }
     await conn.execute(
-        'update romaneio set DATA_FECHAMENTO = current_timestamp where ID = $romaneio;');
+        'update romaneio set DATA_FECHAMENTO = current_timestamp, cod_trans = $trans where ID = $romaneio;');
   }
 
   ///Função para Buscar todas as bipagens do Banco
@@ -1316,6 +1316,53 @@ class Banco {
       }
     }
   }
+
+  ///Função para forçar atualização do Banco
+  void atualizarFull(DateTime? ultAtt, BuildContext context) async{
+
+    if (DateTime.now().difference(ultAtt!.toLocal()) >= const Duration(minutes: 5)) {
+      if (context.mounted) {
+        await showCupertinoModalPopup(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Dados irão ser atualizados, por favor aguarde'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+      await conn.execute('update atualizacao set atualizar_full = true');
+    }else{
+      if (context.mounted) {
+        await showCupertinoModalPopup(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Dados atualizados a menos de 5 minutos'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
   
   ///Código para selecionar o Cliente no banco para mostrar os dados
   Future<Cliente> selectCliente(int cod) async {
@@ -1333,6 +1380,23 @@ class Banco {
     }
 
     return cli;
+
+  }
+
+  ///Código para selecionar a Transportadora no banco para mostrar os dados
+  Future<String> selectTransportadora(String cod) async {
+    var trans = 'Transportadora não encontrada';
+    late Result volumeResponse;
+    volumeResponse = await conn.execute('select transportadora.transportadora from transportadora where transportadora.cod_trans = $cod');
+
+    if (cod != '') {
+      for (var element in volumeResponse) {
+        trans = element[0] as String;
+      }
+
+    }
+
+    return trans;
 
   }
 
@@ -1362,6 +1426,20 @@ class Banco {
     }
 
     return teste;
+  }
+
+  ///Função para puxar todos as Transportadoras do Banco
+  Future<List<Transportadora>> selectAlltransportadora() async {
+    late Result volumeResponse;
+    late var trans = <Transportadora>[];
+
+    volumeResponse = await conn.execute('select cod_trans, transportadora, cgc from transportadora order by cod_trans asc');
+
+    for (var element in volumeResponse){
+      trans.add(Transportadora(element[0] as int, element[1] as String, element[2] as String));
+    }
+
+    return trans;
   }
 
 

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
 import '../Components/Model/criar_palete_model.dart';
+import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
@@ -16,10 +18,10 @@ class AtualizarWidget extends StatefulWidget {
 
   ///Construtor da página de criação de novos Paletes
   const AtualizarWidget(
-    this.usur, {
-    super.key,
-    required this.bd,
-  });
+      this.usur, {
+        super.key,
+        required this.bd,
+      });
 
   @override
   State<AtualizarWidget> createState() => _AtualizarWidget(usur, bd);
@@ -29,6 +31,8 @@ class _AtualizarWidget extends State<AtualizarWidget> {
   late Banco bd;
 
   final Usuario usur;
+
+  late var teste;
 
   late Future<DateTime?> ultAttfut;
   late DateTime? ultAtt;
@@ -48,6 +52,7 @@ class _AtualizarWidget extends State<AtualizarWidget> {
 
   void rodarBanco() async {
     ultAttfut = bd.ultAttget();
+    teste = AtualizacaoWidget(usur: usur, context: context, bd: bd,);
   }
 
   @override
@@ -64,7 +69,7 @@ class _AtualizarWidget extends State<AtualizarWidget> {
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
           backgroundColor: const Color(0xFF007000),
           automaticallyImplyLeading: false,
@@ -85,9 +90,9 @@ class _AtualizarWidget extends State<AtualizarWidget> {
           title: Text(
             'Atualizar Banco',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
-                  color: FlutterFlowTheme.of(context).primaryBackground,
-                ),
+              fontFamily: 'Outfit',
+              color: FlutterFlowTheme.of(context).primaryBackground,
+            ),
           ),
           actions: [
             IconButton(
@@ -98,44 +103,6 @@ class _AtualizarWidget extends State<AtualizarWidget> {
               },
               color: Colors.white,
             ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: InkWell(
-                splashColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () async {
-                  bd.atualizar(ultAtt, context);
-                },
-                child: Container(
-                  width: 120,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.green.shade700,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        'Atualizar',
-                        style: FlutterFlowTheme.of(context)
-                            .headlineSmall
-                            .override(
-                                fontFamily: 'Readex Pro',
-                                color: Colors.white,
-                                fontSize: 15),
-                      ),
-                      const Icon(
-                        Icons.refresh,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
           ],
           centerTitle: true,
           elevation: 2,
@@ -152,27 +119,128 @@ class _AtualizarWidget extends State<AtualizarWidget> {
             ),
           ),
         ),
-        body: SafeArea(
-            top: true,
-            child: FutureBuilder(
-              future: ultAttfut,
-              builder: (context, snapshot) {
-                ultAtt = snapshot.data;
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Center(
-                      child: Text(
-                          'Última Atualização \n ${ultAtt != null ? DateFormat('dd/MM/yyyy kk:mm:ss').format(ultAtt!.toLocal()) : 'Não atualizado'}',
-                          style: FlutterFlowTheme.of(context)
-                              .headlineLarge
-                              .override(fontFamily: 'Readex Pro', fontSize: 16),
-                          textAlign: TextAlign.center));
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            )),
+        body: Stack(
+          children: [
+            SafeArea(
+                top: true,
+                child: FutureBuilder(
+                  future: ultAttfut,
+                  builder: (context, snapshot) {
+                    ultAtt = snapshot.data;
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  if (await bd.connected(context) == 1){
+                                    if (context.mounted) {
+                                      bd.atualizar(ultAtt, context);
+                                    }
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                    MediaQuery.of(context).size.height *
+                                        0.3,
+                                    height:
+                                    MediaQuery.of(context).size.height *
+                                        0.2,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                        BorderRadius.circular(20)),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.refresh),
+                                        Container(
+                                          height: 20,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          'Atualização Rápida',
+                                          style: FlutterFlowTheme.of(context)
+                                              .titleLarge,
+                                          textAlign: TextAlign.center,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  if (await bd.connected(context) == 1){
+                                    if (context.mounted) {
+                                      bd.atualizarFull(ultAtt, context);
+                                    }
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                    MediaQuery.of(context).size.height *
+                                        0.3,
+                                    height:
+                                    MediaQuery.of(context).size.height *
+                                        0.2,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                        BorderRadius.circular(20)),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.restart_alt),
+                                        Container(
+                                          height: 20,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          'Atualização Full',
+                                          style: FlutterFlowTheme.of(context)
+                                              .titleLarge,
+                                          textAlign: TextAlign.center,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ));
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                )),
+            Positioned(bottom: 0,right:0, child: teste)
+          ],
+        ),
       ),
     );
   }
