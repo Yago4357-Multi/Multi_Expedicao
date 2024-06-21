@@ -7,6 +7,8 @@ import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
 import '../Models/usur.dart';
+import 'lista_cancelados.dart';
+import 'lista_faturados.dart';
 
 ///Página para a criação de novos Paletes
 class AtualizarWidget extends StatefulWidget {
@@ -39,6 +41,12 @@ class _AtualizarWidget extends State<AtualizarWidget> {
 
   late CriarPaleteModel _model;
 
+  late Future<int> qtdFatFut;
+  late Future<int> qtdCancFut;
+  int qtdFat = 0;
+  int qtdCanc = 0;
+
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   _AtualizarWidget(this.usur, this.bd);
@@ -53,6 +61,10 @@ class _AtualizarWidget extends State<AtualizarWidget> {
   void rodarBanco() async {
     ultAttfut = bd.ultAttget();
     teste = AtualizacaoWidget(usur: usur, context: context, bd: bd,);
+
+    qtdCancFut = bd.qtdCanc();
+    qtdFatFut = bd.qtdFat();
+
   }
 
   @override
@@ -73,19 +85,116 @@ class _AtualizarWidget extends State<AtualizarWidget> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF007000),
           automaticallyImplyLeading: false,
-          leading: FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 60,
-            icon: const Icon(
-              Icons.dehaze_rounded,
-              color: Colors.white,
-              size: 30,
-            ),
-            onPressed: () async {
-              scaffoldKey.currentState!.openDrawer();
-            },
+          leadingWidth: 400,
+          leading: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 30,
+                borderWidth: 1,
+                buttonSize: 60,
+                icon: const Icon(
+                  Icons.dehaze_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                onPressed: () async {
+                  scaffoldKey.currentState!.openDrawer();
+                },
+              ),
+              if (responsiveVisibility(
+                context: context,
+                phone: false,
+                tablet: false,
+              ))
+                FutureBuilder(
+                  future: qtdFatFut,
+                  builder: (context, snapshot) {
+                    qtdFat = snapshot.data ?? 0;
+                    if (qtdFat > 0 ) {
+                      return Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: SizedBox(
+                              width: 120,
+                              height: 50,
+                              child: Row(children: [
+                                Text(
+                                  'Fat.: $qtdFat',
+                                  style: FlutterFlowTheme
+                                      .of(context)
+                                      .headlineSmall
+                                      .override(
+                                      fontFamily: 'Readex Pro',
+                                      fontSize: 16,
+                                      color: Colors.red),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ListaFaturadosWidget(usur, bd: bd),
+                                        ));
+                                  },
+                                  icon: const Icon(
+                                    Icons.assignment_late,
+                                    color: Colors.red,
+                                  ),
+                                )
+                              ])));
+                    } else{
+                      return Container();
+                    }
+                  },
+                ),
+              if (responsiveVisibility(
+                context: context,
+                phone: false,
+                tablet: false,
+              ))
+                FutureBuilder(
+                    future: qtdCancFut,
+                    builder: (context, snapshot) {
+                      qtdCanc = snapshot.data ?? 0;
+                      if (qtdCanc > 0) {
+                        return Padding(
+                            padding: const EdgeInsets.only(right: 20),
+                            child: SizedBox(
+                                width: 120,
+                                height: 50,
+                                child: Row(children: [
+                                  Text('Canc. : $qtdCanc',
+                                      style: FlutterFlowTheme
+                                          .of(context)
+                                          .headlineSmall
+                                          .override(
+                                          fontFamily: 'Readex Pro',
+                                          fontSize: 16,
+                                          color: Colors.orange)),
+                                  IconButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ListaCanceladosWidget(usur, bd: bd),
+                                          ));
+                                    },
+                                    icon: const Icon(
+                                      Icons.assignment_late,
+                                      color: Colors.orange,
+                                    ),
+                                  )
+                                ])));
+                      } else{
+                        return Container();
+                      }
+                    }),
+            ],
           ),
           title: Text(
             'Atualizar Banco',
