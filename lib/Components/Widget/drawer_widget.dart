@@ -587,7 +587,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     padding: const EdgeInsets.only(left: 20),
                     child: InkWell(
                       onTap: () async {
-                        showAboutDialog(context: context, applicationVersion: 'Versão : 0.1.1.6', applicationName: 'MultiExpedição', children: [Text('Dev. : Yago Lima Bortolini \nPMP : Tiago Felsky Silveira', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', fontSize: 14),)]);
+                        showAboutDialog(context: context, applicationVersion: 'Versão : 0.1.1.7', applicationName: 'MultiExpedição', children: [Text('Dev. : Yago Lima Bortolini \nPMP : Tiago Felsky Silveira', style: FlutterFlowTheme.of(context).headlineSmall.override(fontFamily: 'Readex Pro', fontSize: 14),)]);
                       },
                       child: const Icon(
                         Icons.info_outline,
