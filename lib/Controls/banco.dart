@@ -34,9 +34,9 @@ class Banco {
       conn = await Connection.open(
           Endpoint(
             host: '192.168.17.104',
-            database: 'postgres',
-            username: 'postgres',
-            password: 'Multi@bd7',
+            database: 'multiexpedicao',
+            username: 'multi',
+            password: '@#Multi4785',
             port: 5432,
           ),
           settings: ConnectionSettings(
@@ -75,9 +75,9 @@ class Banco {
         conn = await Connection.open(
             Endpoint(
               host: '192.168.17.104',
-              database: 'postgres',
-              username: 'postgres',
-              password: 'Multi@bd7',
+              database: 'multiexpedicao',
+              username: 'multi',
+              password: '@#Multi4785',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
@@ -132,9 +132,9 @@ class Banco {
         conn = await Connection.open(
             Endpoint(
               host: '192.168.17.104',
-              database: 'postgres',
-              username: 'postgres',
-              password: 'Multi@bd7',
+              database: 'multiexpedicao',
+              username: 'multi',
+              password: '@#Multi4785',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
