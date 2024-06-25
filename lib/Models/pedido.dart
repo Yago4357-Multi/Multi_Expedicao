@@ -9,7 +9,7 @@ class Pedido{
   late String?  situacao, cnpj, cidade, cliente;
 
   ///Variáveis inicials do Pedido
-  late int? nota, volfat, codCli, codVenda, romaneio;
+  late int? nota, volfat, codCli, codVenda, romaneio, codTrans;
 
   ///Variáveis inicials do Pedido
   late DateTime? dtPedido, dtCancelPed, dtFat, dtCancelNf;
@@ -23,5 +23,21 @@ class Pedido{
   late bool? ignorar;
 
   ///Construtor para a classe de Pedido
-  Pedido(this.ped, this.palete, this.caixas, this.vol, this.status, {this.situacao, this.cnpj , this.cidade, this.nota, this.valor, this.volfat, this.codCli, this.cliente, this.codVenda, this.dtPedido, this.dtFat, this.dtCancelPed, this.dtCancelNf, this.romaneio, this.ignorar});
+  Pedido(this.ped, this.palete, this.caixas, this.vol, this.status,
+      {this.situacao,
+      this.cnpj,
+      this.cidade,
+      this.nota,
+      this.valor,
+      this.volfat,
+      this.codCli,
+      this.cliente,
+      this.codVenda,
+      this.dtPedido,
+      this.dtFat,
+      this.dtCancelPed,
+      this.dtCancelNf,
+      this.romaneio,
+      this.ignorar,
+      this.codTrans});
 }

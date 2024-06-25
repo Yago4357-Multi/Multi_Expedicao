@@ -33,6 +33,9 @@ class _AtualizacaoWidgetState extends State<AtualizacaoWidget> {
 
   final BuildContext context2;
 
+  late final Future<String> banco;
+  String teste = '';
+
   late Future<DateTime?> ultAttfut;
   late DateTime? ultAtt;
 
@@ -59,51 +62,71 @@ class _AtualizacaoWidgetState extends State<AtualizacaoWidget> {
 
   void rodarBanco() async {
     ultAttfut = bd.ultAttget();
+    banco = bd.conexao();
   }
 
   @override
   Widget build(BuildContext context) {
     return (responsiveVisibility(
-        context: context,
-        phone: false,
-        tablet: false,
-        desktop: true)) ? Container(
-      width: 150,
-      height: 40,
-      decoration: const BoxDecoration(
-          color: Color.fromRGBO(56, 142, 62, 120),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20))),
-      child: FutureBuilder(
-        future: ultAttfut,
-        builder: (context, snapshot) {
-          ultAtt = snapshot.data;
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                  Text('Última Atualização',
-                      style: FlutterFlowTheme.of(context)
-                          .headlineLarge
-                          .override(fontFamily: 'Readex Pro', fontSize: 10, color: Colors.white),
-                      textAlign: TextAlign.center),
-                  Text(
-                      ultAtt != null
-                          ? DateFormat('dd/MM/yyyy kk:mm:ss')
-                              .format(ultAtt!.toLocal())
-                          : 'Não atualizado',
-                      style: FlutterFlowTheme.of(context)
-                          .headlineLarge
-                          .override(fontFamily: 'Readex Pro', fontSize: 12, color: Colors.white),
-                      textAlign: TextAlign.center)
-                ]));
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-    ) : Container();
+            context: context, phone: false, tablet: false, desktop: true))
+        ? Container(
+            width: 150,
+            height: 50,
+            decoration: const BoxDecoration(
+                color: Color.fromRGBO(56, 142, 62, 120),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20))),
+            child: FutureBuilder(
+              future: ultAttfut,
+              builder: (context, snapshot) {
+                ultAtt = snapshot.data;
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                        Text('Última Atualização',
+                            style: FlutterFlowTheme.of(context)
+                                .headlineLarge
+                                .override(
+                                    fontFamily: 'Readex Pro',
+                                    fontSize: 10,
+                                    color: Colors.white),
+                            textAlign: TextAlign.center),
+                        Text(
+                            ultAtt != null
+                                ? DateFormat('dd/MM/yyyy kk:mm:ss')
+                                    .format(ultAtt!.toLocal())
+                                : 'Não atualizado',
+                            style: FlutterFlowTheme.of(context)
+                                .headlineLarge
+                                .override(
+                                    fontFamily: 'Readex Pro',
+                                    fontSize: 12,
+                                    color: Colors.white),
+                            textAlign: TextAlign.center),
+                        FutureBuilder(
+                          future: banco,
+                          builder: (context, snapshot) {
+                            teste = snapshot.data ?? '';
+                            return Text('Banco $teste',
+                                style: FlutterFlowTheme.of(context)
+                                    .headlineLarge
+                                    .override(
+                                        fontFamily: 'Readex Pro',
+                                        fontSize: 10,
+                                        color: Colors.white),
+                                textAlign: TextAlign.center);
+                          },
+                        ),
+                      ]));
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          )
+        : Container();
   }
 }

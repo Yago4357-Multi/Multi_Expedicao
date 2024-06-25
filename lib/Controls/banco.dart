@@ -34,12 +34,15 @@ class Banco {
       conn = await Connection.open(
           Endpoint(
             host: '192.168.17.104',
-            database: 'multiexpedicao',
-            username: 'multi',
-            password: '@#Multi4785',
+            database: 'postgres',
+            username: 'postgres',
+            password: 'Multi@bd7',
             port: 5432,
           ),
-          settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
+          settings: ConnectionSettings(
+              sslMode: SslMode.disable,
+              onOpen: (connection) =>
+                  connection.execute('SET search_path TO public')));
     } on SocketException {
       if (context.mounted) {
         await showCupertinoModalPopup(
@@ -72,9 +75,9 @@ class Banco {
         conn = await Connection.open(
             Endpoint(
               host: '192.168.17.104',
-              database: 'multiexpedicao',
-              username: 'multi',
-              password: '@#Multi4785',
+              database: 'postgres',
+              username: 'postgres',
+              password: 'Multi@bd7',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
@@ -129,9 +132,9 @@ class Banco {
         conn = await Connection.open(
             Endpoint(
               host: '192.168.17.104',
-              database: 'multiexpedicao',
-              username: 'multi',
-              password: '@#Multi4785',
+              database: 'postgres',
+              username: 'postgres',
+              password: 'Multi@bd7',
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
@@ -662,6 +665,11 @@ class Banco {
       }
       var teste3 = <int>[];
       for (var element in pedidos) {
+        try {
+          teste3 = (element[1]).toString().split(',').map(int.parse).toList();
+        } catch (e) {
+          print(e);
+        }
         if ((element[2] as int) < (element[3] as int) || element[3] == 0 ||
             !paletes.toSet().containsAll(teste3.toSet()) ||
             (element[10] != 'F')) {
@@ -679,7 +687,8 @@ class Banco {
               valor: element[8] as double?,
               volfat: (element[3] ?? 0) as int?,
               codCli: element[9] as int?,
-              situacao: element[10] as String?));
+              situacao: element[10] as String?,
+              codTrans: 417));
         } catch(e){
           if (kDebugMode) {
             print(e);
@@ -978,10 +987,26 @@ class Banco {
     return teste;
   }
 
+  Future<String> conexao() async {
+    late final Result pedidos;
+    var conexao = '';
+    pedidos = await conn.execute(
+        'SELECT datname FROM pg_stat_activity WHERE pid = pg_backend_pid();');
+    for (var i in pedidos) {
+      if (i[0] == 'postgres') {
+        conexao = 'Homolog';
+      } else {
+        conexao = 'Produção';
+      }
+    }
+    return conexao;
+  }
+
   ///Função para verificar login do Banco
   void auth(String login, String senha, BuildContext a, Banco bd) async {
     Usuario? usur;
     late final Result pedidos;
+
     try {
       pedidos = await conn.execute(
           "select ID, SETOR, NOME from usuarios where upper(APELIDO) like upper('$login') and SENHA like '$senha'");
