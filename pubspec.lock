@@ -313,7 +313,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutterflow_ui:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       name: flutterflow_ui
       sha256: "9458017c749539fb55d35248b1729056a170165f9292ba85212019c4f24bbb21"
@@ -345,7 +345,7 @@ packages:
     source: hosted
     version: "7.7.0"
   google_fonts:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: google_fonts
       sha256: "927573f2e8a8d65c17931e21918ad0ab0666b1b636537de7c4932bdb487b190f"

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -299,7 +298,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                 isDefaultAction: true,
                                 isDestructiveAction: true,
                                 onPressed: () async {
-                                  await showCupertinoModalPopup(
+                                        Navigator.pop(context);
+                                        await showCupertinoModalPopup(
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) {
@@ -316,14 +316,16 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                         .connected(context) ==
                                                     1) {
                                                   if (pedidosExc.isNotEmpty) {
-                                                    getPed = bd.excluiPedido(
-                                                        pedidosExc, usur, cont);
-                                                    pedidosExc = [];
+                                                          await bd.excluiPedido(
+                                                              pedidosExc, usur, cont);
+                                                          getPed =
+                                                              bd.selectPallet(
+                                                                  cont,
+                                                                  context);
+                                                          pedidosExc = [];
                                                   }
-                                                  setState(() {
                                                     inicial = true;
                                                     Navigator.pop(context);
-                                                  });
                                                 }
                                                 setState(() {});
                                               },

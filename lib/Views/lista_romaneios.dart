@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '/Components/Widget/drawer_widget.dart';
 import '../Components/Model/lista_romaneios.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Controls/banco.dart';
 import '../Models/pedido.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
-import '/Components/Widget/drawer_widget.dart';
 import 'lista_cancelados.dart';
 import 'lista_faturados.dart';
 
@@ -87,13 +87,13 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
 
   void rodarBanco() async {
     romaneioResposta = bd.romaneiosFinalizados(dtIni, dtFim);
+    qtdCancFut = bd.qtdCanc();
+    qtdFatFut = bd.qtdFat();
     var teste = await romaneioResposta;
     for (var i in teste) {
       romaneiosSelecionadoint.add(i.romaneio!);
     }
           pedidosResposta = bd.selectpedidosromaneio(romaneiosSelecionadoint);
-    qtdCancFut = bd.qtdCanc();
-    qtdFatFut = bd.qtdFat();
   }
 
   @override
@@ -693,6 +693,27 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                           ),
                                         ),
                                       ),
+                                    if (responsiveVisibility(
+                                      context: context,
+                                      phone: false,
+                                      tablet: false,
+                                    ))
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 4, 40, 4),
+                                          child: Text(
+                                            'Transportadora',
+                                            textAlign: TextAlign.center,
+                                            style: FlutterFlowTheme.of(context)
+                                                .labelSmall
+                                                .override(
+                                                  fontFamily: 'Readex Pro',
+                                                  letterSpacing: 0,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -838,6 +859,27 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                                     letterSpacing:
                                                                     0,
                                                                   ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  romaneios[index]
+                                                                          .transportadora ??
+                                                                      'Não cadastrada',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        color:
+                                                                            corTextoStatus,
+                                                                        fontFamily:
+                                                                            'Readex Pro',
+                                                                        letterSpacing:
+                                                                            0,
+                                                                      ),
                                                                 ),
                                                               ),
                                                             ],

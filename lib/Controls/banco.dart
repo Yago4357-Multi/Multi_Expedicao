@@ -352,7 +352,15 @@ class Banco {
       }
     }
     for (var element in pedidos) {
-      teste.add(Romaneio(element[0] as int?, element[5] as int?, (element[1] as DateTime?)?.toLocal(), (element[2] as DateTime?)?.toLocal(), element[3] as String?, element[4] as String?));
+      teste.add(Romaneio(
+          element[0] as int?,
+          element[5] as int?,
+          (element[1] as DateTime?)?.toLocal(),
+          (element[2] as DateTime?)?.toLocal(),
+          element[3] as String?,
+          element[4] as String?,
+          0,
+          ''));
     }
     return teste;
   }
@@ -432,7 +440,12 @@ class Banco {
     }
     for (var element in pedidos) {
       teste.add(Romaneio(element[0] as int?, element[1] as int?,
-          DateTime.parse('${element[2]}').toLocal() as DateTime?,null, null, null));
+          DateTime.parse('${element[2]}').toLocal() as DateTime?,
+          null,
+          null,
+          null,
+          0,
+          ''));
     }
 
     return teste;
@@ -878,7 +891,7 @@ class Banco {
     for (var element in pedidos2) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos. = ${element[1]};'));
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -1181,15 +1194,19 @@ class Banco {
     late Result volumeResponse;
 
     volumeResponse = await conn.execute(
-        'select romaneio.ID, DATA_FECHAMENTO, sum(VOLUME_TOTAL) from romaneio left join pedidos on pedidos.id_romaneio = romaneio.ID where DATA_FECHAMENTO is not null and DATA_FECHAMENTO between \'$dtIni\' and \'$dtFim\' group by romaneio.ID, DATA_FECHAMENTO order by DATA_FECHAMENTO');
+        'select romaneio.ID, DATA_FECHAMENTO, sum(VOLUME_TOTAL), transportadora from romaneio left join pedidos on pedidos.id_romaneio = romaneio.ID left join transportadora on transportadora.cod_trans = romaneio.cod_trans where DATA_FECHAMENTO is not null and DATA_FECHAMENTO between \'$dtIni\' and \'$dtFim\' group by romaneio.ID, DATA_FECHAMENTO, transportadora order by DATA_FECHAMENTO');
     for (var element in volumeResponse) {
       if (element.isNotEmpty) {
         teste.add(Romaneio(
             element[0] as int,
             (element[2] ?? 0) as int,
             element[1] != ''
-                ? DateTime.parse('${element[1]}').toLocal()
-                : null, null , null, null));
+                ? DateTime.parse('${element[1]}').toLocal() : null,
+            null,
+            null,
+            null,
+            0,
+            element[3] as String?));
       }
     }
 
