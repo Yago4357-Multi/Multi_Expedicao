@@ -164,6 +164,75 @@ class Banco {
     }
   }
 
+  ///Função para verificar em qual banco está conectado
+  Future<String> conexao() async {
+    late final Result pedidos;
+    var conexao = '';
+    pedidos = await conn.execute(
+        'SELECT datname FROM pg_stat_activity WHERE pid = pg_backend_pid();');
+    for (var i in pedidos) {
+      if (i[0] == 'postgres') {
+        conexao = 'Homolog';
+      } else {
+        conexao = 'Produção';
+      }
+    }
+    return conexao;
+  }
+
+  ///Função para verificar login do Banco
+  void auth(String login, String senha, BuildContext a, Banco bd) async {
+    Usuario? usur;
+    late final Result pedidos;
+
+    try {
+      pedidos = await conn.execute(
+          "select ID, SETOR, NOME from usuarios where upper(APELIDO) like upper('$login') and SENHA like '$senha'");
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in pedidos) {
+      if (element[0] != null) {
+        usur = Usuario(
+            element[0] as int, element[1] as String, element[2] as String);
+      }
+    }
+    if (usur?.acess != null) {
+      if (a.mounted) {
+        Navigator.pop(a);
+        await Navigator.push(
+            a,
+            MaterialPageRoute(
+              builder: (context) => HomeWidget(usur!, bd: bd),
+            ));
+      }
+    } else {
+      if (a.mounted) {
+        await showCupertinoModalPopup(
+          context: a,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text(
+                'Usuário ou Senha inválidos',
+              ),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
   ///Função para inserir dados no Banco
   Future<List<Contagem>> insert(String cod, int pallet, BuildContext a, Usuario usur) async {
     if (cod.length != 33) {
@@ -642,7 +711,6 @@ class Banco {
     return teste;
   }
 
-
   ///Função para buscar todas as bipagens dos paletes selecionados para a tela do romaneio
   Future<List<Pedido>>  selectPalletromaneio(Future<List<int>> listapaletes) async {
     var paletes = await listapaletes;
@@ -668,7 +736,9 @@ class Banco {
         try {
           teste3 = (element[1]).toString().split(',').map(int.parse).toList();
         } catch (e) {
-          print(e);
+          if (kDebugMode) {
+            print(e);
+          }
         }
         if ((element[2] as int) < (element[3] as int) || element[3] == 0 ||
             !paletes.toSet().containsAll(teste3.toSet()) ||
@@ -816,7 +886,8 @@ class Banco {
   }
 
   ///Função para atualizar o palete da Caixa
-  Future<List<Contagem>> updatePedidoBip(List<Contagem> pedidos, cod) async {
+  Future<List<Contagem>> updatePedidoBip(
+      List<Contagem> pedidos, int cod) async {
     for (var element in pedidos) {
       await conn.execute(
           'update bipagem set PALETE = ${element.palete} where PEDIDO = ${element.ped} and VOLUME_CAIXA = ${element.caixa};');
@@ -987,73 +1058,6 @@ class Banco {
     return teste;
   }
 
-  Future<String> conexao() async {
-    late final Result pedidos;
-    var conexao = '';
-    pedidos = await conn.execute(
-        'SELECT datname FROM pg_stat_activity WHERE pid = pg_backend_pid();');
-    for (var i in pedidos) {
-      if (i[0] == 'postgres') {
-        conexao = 'Homolog';
-      } else {
-        conexao = 'Produção';
-      }
-    }
-    return conexao;
-  }
-
-  ///Função para verificar login do Banco
-  void auth(String login, String senha, BuildContext a, Banco bd) async {
-    Usuario? usur;
-    late final Result pedidos;
-
-    try {
-      pedidos = await conn.execute(
-          "select ID, SETOR, NOME from usuarios where upper(APELIDO) like upper('$login') and SENHA like '$senha'");
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in pedidos) {
-      if (element[0] != null) {
-        usur = Usuario(element[0] as int, element[1] as String, element[2] as String);
-      }
-    }
-    if (usur?.acess != null) {
-      if (a.mounted) {
-        Navigator.pop(a);
-        await Navigator.push(
-            a,
-            MaterialPageRoute(
-              builder: (context) => HomeWidget(usur!, bd: bd),
-            ));
-      }
-    } else {
-      if (a.mounted) {
-        await showCupertinoModalPopup(
-          context: a,
-          barrierDismissible: false,
-          builder: (context) {
-            return CupertinoAlertDialog(
-              title: const Text(
-                'Usuário ou Senha inválidos',
-              ),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                    isDefaultAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Voltar'))
-              ],
-            );
-          },
-        );
-      }
-    }
-  }
-
   ///Busca pedidos do Banco por Roameneio
   Future<List<Pedido>> selectpedidosromaneio(List<int> cods) async {
     var teste = <Pedido>[];
@@ -1085,7 +1089,7 @@ class Banco {
   }
 
   ///Busca as declarações na tabela de pedidos
-  Future<List<Pedido>> allDeclaracoes(dtIni, dtFim) async {
+  Future<List<Pedido>> allDeclaracoes(DateTime? dtIni, DateTime? dtFim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
     volumeResponse = await conn.execute(
@@ -1107,6 +1111,28 @@ class Banco {
           dtPedido: element[9] as DateTime?,));
       }
     }
+    return teste;
+  }
+
+  ///Função para buscar a quantidade de todos os pedidos Faturados e não bipados do Banco
+  Future<int> qtdFat() async {
+    var teste = 0;
+    late Result volumeResponse;
+
+    try {
+      volumeResponse = await conn.execute(
+          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    for (var element in volumeResponse) {
+      if (element.isNotEmpty) {
+        teste = (element[0] ?? 0) as int;
+      }
+    }
+
     return teste;
   }
 
@@ -1153,13 +1179,38 @@ class Banco {
               cidade: element[6].toString()));
         }
       }catch(e){
-        print(e);
+        if (kDebugMode) {
+          print(e);
+        }
       }
     }
 
     return teste;
   }
 
+  ///Função para selecionar a quantidade de todos os pedidos cancelados já bipados do Banco
+  Future<int> qtdCanc() async {
+    var teste = 0;
+    late Result volumeResponse;
+
+    volumeResponse = await conn.execute(
+        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
+    for (var element in volumeResponse) {
+      try {
+        if (element.isNotEmpty) {
+          teste = (element[0] ?? 0) as int;
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    }
+
+    return teste;
+  }
+
+  ///Função para puxar todos os paletes que não foram carregados
   Future<List<Paletes>> paletesFull() async{
     var teste = <Paletes>[];
     late Result volumeResponse;
@@ -1188,7 +1239,9 @@ class Banco {
           'select count(*) from pedidos where pedidos.pedido = $cod;');
     }
     catch(e){
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
     late int? teste;
 
@@ -1213,6 +1266,7 @@ class Banco {
 
   }
 
+  ///Função para puxar todos os romaneios finalizados dentro de um período de tempo
   Future<List<Romaneio>> romaneiosFinalizados(
       DateTime dtIni, DateTime dtFim) async {
     var teste = <Romaneio>[];
@@ -1238,46 +1292,10 @@ class Banco {
     return teste;
   }
 
-  Future<int> qtdFat() async {
-    int teste = 0;
-    late Result volumeResponse;
-
-    try {
-      volumeResponse = await conn.execute(
-          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
-    } catch(e){
-      print(e);
-    }
-    for (var element in volumeResponse) {
-      if (element.isNotEmpty) {
-        teste = (element[0] ?? 0) as int;
-      }
-    }
-
-    return teste;
-  }
-
-  Future<int> qtdCanc() async {
-    int teste = 0;
-    late Result volumeResponse;
-
-    volumeResponse = await conn.execute(
-        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
-    for (var element in volumeResponse) {
-      try{
-        if (element.isNotEmpty) {
-          teste = (element[0] ?? 0) as int;
-        }
-      }catch(e){
-        print(e);
-      }
-    }
-
-    return teste;
-  }
-
-  Future<void> updateIgnorar(int ped, bool? value) async {
-    await conn.execute('update pedidos set IGNORAR = $value where pedidos.pedido = $ped;');
+  ///Função para mudar o status de "ignorar" da tabela pedido
+  Future<void> updateIgnorar(int ped, bool? ignorar) async {
+    await conn.execute(
+        'update pedidos set IGNORAR = $ignorar where pedidos.pedido = $ped;');
   }
 
   ///Seleciona o número da última declaração criada
@@ -1359,7 +1377,7 @@ class Banco {
     }
   }
 
-  ///Função para forçar atualização do Banco
+  ///Função para forçar atualização full do Banco
   void atualizarFull(DateTime? ultAtt, BuildContext context) async{
 
     if (DateTime.now().difference(ultAtt!.toLocal()) >= const Duration(minutes: 5)) {
@@ -1405,7 +1423,7 @@ class Banco {
       }
     }
   }
-  
+
   ///Código para selecionar o Cliente no banco para mostrar os dados
   Future<Cliente> selectCliente(int cod) async {
     late var cli = Cliente(0, 0, '', '', '', '');
@@ -1442,6 +1460,7 @@ class Banco {
 
   }
 
+  ///Função para criar a declaração no Banco
   Future<List<Pedido>> createDeclaracao(Declaracao dec, DateTime dtIni, DateTime dtFim) async {
     await conn.execute('INSERT INTO pedidos(pedido, VOLUME_TOTAL, DATA_FATURAMENTO, VLTOTAL, cod_cli, STATUS, NF, COND_VENDA, DATA_PEDIDO, VOLUME_NF, DATA_FIM_CHECKOUT, TIPO, MOTIVO)VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
 
