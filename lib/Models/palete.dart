@@ -3,22 +3,30 @@ class Paletes{
 
   ///Variáveis do Palete não finalizado
   int? pallet, volumetria, romaneio;
-  ///Variáveis de Data do Palete não finalizado
+
+  ///Usuário que criou o Palete
+  String? usurInclusao;
+
+  ///Data de criação do palete
   DateTime? dtInclusao;
 
-  String? UsurInclusao;
+  ///Usuário que fechou o Palete
+  String? usurFechamento;
 
-  ///Variáveis adicionais do Palete finalizado
-  String? UsurFechamento;
-  ///Variáveis de Data adicionais do Palete finalizado
+  ///Data de fechamento do palete
   DateTime? dtFechamento;
 
-  ///Variáveis de Data adicionais do Palete carregado
-  String? UsurCarregamento;
-  ///Variáveis de Data adicionais do Palete carregado
+  ///Usuário que carregou o Palete
+  String? usurCarregamento;
+
+  ///Data de carregamento do palete
   DateTime? dtCarregamento;
 
   ///Construtor para criar um objeto Palete
-  Paletes(this.pallet, this.UsurInclusao, this.dtInclusao, this.volumetria,{this.UsurFechamento,
-    this.dtFechamento, this.UsurCarregamento, this.dtCarregamento, this.romaneio});
+  Paletes(this.pallet, this.usurInclusao, this.dtInclusao, this.volumetria,
+      {this.usurFechamento,
+      this.dtFechamento,
+      this.usurCarregamento,
+      this.dtCarregamento,
+      this.romaneio});
 }

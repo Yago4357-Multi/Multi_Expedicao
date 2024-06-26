@@ -3393,9 +3393,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                                 0,
                                                                                                 0),
                                                                                             child: Text(
-                                                                                              '${palete[index]
-                                                                                                  .UsurInclusao}',
-                                                                                              style: FlutterFlowTheme
+                                                                                              '${palete[index].usurInclusao}',
+                                                                                                    style: FlutterFlowTheme
                                                                                                   .of(
                                                                                                   context)
                                                                                                   .labelLarge
@@ -3440,9 +3439,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                                 0,
                                                                                                 0),
                                                                                             child: Text(
-                                                                                              '${palete[index]
-                                                                                                  .UsurFechamento}',
-                                                                                              style: FlutterFlowTheme
+                                                                                              '${palete[index].usurFechamento}',
+                                                                                                    style: FlutterFlowTheme
                                                                                                   .of(
                                                                                                   context)
                                                                                                   .labelLarge
@@ -3632,9 +3630,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                                 0,
                                                                                                 0),
                                                                                             child: Text(
-                                                                                              '${palete[index]
-                                                                                                  .UsurInclusao}',
-                                                                                              style: FlutterFlowTheme
+                                                                                              '${palete[index].usurInclusao}',
+                                                                                                    style: FlutterFlowTheme
                                                                                                   .of(
                                                                                                   context)
                                                                                                   .labelLarge
@@ -3679,9 +3676,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                                 0,
                                                                                                 0),
                                                                                             child: Text(
-                                                                                              '${palete[index]
-                                                                                                  .UsurFechamento}',
-                                                                                              style: FlutterFlowTheme
+                                                                                              '${palete[index].usurFechamento}',
+                                                                                                    style: FlutterFlowTheme
                                                                                                   .of(
                                                                                                   context)
                                                                                                   .labelLarge

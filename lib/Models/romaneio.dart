@@ -1,13 +1,13 @@
 
 ///Objeto para manter padrão do Romaneio
 class Romaneio{
-
-  ///Variáveis inicials do Romaneio
+  ///Variáveis iniciais do Romaneio
   late int? romaneio, vol, codTrans;
-  ///Variáveis inicials do Romaneio
+
+  ///Variáveis iniciais do Romaneio
   late String? usurCriacao, palete, transportadora;
 
-  ///Variáveis inicias do Romaneio
+  ///Variáveis de data do Romaneio
   late DateTime? dtFechamento, dtRomaneio;
 
 

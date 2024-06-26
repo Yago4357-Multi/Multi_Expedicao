@@ -1,12 +1,27 @@
+///Classe para definir o padrão do Cliente
 class Cliente{
+  ///Variáveis iniciais do Cliente
+  int? codCli, codCid;
 
-  int? cod_cli,cod_cid;
+  ///Variáveis iniciais do Cliente
+  String? cliente,
+      nomeFantasia,
+      cnpj,
+      tipo,
+      bairro,
+      cep,
+      telefoneCelular,
+      endereco;
 
-  String? cliente, nome_fantasia, cnpj, tipo, bairro, cep, telefone_celular,endereco;
-
+  ///Variáveis iniciais do Cliente
   String? cidade;
 
-  Cliente(this.cod_cli, this.cod_cid, this.cliente, this.nome_fantasia,
-      this.cnpj, this.tipo, {this.cidade, this.bairro, this.cep, this.telefone_celular, this.endereco});
-
+  ///Construtor do objeto "Cliente"
+  Cliente(this.codCli, this.codCid, this.cliente, this.nomeFantasia, this.cnpj,
+      this.tipo,
+      {this.cidade,
+      this.bairro,
+      this.cep,
+      this.telefoneCelular,
+      this.endereco});
 }

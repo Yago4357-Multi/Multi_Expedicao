@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -900,8 +897,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                         0),
                                                                                     child:
                                                                                     Text(
-                                                                                      '${paletes[index].UsurInclusao}',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        '${paletes[index].usurInclusao}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),
@@ -944,8 +941,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                         0),
                                                                                     child:
                                                                                     Text(
-                                                                                      paletes[index].UsurFechamento ?? '',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        paletes[index].usurFechamento ?? '',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),
@@ -988,8 +985,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                         0),
                                                                                     child:
                                                                                     Text(
-                                                                                      paletes[index].UsurCarregamento ?? '',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        paletes[index].usurCarregamento ?? '',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),
@@ -1115,8 +1112,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                     child: Text(
-                                                                                      '${paletes[index].UsurInclusao}',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        '${paletes[index].usurInclusao}',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),
@@ -1147,8 +1144,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                     child: Text(
-                                                                                      paletes[index].UsurFechamento ?? '',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        paletes[index].usurFechamento ?? '',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),
@@ -1179,8 +1176,8 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                                                                     child: Text(
-                                                                                      paletes[index].UsurCarregamento ?? '',
-                                                                                      style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                                                        paletes[index].usurCarregamento ?? '',
+                                                                                        style: FlutterFlowTheme.of(context).labelLarge.override(
                                                                                         fontFamily: 'Readex Pro',
                                                                                         letterSpacing: 0,
                                                                                       ),

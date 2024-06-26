@@ -487,7 +487,7 @@ class Banco {
                 ? DateTime.parse('${element[2]}').toLocal()
                 : null,
             element[3] as int?,
-            UsurFechamento: element[4] as String?,
+            usurFechamento: element[4] as String?,
             dtFechamento: element[5] != '' && element[5] != null
                 ? DateTime.parse('${element[5]}').toLocal()
                 : null));
@@ -554,7 +554,7 @@ class Banco {
                   ? DateTime.parse('${element[2]}').toLocal()
                   : null,
               element[3] as int?,
-              UsurFechamento: element[4] as String?,
+              usurFechamento: element[4] as String?,
               dtFechamento: element[5] != '' && element[5] != null
                   ? DateTime.parse('${element[5]}').toLocal()
                   : null));
@@ -566,11 +566,11 @@ class Banco {
                   ? DateTime.parse('${element[2]}').toLocal()
                   : null,
               element[3] as int?,
-              UsurFechamento: element[4] as String?,
+              usurFechamento: element[4] as String?,
               dtFechamento: element[5] != '' && element[5] != null
                   ? DateTime.parse('${element[5]}').toLocal()
                   : null,
-              UsurCarregamento: element[6] as String?,
+              usurCarregamento: element[6] as String?,
               dtCarregamento: element[7] != '' && element[7] != null
                   ? DateTime.parse('${element[7]}').toLocal()
                   : null));
@@ -1221,10 +1221,10 @@ class Banco {
       teste.add(Paletes(element[0] as int?, element[2] as String?,
           (element[3] as DateTime).toLocal(), element[8] as int?,
           romaneio: element[1] as int?,
-          UsurFechamento: element[4] as String?,
+          usurFechamento: element[4] as String?,
           dtFechamento: element[5] != null ? (
               element[5] as DateTime).toLocal() : null,
-          UsurCarregamento: element[6] as String?,
+          usurCarregamento: element[6] as String?,
           dtCarregamento: element[7] != null ? (
               element[7] as DateTime).toLocal() : null));
     }
@@ -1434,7 +1434,11 @@ class Banco {
       for (var element in volumeResponse) {
         cli = Cliente(
             cod, 0, element[0] as String?, '', element[1] as String?, '',
-            cidade: element[2] as String?, bairro: element[3] as String?, cep: '${element[4]}' as String?, endereco: element[5] as String?, telefone_celular: element[6] as String?);
+            cidade: element[2] as String?,
+            bairro: element[3] as String?,
+            cep: '${element[4]}' as String?,
+            endereco: element[5] as String?,
+            telefoneCelular: element[6] as String?);
       }
 
     }

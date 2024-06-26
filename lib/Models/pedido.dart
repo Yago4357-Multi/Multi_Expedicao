@@ -1,25 +1,25 @@
 
 ///Objeto para manter padrão do Pedido
 class Pedido{
-
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late String palete, status;
 
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late String?  situacao, cnpj, cidade, cliente;
 
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late int? nota, volfat, codCli, codVenda, romaneio, codTrans;
 
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late DateTime? dtPedido, dtCancelPed, dtFat, dtCancelNf;
 
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late double? valor;
 
-  ///Variáveis inicials do Pedido
+  ///Variáveis iniciais do Pedido
   late int ped, vol, caixas;
 
+  ///Variável para verificar se o pedido é ignorado ou não
   late bool? ignorar;
 
   ///Construtor para a classe de Pedido

@@ -1,8 +1,11 @@
+///Classe para definir o padrão da cidade
 class Cidade{
+  ///Variáveis iniciais da cidade
+  int? codCidade, codIbge;
 
-  int? cod_cidade, cod_ibge;
-
+  ///Variáveis iniciais da cidade
   String? cidade, uf;
 
-  Cidade(this.cod_cidade, this.cod_ibge, this.cidade, this.uf);
+  ///Construtor do objeto cidade
+  Cidade(this.codCidade, this.codIbge, this.cidade, this.uf);
 }

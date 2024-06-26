@@ -1523,9 +1523,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0),
                                                                                                           child:
                                                                                                           Text(
-                                                                                                            '${paletes[index]
-                                                                                                                .UsurInclusao}',
-                                                                                                            style: FlutterFlowTheme
+                                                                                                            '${paletes[index].usurInclusao}',
+                                                                                                                  style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)
                                                                                                                 .labelLarge
@@ -1582,9 +1581,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0),
                                                                                                           child:
                                                                                                           Text(
-                                                                                                            paletes[index]
-                                                                                                                .UsurFechamento ??
-                                                                                                                '',
+                                                                                                            paletes[index].usurFechamento ?? '',
                                                                                                             style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)
@@ -1646,9 +1643,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0),
                                                                                                           child:
                                                                                                           Text(
-                                                                                                            paletes[index]
-                                                                                                                .UsurCarregamento ??
-                                                                                                                '',
+                                                                                                            paletes[index].usurCarregamento ?? '',
                                                                                                             style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)
@@ -1856,9 +1851,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0,
                                                                                                               0),
                                                                                                           child: Text(
-                                                                                                            '${paletes[index]
-                                                                                                                .UsurInclusao}',
-                                                                                                            style: FlutterFlowTheme
+                                                                                                            '${paletes[index].usurInclusao}',
+                                                                                                                  style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)
                                                                                                                 .labelLarge
@@ -1911,9 +1905,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0,
                                                                                                               0),
                                                                                                           child: Text(
-                                                                                                            paletes[index]
-                                                                                                                .UsurFechamento ??
-                                                                                                                '',
+                                                                                                            paletes[index].usurFechamento ?? '',
                                                                                                             style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)
@@ -1971,9 +1963,7 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                                               0,
                                                                                                               0),
                                                                                                           child: Text(
-                                                                                                            paletes[index]
-                                                                                                                .UsurCarregamento ??
-                                                                                                                '',
+                                                                                                            paletes[index].usurCarregamento ?? '',
                                                                                                             style: FlutterFlowTheme
                                                                                                                 .of(
                                                                                                                 context)

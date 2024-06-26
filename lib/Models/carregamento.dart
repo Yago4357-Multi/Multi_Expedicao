@@ -1,8 +1,6 @@
-
-///Objeto para manter padrão do Carrgeamento
+///Objeto para manter padrão do Carregamento
 class Carregamento{
-
-  ///Variáveis inicials do Carregamento
+  ///Variáveis iniciais do Carregamento
   late int? romaneio, vol;
 
   ///Variáveis iniciais do Carregamento

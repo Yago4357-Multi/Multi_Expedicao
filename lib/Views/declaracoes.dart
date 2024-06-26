@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '/Components/Widget/drawer_widget.dart';
 import '../Components/Model/lista_romaneios.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Controls/banco.dart';
@@ -11,7 +12,6 @@ import '../Models/cliente.dart';
 import '../Models/declaracao.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
-import '/Components/Widget/drawer_widget.dart';
 import 'lista_cancelados.dart';
 import 'lista_faturados.dart';
 
@@ -260,13 +260,13 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                     ConnectionState.done) {
                                   cliente = snapshot.data;
                                   dec.ped = ultDec;
-                                  dec.codCli = cliente?.cod_cli;
+                                  dec.codCli = cliente?.codCli;
                                   dec.cliente = cliente?.cliente;
                                   dec.cnpj = cliente?.cnpj;
                                   dec.cidade = cliente?.cidade;
                                   dec.endereco = cliente?.endereco;
                                   dec.cep = cliente?.cep;
-                                  dec.telefone = cliente?.telefone_celular;
+                                  dec.telefone = cliente?.telefoneCelular;
                                   return Dialog(
                                     backgroundColor: Colors.white,
                                     child: SizedBox(
@@ -727,7 +727,7 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                                         autofocus: true,
                                                         obscureText: false,
                                                         initialValue:
-                                                            '${cliente?.cod_cli ?? ''}',
+                                                            '${cliente?.codCli ?? ''}',
                                                         decoration:
                                                             InputDecoration(
                                                           labelText:
