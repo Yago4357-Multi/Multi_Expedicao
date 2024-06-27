@@ -23,6 +23,9 @@ class Banco {
   ///Variável para guardar a conexão com o Banco
   late Connection conn;
 
+  ///Variáveis para manter dados de conexão do Banco
+  late String host, database, username, password;
+
   ///Construtor do Banco
   Banco(context) {
     init(context);
@@ -30,13 +33,25 @@ class Banco {
 
   ///Função para iniciar o Banco de Dados
   void init(BuildContext context) async {
+    if (kDebugMode) {
+      host = '192.168.17.104';
+      database = 'postgres';
+      username = 'postgres';
+      password = 'Multi@bd7';
+    } else {
+      host = '192.168.17.104';
+      database = 'multiexpedicao';
+      username = 'multi';
+      password = '@#Multi4785';
+    }
+
     try {
       conn = await Connection.open(
           Endpoint(
-            host: '192.168.17.104',
-            database: 'multiexpedicao',
-            username: 'multi',
-            password: '@#Multi4785',
+            host: host,
+            database: database,
+            username: username,
+            password: password,
             port: 5432,
           ),
           settings: ConnectionSettings(
@@ -74,10 +89,10 @@ class Banco {
       } else {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.17.104',
-              database: 'multiexpedicao',
-              username: 'multi',
-              password: '@#Multi4785',
+              host: host,
+              database: database,
+              username: username,
+              password: password,
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));
@@ -131,10 +146,10 @@ class Banco {
       try {
         conn = await Connection.open(
             Endpoint(
-              host: '192.168.17.104',
-              database: 'multiexpedicao',
-              username: 'multi',
-              password: '@#Multi4785',
+              host: host,
+              database: database,
+              username: username,
+              password: password,
               port: 5432,
             ),
             settings: ConnectionSettings(sslMode: SslMode.disable, onOpen: (connection) => connection.execute('SET search_path TO public'),));

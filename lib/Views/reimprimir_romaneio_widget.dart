@@ -281,7 +281,8 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                         canRequestFocus: true,
                                         onChanged: (value) {
                                           paleteText = value;
-                                        },
+                                            print(paleteText);
+                                          },
                                         onFieldSubmitted: (value) async {
                                           paleteText = value;
                                           palete = int.parse(value);
@@ -360,7 +361,12 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                           onPressed: () async {
                                             if (await bd.connected(context) == 1) {
                                               palete = int.parse(paleteText);
-                                            }
+                                                getPaletes =
+                                                    bd.selectromaneio(palete);
+                                                pedidoResposta =
+                                                    bd.selectPalletromaneio(
+                                                        getPaletes);
+                                              }
                                             setState(() {});
                                           },
                                           icon: const Icon(Icons.check_rounded),

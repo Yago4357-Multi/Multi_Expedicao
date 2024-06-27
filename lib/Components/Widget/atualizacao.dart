@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
@@ -72,9 +73,12 @@ class _AtualizacaoWidgetState extends State<AtualizacaoWidget> {
         ? Container(
             width: 150,
             height: 50,
-            decoration: const BoxDecoration(
-                color: Color.fromRGBO(56, 142, 62, 120),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20))),
+            decoration: BoxDecoration(
+                color: (kDebugMode)
+                    ? Colors.orange.shade200
+                    : const Color.fromRGBO(56, 142, 62, 120),
+                borderRadius:
+                    const BorderRadius.only(topLeft: Radius.circular(20))),
             child: FutureBuilder(
               future: ultAttfut,
               builder: (context, snapshot) {
@@ -104,8 +108,9 @@ class _AtualizacaoWidgetState extends State<AtualizacaoWidget> {
                                     fontSize: 12,
                                     color: Colors.white),
                             textAlign: TextAlign.center),
-                        FutureBuilder(
-                          future: banco,
+                        (kDebugMode)
+                            ? (FutureBuilder(
+                                future: banco,
                           builder: (context, snapshot) {
                             teste = snapshot.data ?? '';
                             return Text('Banco $teste',
@@ -117,7 +122,8 @@ class _AtualizacaoWidgetState extends State<AtualizacaoWidget> {
                                         color: Colors.white),
                                 textAlign: TextAlign.center);
                           },
-                        ),
+                              ))
+                            : Container()
                       ]));
                 } else {
                   return const Center(

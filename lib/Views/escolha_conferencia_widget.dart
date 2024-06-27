@@ -1,4 +1,3 @@
-import 'package:MultiExpedicao/Views/reimprimir_palete_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -13,6 +12,7 @@ import 'declaracoes.dart';
 import 'lista_cancelados.dart';
 import 'lista_faturados.dart';
 import 'lista_palete_widget.dart';
+import 'reimprimir_palete_widget.dart';
 
 export '../Components/Model/escolha_bipagem_model.dart';
 
@@ -227,244 +227,1030 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
           top: true,
           child: Stack(
             children: [
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    (InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await Navigator.push(context, MaterialPageRoute(
-                            builder: (context) =>
-                                ReimprimirPaleteWidget(usur, 0, bd: bd)));
-                      },
-                      child: (Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          'Reimprimir Paletes',
-                          style: FlutterFlowTheme.of(context).titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      )),
-                    )),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        if (await bd.connected(context) == 1) {
-                          Navigator.pop(context);
-                          await Navigator.push(context, MaterialPageRoute(
-                            builder: (context) =>
-                                ListaPaleteWidget(cont: 0, usur, bd: bd),));
-                        }
-                      },
-                      child: (Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          'Conferir Paletes',
-                          style: FlutterFlowTheme.of(context).titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      )),
-                    ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        if (await bd.connected(context) == 1) {
-                          await showDialog(
-                            useSafeArea: true,
+              SizedBox(
+                height: double.infinity,
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: (responsiveVisibility(
                             context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      16, 12, 16, 12),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          showCursor: true,
-                                          controller: _model.textController,
-                                          focusNode: _model.textFieldFocusNode,
-                                          onFieldSubmitted: (value) async {
-                                            if (await bd.connected(context) == 1) {
-                                              bd.paleteExiste(int.parse(value),
-                                                  context, usur, bd);
-                                            }
-                                            setState(() {});
-                                          },
-                                          autofocus: true,
-                                          obscureText: false,
-                                          decoration: InputDecoration(
-                                            labelText: 'Insira o Palete',
-                                            labelStyle: FlutterFlowTheme.of(context)
-                                                .labelMedium
-                                                .override(
-                                                  fontFamily: 'Readex Pro',
-                                                  color:
-                                                      FlutterFlowTheme.of(context)
-                                                          .secondaryText,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                            alignLabelWithHint: false,
-                                            hintStyle: FlutterFlowTheme.of(context)
-                                                .labelMedium,
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: FlutterFlowTheme.of(context)
-                                                    .alternate,
-                                                width: 2,
-                                              ),
+                            phone: false,
+                            tablet: false,
+                            desktop: true))
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Padding(
+                              padding: const EdgeInsets.fromLTRB(40, 20, 0, 10),
+                              child: Text(
+                                'Conferência',
+                                style:
+                                    FlutterFlowTheme.of(context).headlineMedium,
+                              ))),
+                      Divider(
+                        height: 12,
+                        thickness: 2,
+                        color: FlutterFlowTheme.of(context).alternate,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, left: 20),
+                        child: ((responsiveVisibility(
+                                context: context,
+                                phone: false,
+                                tablet: false,
+                                desktop: true))
+                            ? SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        if (await bd.connected(context) == 1) {
+                                          Navigator.pop(context);
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CriarPaleteWidget(usur, 0,
+                                                        bd: bd),
+                                              ));
+                                        }
+                                        setState(() {});
+                                      },
+                                      child: (Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade500,
-                                                width: 2,
+                                                  BorderRadius.circular(20)),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.create_new_folder_rounded,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade100,
-                                                width: 2,
+                                              Container(
+                                                height: 20,
+                                                color: Colors.white,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            focusedErrorBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Colors.green.shade100,
-                                                width: 2,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
+                                              Text(
+                                                'Criar Novo Palete',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleLarge,
+                                                textAlign: TextAlign.center,
+                                              )
+                                            ],
                                           ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium,
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(),
-                                          validator: _model.textControllerValidator
-                                              .asValidator(context),
-                                          inputFormatters: [
-                                            LengthLimitingTextInputFormatter(33),
-                                            FilteringTextInputFormatter.digitsOnly,
+                                        ),
+                                      )),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        if (await bd.connected(context) == 1) {
+                                          await showDialog(
+                                            useSafeArea: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          16, 12, 16, 12),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: TextFormField(
+                                                          showCursor: true,
+                                                          controller: _model
+                                                              .textController,
+                                                          focusNode: _model
+                                                              .textFieldFocusNode,
+                                                          onFieldSubmitted:
+                                                              (value) async {
+                                                            if (await bd.connected(
+                                                                    context) ==
+                                                                1) {
+                                                              bd.paleteExiste(
+                                                                  int.parse(
+                                                                      value),
+                                                                  context,
+                                                                  usur,
+                                                                  bd);
+                                                            }
+                                                            setState(() {});
+                                                          },
+                                                          autofocus: true,
+                                                          obscureText: false,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            labelText:
+                                                                'Insira o Palete',
+                                                            labelStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Readex Pro',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondaryText,
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                            alignLabelWithHint:
+                                                                false,
+                                                            hintStyle:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium,
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .alternate,
+                                                                width: 2,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade500,
+                                                                width: 2,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            errorBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade100,
+                                                                width: 2,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            focusedErrorBorder:
+                                                                OutlineInputBorder(
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade100,
+                                                                width: 2,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                          ),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium,
+                                                          keyboardType:
+                                                              const TextInputType
+                                                                  .numberWithOptions(),
+                                                          validator: _model
+                                                              .textControllerValidator
+                                                              .asValidator(
+                                                                  context),
+                                                          inputFormatters: [
+                                                            LengthLimitingTextInputFormatter(
+                                                                33),
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: (Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.next_week,
+                                              ),
+                                              Container(
+                                                height: 20,
+                                                color: Colors.white,
+                                              ),
+                                              Text(
+                                                'Continuar Palete',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleLarge,
+                                                textAlign: TextAlign.center,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        if (await bd.connected(context) == 1) {
+                                          Navigator.pop(context);
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ListaPaleteWidget(
+                                                        cont: 0, usur, bd: bd),
+                                              ));
+                                        }
+                                      },
+                                      child: (Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.manage_search,
+                                              ),
+                                              Container(
+                                                height: 20,
+                                                color: Colors.white,
+                                              ),
+                                              Text(
+                                                'Conferir Paletes',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleLarge,
+                                                textAlign: TextAlign.center,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ReimprimirPaleteWidget(
+                                                        usur, 0,
+                                                        bd: bd)));
+                                      },
+                                      child: (Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.print_rounded,
+                                              ),
+                                              Container(
+                                                height: 20,
+                                                color: Colors.white,
+                                              ),
+                                              Text(
+                                                'Reimprimir Paletes',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleLarge,
+                                                textAlign: TextAlign.center,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      if (await bd.connected(context) == 1) {
+                                        Navigator.pop(context);
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CriarPaleteWidget(usur, 0,
+                                                      bd: bd),
+                                            ));
+                                      }
+                                      setState(() {});
+                                    },
+                                    child: (Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, right: 20),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.1,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(width: 20),
+                                            const Icon(
+                                              Icons.create_new_folder_rounded,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Criar Novo Palete',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleLarge,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    20))),
+                                              ),
+                                            )
                                           ],
                                         ),
                                       ),
+                                    )),
+                                  ),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      if (await bd.connected(context) == 1) {
+                                        await showDialog(
+                                          useSafeArea: true,
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        16, 12, 16, 12),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextFormField(
+                                                        showCursor: true,
+                                                        controller: _model
+                                                            .textController,
+                                                        focusNode: _model
+                                                            .textFieldFocusNode,
+                                                        onFieldSubmitted:
+                                                            (value) async {
+                                                          if (await bd.connected(
+                                                                  context) ==
+                                                              1) {
+                                                            bd.paleteExiste(
+                                                                int.parse(
+                                                                    value),
+                                                                context,
+                                                                usur,
+                                                                bd);
+                                                          }
+                                                          setState(() {});
+                                                        },
+                                                        autofocus: true,
+                                                        obscureText: false,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              'Insira o Palete',
+                                                          labelStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .labelMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Readex Pro',
+                                                                    color: FlutterFlowTheme.of(context)
+                                                          .secondaryText,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                          alignLabelWithHint:
+                                                              false,
+                                                          hintStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .labelMedium,
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .alternate,
+                                                              width: 2,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          focusedBorder:
+                                                              OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade500,
+                                                              width: 2,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          errorBorder:
+                                                              OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade100,
+                                                              width: 2,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          focusedErrorBorder:
+                                                              OutlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade100,
+                                                              width: 2,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium,
+                                                        keyboardType:
+                                                            const TextInputType
+                                                                .numberWithOptions(),
+                                                        validator: _model
+                                                            .textControllerValidator
+                                                            .asValidator(
+                                                                context),
+                                                        inputFormatters: [
+                                                          LengthLimitingTextInputFormatter(
+                                                              33),
+                                                          FilteringTextInputFormatter
+                                                              .digitsOnly,
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: (Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, right: 20),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.1,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(width: 20),
+                                            const Icon(
+                                              Icons.next_week,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Continuar Palete',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleLarge,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    20))),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                  ),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ReimprimirPaleteWidget(
+                                                      usur, 0,
+                                                      bd: bd)));
+                                    },
+                                    child: (Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, right: 20),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.1,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(width: 20),
+                                            const Icon(
+                                              Icons.print_rounded,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Reimprimir Paletes',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleLarge,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    20))),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                  ),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      if (await bd.connected(context) == 1) {
+                                        Navigator.pop(context);
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ListaPaleteWidget(
+                                                      cont: 0, usur, bd: bd),
+                                            ));
+                                      }
+                                    },
+                                    child: (Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10, right: 20),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.1,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(width: 20),
+                                            const Icon(
+                                              Icons.manage_search,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Conferir Paletes',
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleLarge,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(20),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    20))),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                  ),
+                                ],
+                              )),
+                      ),
+                      if (acessosPC.contains(usur.acess) ||
+                          acessosADM.contains(usur.acess))
+                        Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(40, 20, 0, 10),
+                                child: Text(
+                                  'Declarações',
+                                  style: FlutterFlowTheme.of(context)
+                                      .headlineMedium,
+                                ))),
+                      if (acessosPC.contains(usur.acess) ||
+                          acessosADM.contains(usur.acess))
+                        Divider(
+                          height: 12,
+                          thickness: 2,
+                          color: FlutterFlowTheme.of(context).alternate,
+                        ),
+                      if (acessosPC.contains(usur.acess) ||
+                          acessosADM.contains(usur.acess))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 20),
+                          child: ((responsiveVisibility(
+                                  context: context,
+                                  phone: false,
+                                  tablet: false,
+                                  desktop: true))
+                              ? SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          if (await bd.connected(context) ==
+                                              1) {
+                                            Navigator.pop(context);
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DeclaracoesWidget(usur,
+                                                          bd: bd),
+                                                ));
+                                          }
+                                        },
+                                        child: (Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.2,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.list_alt_rounded,
+                                                ),
+                                                Container(
+                                                  height: 20,
+                                                  color: Colors.white,
+                                                ),
+                                                Text(
+                                                  'Reimprimir Paletes',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .titleLarge,
+                                                  textAlign: TextAlign.center,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: (Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          'Continuar Palete',
-                          style: FlutterFlowTheme.of(context).titleLarge,
-                          textAlign: TextAlign.center,
+                                )
+                              : Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        if (await bd.connected(context) == 1) {
+                                          Navigator.pop(context);
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DeclaracoesWidget(usur,
+                                                        bd: bd),
+                                              ));
+                                        }
+                                      },
+                                      child: (Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 10, bottom: 10, right: 20),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.8,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.1,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(width: 20),
+                                              const Icon(
+                                                Icons.list_alt_rounded,
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Declarações',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleLarge,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  decoration: const BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topRight: Radius
+                                                                  .circular(20),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          20))),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )),
+                                    ),
+                                  ],
+                                )),
                         ),
-                      )),
-                    ),
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        if (await bd.connected(context) == 1) {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CriarPaleteWidget(usur, 0, bd: bd),
-                              ));
-                        }
-                        setState(() {});
-                      },
-                      child: (Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          'Criar Novo Palete',
-                          style: FlutterFlowTheme.of(context).titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      )),
-                    ),
-                    if (acessosPC.contains(usur.acess) || acessosADM.contains(usur.acess))
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () async {
-                        if (await bd.connected(context) == 1) {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DeclaracoesWidget(usur, bd: bd),
-                              ));
-                        }
-                      },
-                      child: (Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          'Declarações',
-                          style: FlutterFlowTheme.of(context).titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      )),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Positioned(right: 0,bottom: 0, child: AtualizacaoWidget(bd: bd,context: context, usur: usur,))

@@ -730,7 +730,12 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(flex: 3,
+                                              (responsiveVisibility(
+                                                      context: context,
+                                                      phone: false,
+                                                      tablet: false,
+                                                      desktop: true))
+                                                  ? Expanded(flex: 3,
                                                 child: Align(
                                                   alignment:
                                                       const AlignmentDirectional(
@@ -888,9 +893,16 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                     ],
                                                   ),
                                                 ),
-                                              ),
-                                              Expanded(flex: 3,
-                                                child: Align(
+                                                    )
+                                                  : Container(),
+                                              (responsiveVisibility(
+                                                      context: context,
+                                                      phone: false,
+                                                      tablet: false,
+                                                      desktop: true))
+                                                  ? Expanded(
+                                                      flex: 3,
+                                                      child: Align(
                                                   alignment:
                                                       const AlignmentDirectional(
                                                           0, 0),
@@ -961,7 +973,8 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                     ],
                                                   ),
                                                 ),
-                                              ),
+                                                    )
+                                                  : Container(),
                                               Expanded(flex: 1, child: Padding(
                                                 padding: const EdgeInsets.only(top: 50),
                                                 child: Container(
