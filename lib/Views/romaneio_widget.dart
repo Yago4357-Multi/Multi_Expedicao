@@ -4722,123 +4722,126 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               alignment: const AlignmentDirectional(-1, 0),
-                              child: Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    16, 0, 0, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      textAlign: TextAlign.center,
+                                      'Pedido',
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                    ),
+                                  ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                  ))
                                     Expanded(
+                                      flex: 1,
                                       child: Text(
-                                        'Pedido',
+                                        'Cód. Cli.',
+                                        textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
                                             .override(
-                                          fontFamily: 'Readex Pro',
-                                          letterSpacing: 0,
-                                        ),
+                                              fontFamily: 'Readex Pro',
+                                            ),
                                       ),
                                     ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
-                                        child: Text(
-                                          'Cód. Cli.',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelSmall
-                                              .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
-                                        ),
-                                      ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
-                                        child: Text(
-                                          'Palete',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelSmall
-                                              .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
-                                        ),
-                                      ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                  ))
                                     Expanded(
+                                      flex: 2,
                                       child: Text(
-                                        'Conferido',
+                                        'Palete',
+                                        textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .labelSmall
                                             .override(
-                                          fontFamily: 'Readex Pro',
-                                          letterSpacing: 0,
-                                        ),
-                                      ),
-                                    ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
-                                        child: Text(
-                                          'Situação',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelSmall
-                                              .override(
-                                                fontFamily: 'Readex Pro',
-                                                letterSpacing: 0,
-                                              ),
-                                        ),
-                                      ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
-                                        child: Text(
-                                          'Transp.',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelSmall
-                                              .override(
-                                            fontFamily: 'Readex Pro',
-                                            letterSpacing: 0,
-                                          ),
-                                        ),
-                                      ),
-                                    if (responsiveVisibility(
-                                      context: context,
-                                      phone: false,
-                                      tablet: false,
-                                    ))
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 4, 40, 4),
-                                          child: Text(
-                                            'Status',
-                                            textAlign: TextAlign.center,
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelSmall
-                                                .override(
                                               fontFamily: 'Readex Pro',
                                               letterSpacing: 0,
                                             ),
-                                          ),
-                                        ),
                                       ),
-                                  ],
-                                ),
+                                    ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Conferido',
+                                      textAlign: TextAlign.center,
+                                      style: FlutterFlowTheme.of(context)
+                                          .labelSmall
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            letterSpacing: 0,
+                                          ),
+                                    ),
+                                  ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                  ))
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Situação',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
+                                      ),
+                                    ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                  ))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        'Transp.',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                            ),
+                                      ),
+                                    ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                  ))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        'Status',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             FutureBuilder(
@@ -4931,12 +4934,13 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   .fromSTEB(16, 12, 16, 12),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
                                                 children: [
                                                   Expanded(
+                                                    flex: 1,
                                                     child: Text(
                                                       '${pedidos[index].ped}',
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       style: FlutterFlowTheme
                                                           .of(context)
                                                           .bodyMedium
@@ -4955,8 +4959,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     tablet: false,
                                                   ))
                                                     Expanded(
+                                                      flex: 1,
                                                       child: Text(
                                                         '${pedidos[index].codCli}',
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: FlutterFlowTheme
                                                             .of(context)
                                                             .bodyMedium
@@ -4975,12 +4982,12 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     tablet: false,
                                                   ))
                                                     Expanded(
+                                                      flex: 2,
                                                       child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
+                                                        alignment: Alignment.center,
                                                         child: SizedBox(
-                                                          width: 50,
-                                                          height: 30,
+                                                          width: 180,
+                                                          height: 40,
                                                           child: Container(
                                                             decoration:
                                                             BoxDecoration(
@@ -5056,10 +5063,11 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                       ),
                                                     ),
                                                   Expanded(
+                                                    flex: 1,
                                                     child: Align(
                                                       alignment:
                                                       AlignmentDirectional
-                                                          .centerStart,
+                                                              .center,
                                                       child: SizedBox(
                                                         width: 50,
                                                         height: 30,
@@ -5125,7 +5133,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     tablet: false,
                                                   ))
                                                     Expanded(
+                                                      flex: 1,
                                                       child: Align(
+                                                        alignment:
+                                                            Alignment.center,
                                                         child: SizedBox(
                                                           width: 100,
                                                           height: 30,
@@ -5206,7 +5217,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     tablet: false,
                                                   ))
                                                     Expanded(
+                                                      flex: 2,
                                                       child: Align(
+                                                        alignment:
+                                                            Alignment.center,
                                                         child: SizedBox(
                                                           width: 100,
                                                           height: 30,
@@ -5273,6 +5287,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                     tablet: false,
                                                   ))
                                                     Expanded(
+                                                      flex: 2,
                                                       child: Align(
                                                         alignment:
                                                         Alignment.center,
