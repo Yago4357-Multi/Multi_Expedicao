@@ -1525,7 +1525,12 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                                             0, '', 0, 0, '',
                                                             endereco: '',
                                                             motivo: '');
+                                                        ultDecFut = bd.ultDec();
+                                                        dec.codCli = 0;
+                                                        cliFut =
+                                                            bd.selectCliente(0);
                                                         Navigator.pop(context);
+                                                        setState(() {});
                                                       }
                                                     },
                                                     icon: const Icon(
