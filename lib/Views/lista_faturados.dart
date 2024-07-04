@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '/Components/Widget/drawer_widget.dart';
 import '../Components/Model/lista_faturados.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Controls/banco.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
-import '/Components/Widget/drawer_widget.dart';
 import 'lista_cancelados.dart';
 
 ///Página da listagem de Romaneio
@@ -40,7 +40,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   String dica = 'Procure um pedido...';
 
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 31))).startOfDay;
   DateTime? dtFim = (getCurrentTimestamp).endOfDay;
   late PickerDateRange datasRange;
 
@@ -69,7 +69,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
     _model.textFieldFocusNode ??= FocusNode();
     _model.choiceChipsValue;
     _model.choiceChipsValueController = FormFieldController<List<String>>(
-      ['Todos'],
+      ['N Ignorados'],
     );
     rodarBanco();
   }
@@ -239,7 +239,8 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                           child: TextFormField(
                                             canRequestFocus: true,
                                             onChanged: (value) {
-                                              _model.choiceChipsValue = 'Todos';
+                                              _model.choiceChipsValue =
+                                                  'N Ignorados';
                                               setState(() {
                                                 if (pedidosSalvos.length <
                                                     pedidos.length) {
@@ -341,6 +342,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       FlutterFlowChoiceChips(
                                           options: const [
                                             ChipData('Todos'),
+                                            ChipData('Ignorados'),
                                             ChipData('N Ignorados'),
                                           ],
                                           onChanged: (val) {
@@ -348,11 +350,20 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                               if (_model.choiceChipsValue == 'Todos') {
                                                 pedidos = pedidosSalvos;
                                               } else {
-                                                pedidos = pedidosSalvos
-                                                    .where((element) =>
-                                                element.ignorar ==
-                                                    false)
-                                                    .toList();
+                                                if (_model.choiceChipsValue ==
+                                                    'N Ignorados') {
+                                                  pedidos = pedidosSalvos
+                                                      .where((element) =>
+                                                          element.ignorar ==
+                                                          false)
+                                                      .toList();
+                                                } else {
+                                                  pedidos = pedidosSalvos
+                                                      .where((element) =>
+                                                          element.ignorar ==
+                                                          true)
+                                                      .toList();
+                                                }
                                               }
                                             });
                                           },
@@ -412,11 +423,13 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     navigationDirection:
                                         DateRangePickerNavigationDirection.vertical,
                                     maxDate: getCurrentTimestamp,
+                                    minDate: DateTime.utc(2024, 6, 5),
                                     startRangeSelectionColor: Colors.green.shade700,
                                     initialDisplayDate: dtFim,
                                     onSelectionChanged:
                                         (dateRangePickerSelectionChangedArgs) async {
-                                          _model.choiceChipsValueController?.value = ['Todos'];
+                                      _model.choiceChipsValueController?.value =
+                                          ['N Ignorados'];
                                       if (await bd.connected(context) == 1) {
                                         datasRange =
                                             dateRangePickerSelectionChangedArgs
@@ -428,10 +441,10 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
 
                                           if (datasRange.endDate != null) {
                                             if (datasRange.endDate! >=
-                                                (dtIni.add(
-                                                    const Duration(days: 7)))) {
+                                                (dtIni.add(const Duration(
+                                                    days: 31)))) {
                                               dtFim = dtIni
-                                                  .add(const Duration(days: 7))
+                                                  .add(const Duration(days: 31))
                                                   .endOfDay;
                                             } else {
                                               dtFim = (datasRange.endDate!).endOfDay;
@@ -608,6 +621,11 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                   if (pedidosSalvos != snapshot.data) {
                                     pedidos = snapshot.data ?? [];
                                     pedidosSalvos = pedidos;
+                                    pedidos = pedidos
+                                        .where(
+                                          (element) => !element.ignorar!,
+                                        )
+                                        .toList();
                                   }
                                   return ListView.builder(
                                     itemCount: pedidos.length,

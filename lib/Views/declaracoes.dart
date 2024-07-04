@@ -47,7 +47,7 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
   String dica = 'Procure uma Declaração...';
 
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 31))).startOfDay;
   DateTime dtFim = (getCurrentTimestamp.endOfDay);
   late PickerDateRange datasRange;
 
@@ -1766,10 +1766,10 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                         try {
                                           if (datasRange.endDate != null) {
                                             if (datasRange.endDate! >=
-                                                (dtIni.add(
-                                                    const Duration(days: 7)))) {
+                                                (dtIni.add(const Duration(
+                                                    days: 31)))) {
                                               dtFim = dtIni
-                                                  .add(const Duration(days: 7))
+                                                  .add(const Duration(days: 31))
                                                   .endOfDay;
                                             } else {
                                               dtFim =
@@ -1799,6 +1799,7 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                       }
                                       setState(() {});
                                     },
+                                    minDate: DateTime.utc(2024, 6, 5),
                                     monthViewSettings:
                                         const DateRangePickerMonthViewSettings(
                                       weekendDays: [6, 7],
@@ -1856,7 +1857,7 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                       itemBuilder: (context, index) {
                                         return Padding(
                                             padding: const EdgeInsetsDirectional
-                                                .fromSTEB(0, 0, 0, 10),
+                                                .fromSTEB(0, 10, 0, 0),
                                             child: Container(
                                               padding:
                                                   const EdgeInsetsDirectional.all(
@@ -1865,7 +1866,9 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(20),
-                                              ),
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryBackground),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.spaceBetween,
