@@ -1154,7 +1154,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                   color: Colors.white,
                                                 ),
                                                 Text(
-                                                  'Reimprimir Paletes',
+                                                  'Declarações',
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .titleLarge,

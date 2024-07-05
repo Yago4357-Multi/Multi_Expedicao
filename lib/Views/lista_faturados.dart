@@ -609,6 +609,19 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         ),
                                       ),
                                     ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Ignorar',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -623,7 +636,12 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     pedidosSalvos = pedidos;
                                     pedidos = pedidos
                                         .where(
-                                          (element) => !element.ignorar!,
+                                          (element) =>
+                                              element.ignorar! ==
+                                              (_model.choiceChipsValue ==
+                                                      'Ignorados'
+                                                  ? true
+                                                  : false),
                                         )
                                         .toList();
                                   }
@@ -658,7 +676,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 960,
+                                              width: 920,
                                               decoration: BoxDecoration(
                                                 color: corStatus,
                                                 borderRadius:
@@ -816,16 +834,52 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 ),
                                               ),
                                             ),
-                                            Checkbox(
-                                                value: pedidos[index].ignorar,
-                                                onChanged: (value) async {
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
                                                   await bd.updateIgnorar(
-                                                      pedidos[index].ped, value);
+                                                      pedidos[index].ped,
+                                                      !pedidos[index].ignorar!);
                                                   pedidoResposta =
                                                       bd.faturadosNBipados(
                                                           dtIni, dtFim!);
+                                                  _model.choiceChipsValue =
+                                                      pedidos[index].ignorar!
+                                                          ? 'N Ignorados'
+                                                          : 'Ignorados';
                                                   setState(() {});
-                                                })
+                                                },
+                                                child: Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    8)),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .green.shade700,
+                                                            width: 4)),
+                                                    child: pedidos[index]
+                                                            .ignorar!
+                                                        ? Icon(
+                                                            Icons.check_rounded,
+                                                            color: Colors
+                                                                .green.shade700,
+                                                            size: 16,
+                                                          )
+                                                        : Container()),
+                                              ),
+                                            )
                                           ],
                                         ),
                                       );

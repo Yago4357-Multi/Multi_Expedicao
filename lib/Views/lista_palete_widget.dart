@@ -2068,7 +2068,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                               if (await bd.connected(
                                                                                                   context) ==
                                                                                                   1) {
-                                                                                                print(cont);
                                                                                                 if (await bd
                                                                                                     .selectPallet(
                                                                                                     cont,

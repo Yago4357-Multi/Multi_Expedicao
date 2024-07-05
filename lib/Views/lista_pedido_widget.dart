@@ -47,6 +47,8 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
   Color corBorda = Colors.green.shade700;
   String dica = 'Procure um pedido...';
 
+  bool teste = false;
+
   bool inicial = true;
   late ListaPedidoModel _model;
   late Future<List<Contagem>> getPed;
@@ -446,7 +448,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                           tablet: false,
                                         ))
                                           Expanded(
-                                            flex: 2,
+                                            flex: 4,
                                             child: Align(
                                               alignment:
                                               const AlignmentDirectional(-1, 0),
@@ -587,7 +589,7 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                             ),
                                           ),
                                         Expanded(
-                                          flex: 3,
+                                          flex: 6,
                                           child: Align(
                                             alignment:
                                             const AlignmentDirectional(0, 0),
@@ -760,6 +762,82 @@ class _ListaPedidoWidgetState extends State<ListaPedidoWidget> {
                                                 ),
                                               ],
                                             ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(0, 20, 0, 0),
+                                                child: Text(
+                                                  'Expositor ?',
+                                                  textAlign: TextAlign.start,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .headlineMedium
+                                                      .override(
+                                                        fontFamily: 'Outfit',
+                                                        fontSize: 20,
+                                                      ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        0, 0),
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: InkWell(
+                                                      splashColor:
+                                                          Colors.transparent,
+                                                      focusColor:
+                                                          Colors.transparent,
+                                                      hoverColor:
+                                                          Colors.transparent,
+                                                      highlightColor:
+                                                          Colors.transparent,
+                                                      onTap: () {
+                                                        teste = !teste;
+                                                        setState(() {});
+                                                      },
+                                                      child: Container(
+                                                          width: 50,
+                                                          height: 50,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                      Radius
+                                                                          .circular(
+                                                                              20)),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .green
+                                                                      .shade700,
+                                                                  width: 4)),
+                                                          child: teste
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .check_rounded,
+                                                                  color: Colors
+                                                                      .green
+                                                                      .shade700,
+                                                                  size: 40,
+                                                                )
+                                                              : Container()),
+                                                    )),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
