@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:postgres/postgres.dart';
 
 import '../Models/carregamento.dart';
@@ -1513,35 +1513,25 @@ class Banco {
     var trans = <Transportadora>[];
     late http.Response volumeResponse;
 
-    volumeResponse = await cliente.get(transportadoraAPI);
+    volumeResponse = await cliente.get(Uri.http(
+        '127.0.0.1:5000',
+        '/Transportadoras',
+        cod != null
+            ? {
+                'codigo': cod,
+              }
+            : {}));
 
     var lista = jsonDecode(utf8.decode(volumeResponse.bodyBytes)) as List;
 
-    if (cod != null) {
-      if (lista.where(
-        (element) {
-          return element[0] as int == int.parse(cod);
-        },
-      ).isNotEmpty) {
-        for (var element in lista.where(
-          (element) {
-            return element[0] as int == int.parse(cod);
-          },
-        )) {
-          trans = [
-            Transportadora(
-                element[0] as int, element[1] as String, element[2] as String)
-          ];
-        }
-      } else {
-        trans = [Transportadora(0, 'Transportadora não Encontrada', '')];
-      }
-    } else {
+    if (lista.isNotEmpty) {
       for (var element in lista) {
         trans.add(Transportadora(
             element[0] as int, element[1] as String, element[2] as String));
       }
-    }
+      } else {
+        trans = [Transportadora(0, 'Transportadora não Encontrada', '')];
+      }
 
     return trans;
   }
