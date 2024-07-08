@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,21 @@ import '../Views/home_widget.dart';
 class Banco {
   ///Variável para guardar a conexão com o Banco
   late Connection conn;
+
+  ///Guardar uma conexão com a API
+  http.Client cliente = http.Client();
+
+  ///Variável para guardar o link da API de Pedidos
+  Uri pedidosAPI = Uri.http('127.0.0.1:5000', '/Pedidos');
+
+  ///Variável para guardar o link da API de Clientes
+  Uri clientesAPI = Uri.http('127.0.0.1:5000', '/Clientes');
+
+  ///Variável para guardar o link da API de Transportadoras
+  Uri transportadoraAPI = Uri.http('127.0.0.1:5000', '/Transportadoras');
+
+  ///Variável para guardar o link da API de Cidades
+  Uri cidadesAPI = Uri.http('127.0.0.1:5000', '/Cidades');
 
   ///Variáveis para manter dados de conexão do Banco
   late String host, database, username, password;
@@ -1462,23 +1479,6 @@ class Banco {
 
   }
 
-  ///Código para selecionar a Transportadora no banco para mostrar os dados
-  Future<String> selectTransportadora(String cod) async {
-    var trans = 'Transportadora não encontrada';
-    late Result volumeResponse;
-    volumeResponse = await conn.execute('select transportadora.transportadora from transportadora where transportadora.cod_trans = $cod');
-
-    if (cod != '') {
-      for (var element in volumeResponse) {
-        trans = element[0] as String;
-      }
-
-    }
-
-    return trans;
-
-  }
-
   ///Função para criar a declaração no Banco
   Future<List<Pedido>> createDeclaracao(Declaracao dec, DateTime dtIni, DateTime dtFim) async {
     await conn.execute('INSERT INTO pedidos(pedido, VOLUME_TOTAL, DATA_FATURAMENTO, VLTOTAL, cod_cli, STATUS, NF, COND_VENDA, DATA_PEDIDO, VOLUME_NF, DATA_FIM_CHECKOUT, TIPO, MOTIVO)VALUES(\'${dec.ped}\',\'${dec.vol}\',current_timestamp, \'${dec.valor}\',\'${dec.codCli}\',\'F\',\'${dec.ped}\',1,current_timestamp, \'${dec.vol}\', current_timestamp, \'D\', \'${dec.motivo}\');');
@@ -1508,19 +1508,42 @@ class Banco {
     return teste;
   }
 
-  ///Função para puxar todos as Transportadoras do Banco
-  Future<List<Transportadora>> selectAlltransportadora() async {
-    late Result volumeResponse;
-    late var trans = <Transportadora>[];
+  ///Código para selecionar a Transportadora
+  Future<List<Transportadora>> selectTransportadora({String? cod}) async {
+    var trans = <Transportadora>[];
+    late http.Response volumeResponse;
 
-    volumeResponse = await conn.execute('select cod_trans, transportadora, cgc from transportadora order by cod_trans asc');
+    volumeResponse = await cliente.get(transportadoraAPI);
 
-    for (var element in volumeResponse){
-      trans.add(Transportadora(element[0] as int, element[1] as String, element[2] as String));
+    var lista = jsonDecode(utf8.decode(volumeResponse.bodyBytes)) as List;
+
+    if (cod != null) {
+      if (lista.where(
+        (element) {
+          return element[0] as int == int.parse(cod);
+        },
+      ).isNotEmpty) {
+        for (var element in lista.where(
+          (element) {
+            return element[0] as int == int.parse(cod);
+          },
+        )) {
+          trans = [
+            Transportadora(
+                element[0] as int, element[1] as String, element[2] as String)
+          ];
+        }
+      } else {
+        trans = [Transportadora(0, 'Transportadora não Encontrada', '')];
+      }
+    } else {
+      for (var element in lista) {
+        trans.add(Transportadora(
+            element[0] as int, element[1] as String, element[2] as String));
+      }
     }
 
     return trans;
   }
-
 
 }

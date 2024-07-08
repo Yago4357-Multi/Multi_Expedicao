@@ -105,7 +105,7 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
     paletesFin = bd.paleteFinalizado();
     getPaletes = bd.selectromaneio(romaneio);
     pedidoResposta = bd.selectPalletromaneio(getPaletes);
-    transportadoraFut = bd.selectAlltransportadora();
+    transportadoraFut = bd.selectTransportadora();
     qtdCancFut = bd.qtdCanc();
     qtdFatFut = bd.qtdFat();
   }
@@ -4239,9 +4239,10 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   1) {
                                                 if (value != '') {
                                                   trans.text = value;
-                                                  transNome.text = await bd
-                                                      .selectTransportadora(
-                                                          value);
+                                                  transNome.text = (await bd
+                                                          .selectTransportadora(
+                                                              cod: value))[0]
+                                                      .transportadora;
                                                   if (transNome.text ==
                                                       'Transportadora não encontrada') {
                                                     trans.text = '';
@@ -4687,7 +4688,8 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                                   onPressed: () async {
                                                                                     if (await bd.connected(context) == 1) {
                                                                                       trans.text = '$transportadoraSelecionada';
-                                                                                      transNome.text = await bd.selectTransportadora('$transportadoraSelecionada');
+
+                                                                                      transNome.text = (await bd.selectTransportadora(cod: '$transportadoraSelecionada'))[0].transportadora;
                                                                                     }
                                                                                     setState(() {});
                                                                                     if (context.mounted) {
