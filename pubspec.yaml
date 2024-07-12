@@ -60,6 +60,8 @@ dependencies:
   file_picker:
   syncfusion_flutter_datepicker:
   printing:
+  go_router: ^14.2.0
+  shared_preferences: ^2.2.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

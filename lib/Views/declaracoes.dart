@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
@@ -1780,7 +1781,9 @@ class _DeclaracoesWidget extends State<DeclaracoesWidget> {
                                                 .endOfDay;
                                           }
                                         } catch (e) {
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         datasRange = PickerDateRange(dtIni, dtFim);
                                         datas.selectedRange = datasRange;

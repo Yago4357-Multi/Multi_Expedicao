@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'rotas.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var prefs = await SharedPreferences.getInstance();
+  var logado = prefs.getBool('logado');
+  var ultPag = prefs.getString('ultPag') ?? '/';
+  runApp(MyApp(logado: logado, ultPag: ultPag));
 }
 
-///Classe do meu applicativo
+///Classe do meu aplicativo
 class MyApp extends StatelessWidget {
+  final String ultPag;
+
+  ///Variável para mudar a visualização caso ele esteja logado
+  final bool? logado;
 
   ///Construtor do meu aplicativo
-  const MyApp({super.key});
+  const MyApp({super.key, required this.logado, required this.ultPag});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +29,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: namedRoutes,
-      initialRoute: '/',
+      initialRoute: ultPag,
     );
   }
 }

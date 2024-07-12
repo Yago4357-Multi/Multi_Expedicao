@@ -1269,8 +1269,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                         await Navigator.push(
                                                                             context,
                                                                             MaterialPageRoute(
-                                                                              builder: (context) =>
-                                                                                  HomeWidget(usur, bd: bd),
+                                                                              builder: (context) => HomeWidget(bd: bd),
                                                                             ));
                                                                       }
                                                                     }
@@ -1356,7 +1355,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              HomeWidget(usur, bd: bd),
+                                              HomeWidget(bd: bd),
                                         ));
                                   }
                                 }

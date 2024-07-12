@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -559,7 +560,9 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                 .endOfDay;
                                           }
                                         } catch(e){
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         datasRange = PickerDateRange(dtIni, dtFim);
                                         datas.selectedRange = datasRange;

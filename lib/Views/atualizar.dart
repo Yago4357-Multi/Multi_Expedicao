@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
@@ -19,10 +18,10 @@ class AtualizarWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página de criação de novos Paletes
-  const AtualizarWidget(
-      this.usur, {
+  const AtualizarWidget({
         super.key,
-        required this.bd,
+    required this.usur,
+    required this.bd,
       });
 
   @override

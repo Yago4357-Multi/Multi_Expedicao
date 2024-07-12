@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
-import '../Components/Model/lista_romaneio_conf_model.dart';
 
+import '../Components/Model/lista_romaneio_conf_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
@@ -270,7 +269,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    HomeWidget(usur, bd: bd)));
+                                                    HomeWidget(bd: bd)));
                                       }
                                     }
                                   },
@@ -491,7 +490,7 @@ class _ListaRomaneioConfWidgetState extends State<ListaRomaneioConfWidget> {
                                                   },
                                                 );
                                               } else {
-                                                if(teste == 2){
+                                                if (teste2 == 2) {
                                                   await showCupertinoModalPopup(
                                                     context: context,
                                                     barrierDismissible: false,

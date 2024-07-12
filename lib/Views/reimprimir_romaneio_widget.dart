@@ -281,7 +281,6 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                         canRequestFocus: true,
                                         onChanged: (value) {
                                           paleteText = value;
-                                            print(paleteText);
                                           },
                                         onFieldSubmitted: (value) async {
                                           paleteText = value;
@@ -1066,7 +1065,6 @@ class _ReimpriprimirRomaneioWidget extends State<ReimpriprimirRomaneioWidget> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => HomeWidget(
-                                                  usur,
                                                   bd: bd),
                                             ));
                                       }

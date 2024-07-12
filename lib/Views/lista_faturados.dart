@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -454,7 +455,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 .endOfDay;
                                           }
                                         } catch(e){
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         datasRange = PickerDateRange(dtIni, dtFim);
                                         datas.selectedRange = datasRange;
@@ -846,7 +849,8 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 onTap: () async {
                                                   await bd.updateIgnorar(
                                                       pedidos[index].ped,
-                                                      !pedidos[index].ignorar!);
+                                                      ignorar: !pedidos[index]
+                                                          .ignorar!);
                                                   pedidoResposta =
                                                       bd.faturadosNBipados(
                                                           dtIni, dtFim!);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Components/Model/login_model.dart';
 import '../Controls/banco.dart';
@@ -286,6 +287,11 @@ class _LoginWidgetState extends State<LoginWidget>
                                                           .passwordTextController
                                                           .text, context,
                                                           bd);}
+                                                    var prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    await prefs.setBool(
+                                                        'logado', true);
                                                   }
                                                   setState(() {});
                                                 },

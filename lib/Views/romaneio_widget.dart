@@ -1571,7 +1571,6 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                                   builder: (
                                                                       context) =>
                                                                       HomeWidget(
-                                                                          usur,
                                                                           bd: bd),
                                                                 ));
                                                           }
@@ -2860,9 +2859,9 @@ class _ListaRomaneioWidgetState extends State<ListaRomaneioWidget> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        HomeWidget(usur,
-                                                            bd: bd),
-                                                  ));
+                                                              HomeWidget(
+                                                                  bd: bd),
+                                                        ));
                                             }
                                           }
                                           setState(() {});

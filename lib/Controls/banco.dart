@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:postgres/postgres.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/carregamento.dart';
 import '../Models/cliente.dart';
@@ -18,7 +19,6 @@ import '../Models/romaneio.dart';
 import '../Models/transportadora.dart';
 import '../Models/usur.dart';
 import '../Views/conferencia_widget.dart';
-import '../Views/home_widget.dart';
 
 ///Classe para manter funções do Banco
 class Banco {
@@ -27,6 +27,14 @@ class Banco {
 
   ///Guardar uma conexão com a API
   http.Client cliente = http.Client();
+
+  ///Guardar o header padrão que tem que ser inserido juntamente com uma requisição
+  var headerDefault = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
+    'Content-Type': 'application/json',
+    'Accept': '*/*'
+  };
 
   ///Variável para guardar o link da API de Pedidos
   Uri pedidosAPI = Uri.http('127.0.0.1:5000', '/Pedidos');
@@ -40,6 +48,9 @@ class Banco {
   ///Variável para guardar o link da API de Cidades
   Uri cidadesAPI = Uri.http('127.0.0.1:5000', '/Cidades');
 
+  ///Variável para guardar o link da API de Paletes
+  Uri paletesAPI = Uri.http('127.0.0.1:5000', '/Paletes');
+
   ///Variáveis para manter dados de conexão do Banco
   late String host, database, username, password;
 
@@ -50,121 +61,22 @@ class Banco {
 
   // ----------------------- Conexão de Banco ----------------------------------
 
-  ///Função para iniciar o Banco de Dados
   void init(BuildContext context) async {
-    if (kDebugMode) {
-      host = '192.168.17.104';
-      database = 'postgres';
-      username = 'postgres';
-      password = 'Multi@bd7';
+    if (kIsWeb == true) {
+      print('Web Daora');
     } else {
-      host = '192.168.17.104';
-      database = 'multiexpedicao';
-      username = 'multi';
-      password = '@#Multi4785';
-    }
-
-    try {
-      conn = await Connection.open(
-          Endpoint(
-            host: host,
-            database: database,
-            username: username,
-            password: password,
-            port: 5432,
-          ),
-          settings: ConnectionSettings(
-              sslMode: SslMode.disable,
-              onOpen: (connection) =>
-                  connection.execute('SET search_path TO public')));
-    } on SocketException {
-      if (context.mounted) {
-        await showCupertinoModalPopup(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return CupertinoAlertDialog(
-              title: const Text('Sem conexão com o Servidor'),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                    isDefaultAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Voltar'))
-              ],
-            );
-          },
-        );
-      }
-    }
-  }
-
-  ///Função para verificar a conexão com o Banco
-  Future<int> connected(BuildContext context) async {
-    try {
-      if (conn.isOpen) {
-        return 1;
+      if (kDebugMode) {
+        host = '192.168.17.104';
+        database = 'postgres';
+        username = 'postgres';
+        password = 'Multi@bd7';
       } else {
-        conn = await Connection.open(
-            Endpoint(
-              host: host,
-              database: database,
-              username: username,
-              password: password,
-              port: 5432,
-            ),
-            settings: ConnectionSettings(
-              sslMode: SslMode.disable,
-              onOpen: (connection) =>
-                  connection.execute('SET search_path TO public'),
-            ));
-        if (conn.isOpen) {
-          return 1;
-        } else {
-          if (context.mounted) {
-            await showCupertinoModalPopup(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Sem conexão com o Servidor'),
-                  actions: <CupertinoDialogAction>[
-                    CupertinoDialogAction(
-                        isDefaultAction: true,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Voltar'))
-                  ],
-                );
-              },
-            );
-            return 0;
-          }
-          return 0;
-        }
+        host = '192.168.17.104';
+        database = 'multiexpedicao';
+        username = 'multi';
+        password = '@#Multi4785';
       }
-    } on SocketException {
-      await showCupertinoModalPopup(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: const Text('Sem conexão com a Internet'),
-            actions: <CupertinoDialogAction>[
-              CupertinoDialogAction(
-                  isDefaultAction: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Voltar'))
-            ],
-          );
-        },
-      );
-      return 0;
-    } catch (e) {
+
       try {
         conn = await Connection.open(
             Endpoint(
@@ -175,13 +87,10 @@ class Banco {
               port: 5432,
             ),
             settings: ConnectionSettings(
-              sslMode: SslMode.disable,
-              onOpen: (connection) =>
-                  connection.execute('SET search_path TO public'),
-            ));
-
-        return 1;
-      } catch (e) {
+                sslMode: SslMode.disable,
+                onOpen: (connection) =>
+                    connection.execute('SET search_path TO public')));
+      } on SocketException {
         if (context.mounted) {
           await showCupertinoModalPopup(
             context: context,
@@ -201,14 +110,124 @@ class Banco {
             },
           );
         }
-        return 0;
       }
     }
   }
 
-  ///Função para verificar em qual banco está conectado
+  Future<int> connected(BuildContext context) async {
+    if (kIsWeb == true) {
+      return 1;
+    } else {
+      try {
+        if (conn.isOpen) {
+          return 1;
+        } else {
+          conn = await Connection.open(
+              Endpoint(
+                host: host,
+                database: database,
+                username: username,
+                password: password,
+                port: 5432,
+              ),
+              settings: ConnectionSettings(
+                sslMode: SslMode.disable,
+                onOpen: (connection) =>
+                    connection.execute('SET search_path TO public'),
+              ));
+          if (conn.isOpen) {
+            return 1;
+          } else {
+            if (context.mounted) {
+              await showCupertinoModalPopup(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return CupertinoAlertDialog(
+                    title: const Text('Sem conexão com o Servidor'),
+                    actions: <CupertinoDialogAction>[
+                      CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Voltar'))
+                    ],
+                  );
+                },
+              );
+              return 0;
+            }
+            return 0;
+          }
+        }
+      } on SocketException {
+        await showCupertinoModalPopup(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Sem conexão com a Internet'),
+              actions: <CupertinoDialogAction>[
+                CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Voltar'))
+              ],
+            );
+          },
+        );
+        return 0;
+      } catch (e) {
+        try {
+          conn = await Connection.open(
+              Endpoint(
+                host: host,
+                database: database,
+                username: username,
+                password: password,
+                port: 5432,
+              ),
+              settings: ConnectionSettings(
+                sslMode: SslMode.disable,
+                onOpen: (connection) =>
+                    connection.execute('SET search_path TO public'),
+              ));
+
+          return 1;
+        } catch (e) {
+          if (context.mounted) {
+            await showCupertinoModalPopup(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return CupertinoAlertDialog(
+                  title: const Text('Sem conexão com o Servidor'),
+                  actions: <CupertinoDialogAction>[
+                    CupertinoDialogAction(
+                        isDefaultAction: true,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Voltar'))
+                  ],
+                );
+              },
+            );
+          }
+          return 0;
+        }
+      }
+    }
+  }
+
   Future<String> conexao() async {
-    late final Result pedidos;
+    if (kIsWeb == true) {
+      return 'WEB';
+    } else {
+      late final Result pedidos;
     var conexao = '';
     pedidos = await conn.execute(
         'SELECT datname FROM pg_stat_activity WHERE pid = pg_backend_pid();');
@@ -220,19 +239,21 @@ class Banco {
       }
     }
     return conexao;
+    }
   }
 
   // ------------------------ Login --------------------------------------------
 
-  ///Função para verificar login do Banco
-  void auth(String login, String senha, BuildContext a, Banco bd) async {
+  void auth(String login, String senha, BuildContext context, Banco bd) async {
     Usuario? usur;
     late final http.Response volumeResponse;
+    var prefs = await SharedPreferences.getInstance();
 
     volumeResponse = await cliente.get(Uri.http('127.0.0.1:5000', '/Login', {
       'login': login,
       'senha': senha,
-    }));
+        }),
+        headers: headerDefault);
 
     var lista = jsonDecode(utf8.decode(volumeResponse.bodyBytes)) as List;
 
@@ -240,21 +261,19 @@ class Banco {
       if (element != null) {
         usur = Usuario(element['ID'] as int, element['SETOR'] as String,
             element['NOME'] as String);
+
+        await prefs.setString('Usuario', element['NOME'] as String);
+        await prefs.setString('Permissão', element['SETOR'] as String);
       }
     }
     if (usur?.acess != null) {
-      if (a.mounted) {
-        Navigator.pop(a);
-        await Navigator.push(
-            a,
-            MaterialPageRoute(
-              builder: (context) => HomeWidget(usur!, bd: bd),
-            ));
+      if (context.mounted) {
+        await Navigator.popAndPushNamed(context, '/Home', arguments: bd);
       }
     } else {
-      if (a.mounted) {
+      if (context.mounted) {
         await showCupertinoModalPopup(
-          context: a,
+          context: context,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
@@ -276,17 +295,16 @@ class Banco {
     }
   }
 
-  // ------------------------ Funções da Bipagem -------------------------------
+  //// ------------------------ Funções da Bipagem -----------------------------
 
   // 1 - Create
 
-  ///Função para inserir dados no Banco
-  Future<List<Contagem>> insert(
-      String cod, int pallet, BuildContext a, Usuario usur) async {
+  Future<List<Contagem>> insert(String cod, int pallet, BuildContext context,
+      Usuario usur) async {
     if (cod.length != 33) {
-      if (a.mounted) {
+      if (context.mounted) {
         await showCupertinoModalPopup(
-          context: a,
+          context: context,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
@@ -312,9 +330,9 @@ class Banco {
         await conn.execute(
             'insert into bipagem(PEDIDO,PALETE,DATA_BIPAGEM,VOLUME_CAIXA,COD_BARRA,ID_USER_BIPAGEM) values ($ped, $pallet,current_timestamp,$cx,$codArrumado,${usur.id});');
       } on Exception {
-        if (a.mounted) {
+        if (context.mounted) {
           await showCupertinoModalPopup(
-            context: a,
+            context: context,
             barrierDismissible: false,
             builder: (context) {
               return CupertinoAlertDialog(
@@ -666,7 +684,6 @@ class Banco {
 
   // 1 - Create
 
-  ///Função para criar novos paletes
   void createpalete(Usuario usur) async {
     await conn.execute(
         'insert into palete (DATA_INCLUSAO,ID_USUR_CRIACAO) values (current_timestamp,${usur.id});');
@@ -674,27 +691,28 @@ class Banco {
 
   // 2 - Read
 
-  ///Função para puxar o último palete criado
-  Future<int> getpalete() async {
-    var teste = 0;
-    late final Result pedidos;
+  ///Busca o número do último palete criado e retorna o número + 1
+  Future<int> novoPalete() async {
+    var ultPalete = 0;
+    late final http.Response resposta;
 
     try {
-      pedidos = await conn.execute('select COALESCE(MAX(ID),0) from palete;');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in pedidos) {
-      teste = (element[0] ?? 0) as int;
+      resposta = await cliente.get(paletesAPI, headers: headerDefault);
+
+      var listaResposta = jsonDecode(utf8.decode(resposta.bodyBytes)) as List;
+
+      ultPalete = listaResposta[listaResposta.length - 1]['ID'];
+
+      print('ÚLTIMO PALETE : $ultPalete');
+    } catch (e) {
+      print(e);
     }
 
-    return teste + 1;
+    return ultPalete + 1;
   }
 
-  ///Função para verificar se o palete já existe
-  void paleteExiste(int palete, BuildContext a, Usuario usur, Banco bd) async {
+  void paleteExiste(
+      int palete, BuildContext context, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
 
@@ -713,10 +731,10 @@ class Banco {
       teste = (element[0] ?? 0) as int;
       teste2 = element[1];
     }
-    if (a.mounted) {
+    if (context.mounted) {
       if (teste == 0) {
         await showCupertinoModalPopup(
-          context: a,
+          context: context,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
@@ -755,13 +773,13 @@ class Banco {
                 ],
               );
             },
-            context: a);
+            context: context);
         return;
       }
-      if (a.mounted) {
-        Navigator.pop(a);
+      if (context.mounted) {
+        Navigator.pop(context);
         await Navigator.push(
-            a,
+            context,
             MaterialPageRoute(
                 builder: (context) =>
                     ListaRomaneioConfWidget(palete: teste, usur, bd: bd)));
@@ -769,7 +787,6 @@ class Banco {
     }
   }
 
-  ///Função para verificar se o palete foi finalizado
   Future<List<Paletes>> paleteFinalizado() async {
     var teste = <Paletes>[];
     late final Result pedidos;
@@ -809,8 +826,7 @@ class Banco {
     return teste;
   }
 
-  ///Função para verificar se o palete foi finalizado
-  Future<List<Paletes>> paleteAll(int palete, BuildContext a) async {
+  Future<List<Paletes>> paleteAll(int palete, BuildContext context) async {
     var teste = <Paletes>[];
     late final Result pedidos;
 
@@ -867,7 +883,7 @@ class Banco {
     return teste;
   }
 
-  Future<List<Contagem>> selectPallet(int palete, BuildContext a) async {
+  Future<List<Contagem>> selectPallet(int palete, BuildContext context) async {
     var teste = <Contagem>[];
     late final Result pedidos;
     late Result volumeResponse;
@@ -879,9 +895,9 @@ class Banco {
       teste2 = element[0] as int;
     }
     if (teste2 == 0 && palete > 0) {
-      if (a.mounted) {
+      if (context.mounted) {
         await showCupertinoModalPopup(
-          context: a,
+          context: context,
           barrierDismissible: false,
           builder: (context) {
             return CupertinoAlertDialog(
@@ -938,7 +954,6 @@ class Banco {
     return teste;
   }
 
-  ///Função para puxar os paletes que estão no romaneio
   Future<List<int>> selectromaneio(int romaneio) async {
     var teste = <int>[];
     late final Result pedidos;
@@ -958,7 +973,6 @@ class Banco {
     return teste;
   }
 
-  ///Função para puxar todos os paletes que não foram carregados
   Future<List<Paletes>> paletesFull() async {
     var teste = <Paletes>[];
     late Result volumeResponse;
@@ -981,7 +995,6 @@ class Banco {
 
   // 3 - Update
 
-  ///Função para atualizar o romaneio do palete
   Future<List<int>> updatepalete(int romaneio, List<int> paletes) async {
     await conn.execute(
         'update palete set ID_ROMANEIO = $romaneio where ID in (${paletes.join(',')});');
@@ -1004,13 +1017,11 @@ class Banco {
     return teste;
   }
 
-  ///Função para finalizar paletes
   void endpalete(int palete, Usuario usur) async {
     await conn.execute(
         'update palete set DATA_FECHAMENTO = current_timestamp, ID_USUR_FECHAMENTO = ${usur.id} where ID = $palete');
   }
 
-  ///Função para remover o romaneio do palete
   void removepalete(int romaneio, List<int> paletes) async {
     if (paletes.isNotEmpty) {
       await conn.execute(
@@ -1021,7 +1032,6 @@ class Banco {
     }
   }
 
-  ///Função para reabrir o palete no Banco
   void reabrirpalete(int palete) async {
     await conn.execute(
         'update palete set DATA_FECHAMENTO = null, ID_USUR_FECHAMENTO = null, ID_ROMANEIO = null where ID = $palete;');
@@ -1031,7 +1041,6 @@ class Banco {
 
   // 1 - Create
 
-  ///Função para criar novos romaneios
   void createromaneio(Usuario usur) async {
     await conn.execute(
         'insert into romaneio (DATA_ROMANEIO,ID_USUR) values (current_timestamp,${usur.id});');
@@ -1039,7 +1048,6 @@ class Banco {
 
   // 2 - Read
 
-  ///Função para puxar todos os Romaneio
   Future<List<Romaneio>> romaneioExiste() async {
     var teste = <Romaneio>[];
 
@@ -1068,7 +1076,6 @@ class Banco {
     return teste;
   }
 
-  ///Função para verificar se o romaneio foi finalizado
   Future<List<Romaneio>> romaneioFinalizado() async {
     var teste = <Romaneio>[];
     late final Result pedidos;
@@ -1096,8 +1103,7 @@ class Banco {
     return teste;
   }
 
-  ///Função para buscar o último romaneio do Banco
-  Future<int?> getromaneio(BuildContext a) async {
+  Future<int?> getromaneio(BuildContext context) async {
     int? teste;
     late final Result pedidos;
 
@@ -1113,7 +1119,7 @@ class Banco {
       teste = element[0] as int?;
     }
     if (teste == 0) {
-      if (a.mounted) {
+      if (context.mounted) {
         await showCupertinoModalPopup(
             barrierDismissible: false,
             builder: (context) {
@@ -1129,7 +1135,7 @@ class Banco {
                 ],
               );
             },
-            context: a);
+            context: context);
       }
     } else {
       return teste;
@@ -1137,7 +1143,6 @@ class Banco {
     return null;
   }
 
-  ///Função para puxar todos os romaneios finalizados dentro de um período de tempo
   Future<List<Romaneio>> romaneiosFinalizados(
       DateTime dtIni, DateTime dtFim) async {
     var teste = <Romaneio>[];
@@ -1164,7 +1169,6 @@ class Banco {
 
   // 3 - Update
 
-  ///Função para finalizar romaneio
   void endromaneio(int romaneio, List<Pedido> pedidos, int trans) async {
     for (var i in pedidos) {
       await conn.execute(
@@ -1178,7 +1182,6 @@ class Banco {
 
   // 2 - Read
 
-  ///Pegar palete baseado no romaneio
   Future<List<Carregamento>> getCarregamento(int romaneio) async {
     late var carregamento = <Carregamento>[];
     late final Result pedidos;
@@ -1206,7 +1209,6 @@ class Banco {
 
   // 3 - Update
 
-  ///Função para atualizar dados do Carregamento
   void updateCarregamento(int palete, Usuario usur) async {
     await conn.execute(
         'update palete set DATA_CARREGAMENTO = current_timestamp, ID_USUR_CARREGAMENTO = ${usur.id} where ID = $palete;');
@@ -1216,7 +1218,6 @@ class Banco {
 
   // 2 - Read
 
-  ///Busca pedidos do Banco por Romaneio
   Future<List<Pedido>> selectpedidosromaneio(List<int> cods) async {
     var teste = <Pedido>[];
     if (cods.isNotEmpty) {
@@ -1246,29 +1247,27 @@ class Banco {
     return teste;
   }
 
-  ///Função para buscar a quantidade de todos os pedidos Faturados e não bipados do Banco
   Future<int> qtdFat() async {
     var teste = 0;
     late Result volumeResponse;
 
-    try {
-      volumeResponse = await conn.execute(
-          'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    for (var element in volumeResponse) {
-      if (element.isNotEmpty) {
-        teste = (element[0] ?? 0) as int;
-      }
-    }
+    // try {
+    //   volumeResponse = await conn.execute(
+    //       'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is null and STATUS like \'F\' and VOLUME_TOTAL <> 0 and IGNORAR = false;');
+    // } catch (e) {
+    //   if (kDebugMode) {
+    //     print(e);
+    //   }
+    // }
+    // for (var element in volumeResponse) {
+    //   if (element.isNotEmpty) {
+    //     teste = (element[0] ?? 0) as int;
+    //   }
+    // }
 
     return teste;
   }
 
-  ///Busca pedidos não bipados que foram faturados
   Future<List<Pedido>> faturadosNBipados(
       DateTime dtIni, DateTime? dtFim) async {
     var teste = <Pedido>[];
@@ -1292,29 +1291,27 @@ class Banco {
     return teste;
   }
 
-  ///Função para selecionar a quantidade de todos os pedidos cancelados já bipados do Banco
   Future<int> qtdCanc() async {
     var teste = 0;
     late Result volumeResponse;
 
-    volumeResponse = await conn.execute(
-        'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
-    for (var element in volumeResponse) {
-      try {
-        if (element.isNotEmpty) {
-          teste = (element[0] ?? 0) as int;
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      }
-    }
+    // volumeResponse = await conn.execute(
+    //     'select count(*) from pedidos left join bipagem on bipagem.PEDIDO = pedidos.pedido left join clientes on clientes.cod_cli = pedidos.cod_cli left join cidades on cidades.COD_CIDADE = clientes.COD_CIDADE where bipagem.PEDIDO is not null and (DATA_CANC_PED IS NOT NULL OR DATA_CANC_NF IS NOT NULL) and IGNORAR = false group by pedidos.pedido, VOLUME_TOTAL, clientes.cod_cli, CLIENTE, NF, cidades.CIDADE;');
+    // for (var element in volumeResponse) {
+    //   try {
+    //     if (element.isNotEmpty) {
+    //       teste = (element[0] ?? 0) as int;
+    //     }
+    //   } catch (e) {
+    //     if (kDebugMode) {
+    //       print(e);
+    //     }
+    //   }
+    // }
 
     return teste;
   }
 
-  ///Função para buscar pedidos que já foram Bipados e forma cancelados após isso.
   Future<List<Pedido>> canceladosBipados() async {
     var teste = <Pedido>[];
     late Result volumeResponse;
@@ -1376,8 +1373,7 @@ class Banco {
 
   // 3 - Update
 
-  ///Função para mudar o status de "ignorar" da tabela pedido
-  Future<void> updateIgnorar(int ped, bool? ignorar) async {
+  Future<void> updateIgnorar(int ped, {bool? ignorar}) async {
     await conn.execute(
         'update pedidos set IGNORAR = $ignorar where pedidos.pedido = $ped;');
   }
@@ -1386,7 +1382,6 @@ class Banco {
 
   // 1 - Create
 
-  ///Função para criar a declaração no Banco
   Future<List<Pedido>> createDeclaracao(
       Declaracao dec, DateTime dtIni, DateTime dtFim) async {
     await conn.execute(
@@ -1421,7 +1416,6 @@ class Banco {
 
   // 2 - Read
 
-  ///Busca as declarações na tabela de pedidos
   Future<List<Pedido>> allDeclaracoes(DateTime? dtIni, DateTime? dtFim) async {
     var teste = <Pedido>[];
     late Result volumeResponse;
@@ -1449,7 +1443,6 @@ class Banco {
     return teste;
   }
 
-  ///Seleciona o número da última declaração criada
   Future<int> ultDec() async {
     var teste = 0;
     late final Result pedidos;
@@ -1489,7 +1482,6 @@ class Banco {
 
   // 3 - Update
 
-  ///Função para forçar atualização do Banco
   void atualizar(DateTime? ultAtt, BuildContext context) async {
     if (DateTime.now().difference(ultAtt!.toLocal()) >=
         const Duration(minutes: 5)) {
@@ -1537,7 +1529,6 @@ class Banco {
     }
   }
 
-  ///Função para forçar atualização full do Banco
   void atualizarFull(DateTime? ultAtt, BuildContext context) async {
     if (DateTime.now().difference(ultAtt!.toLocal()) >=
         const Duration(minutes: 5)) {
@@ -1587,7 +1578,6 @@ class Banco {
 
   // ------------------------ Funções do Cliente -------------------------------
 
-  ///Código para selecionar o Cliente no banco para mostrar os dados
   Future<Cliente> selectCliente(int cod) async {
     late var cli = Cliente(0, 0, '', '', '', '');
     late Result volumeResponse;
@@ -1613,7 +1603,6 @@ class Banco {
 
   // 2 - Read
 
-  ///Código para selecionar a Transportadora
   Future<List<Transportadora>> selectTransportadora({String? cod}) async {
     var trans = <Transportadora>[];
     late http.Response volumeResponse;

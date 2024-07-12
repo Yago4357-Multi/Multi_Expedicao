@@ -1,5 +1,5 @@
 ///Classe para definir o padrão do Cliente
-class Cliente{
+class Cliente {
   ///Variáveis iniciais do Cliente
   int? codCli, codCid;
 
@@ -13,7 +13,7 @@ class Cliente{
       telefoneCelular,
       endereco;
 
-  ///Variáveis iniciais do Cliente
+  ///Variável para guardar o nome da cidade junto com o Cliente
   String? cidade;
 
   ///Construtor do objeto "Cliente"
