@@ -5,11 +5,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:postgres/postgres.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/carregamento.dart';
+import '../Models/cidade.dart';
 import '../Models/cliente.dart';
 import '../Models/contagem.dart';
 import '../Models/declaracao.dart';
@@ -39,17 +41,26 @@ class Banco {
   ///Variável para guardar o link da API de Pedidos
   Uri pedidosAPI = Uri.http('127.0.0.1:5000', '/Pedidos');
 
+  ///Variável para guardar o link da API de Usuarios
+  Uri usuariosAPI = Uri.http('127.0.0.1:5000', '/Usuarios');
+
   ///Variável para guardar o link da API de Clientes
   Uri clientesAPI = Uri.http('127.0.0.1:5000', '/Clientes');
 
   ///Variável para guardar o link da API de Transportadoras
   Uri transportadoraAPI = Uri.http('127.0.0.1:5000', '/Transportadoras');
 
+  ///Variável para guardar o link da API de Romaneios
+  Uri romaneioAPI = Uri.http('127.0.0.1:5000', '/Romaneios');
+
   ///Variável para guardar o link da API de Cidades
   Uri cidadesAPI = Uri.http('127.0.0.1:5000', '/Cidades');
 
   ///Variável para guardar o link da API de Paletes
   Uri paletesAPI = Uri.http('127.0.0.1:5000', '/Paletes');
+
+  ///Variável para guardar o link da API de Bipagens
+  Uri bipagensAPI = Uri.http('127.0.0.1:5000', '/Bipagens');
 
   ///Variáveis para manter dados de conexão do Banco
   late String host, database, username, password;
@@ -228,17 +239,16 @@ class Banco {
       return 'WEB';
     } else {
       late final Result pedidos;
-    var conexao = '';
     pedidos = await conn.execute(
         'SELECT datname FROM pg_stat_activity WHERE pid = pg_backend_pid();');
     for (var i in pedidos) {
       if (i[0] == 'postgres') {
-        conexao = 'Homolog';
-      } else {
-        conexao = 'Produção';
+          return 'Homolog';
+        } else {
+          return 'Produção';
+        }
       }
-    }
-    return conexao;
+      return '';
     }
   }
 
@@ -264,6 +274,7 @@ class Banco {
 
         await prefs.setString('Usuario', element['NOME'] as String);
         await prefs.setString('Permissão', element['SETOR'] as String);
+        await prefs.setInt('ID_Usur', element['ID'] as int);
       }
     }
     if (usur?.acess != null) {
@@ -393,40 +404,6 @@ class Banco {
 
   // 2 - Read
 
-  Future<List<Contagem>> selectAll() async {
-    var teste = <Contagem>[];
-    late final Result pedidos;
-    late Result volumeResponse;
-
-    try {
-      pedidos = await conn.execute(
-          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem;');
-    } on Exception catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-
-    for (var element in pedidos) {
-      try {
-        volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL from pedidos where pedidos.pedido = ${element[1]};'));
-        for (var element2 in volumeResponse) {
-          if (element2[0] != null) {
-            teste.add(Contagem(element[1] as int?, element[5] as int?,
-                element[4] as int?, (int.parse('${element2[0]}'))));
-          }
-        }
-      } on Exception catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      }
-    }
-
-    return teste;
-  }
-
   Future<List<Pedido>> selectPalletromaneio(
       Future<List<int>> listapaletes) async {
     var paletes = await listapaletes;
@@ -523,20 +500,29 @@ class Banco {
 
   Future<List<Contagem>> selectPedido(int cod) async {
     var teste = <Contagem>[];
-    late final Result pedidos;
-    late Result volumeResponse;
+    var bipLista = [];
+    late final http.Response bipResponse;
+    late final Result volumeResponse;
     try {
-      pedidos = await conn.execute(
-          'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = $cod order by VOLUME_CAIXA;');
+      bipResponse = await cliente.get(
+        Uri.http('127.0.0.1:5000', '/Bipagens', {'Pedido': cod}),
+        headers: headerDefault,
+      );
+
+      bipLista = jsonDecode(utf8.decode(bipResponse.bodyBytes)) as List;
+
+      // bipResponse = await conn.execute(
+      //     'Select ID, PEDIDO, DATA_BIPAGEM, COD_BARRA, VOLUME_CAIXA, PALETE, ID_USER_BIPAGEM from bipagem where PEDIDO = $cod order by VOLUME_CAIXA;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-    for (var element in pedidos) {
+    for (var element in bipLista) {
       try {
         volumeResponse = (await conn.execute(
-            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element[1]};'));
+            'select VOLUME_TOTAL, VLTOTAL, CLIENTE, cidades.CIDADE, STATUS from pedidos left join clientes on clientes.cod_cli = pedidos.cod_cli LEFT JOIN cidades on clientes.COD_CIDADE = cidades.COD_CIDADE where pedidos.pedido = ${element['Pedido']};'));
+
         for (var element2 in volumeResponse) {
           if (element2[0] != null) {
             teste.add(Contagem(element[1] as int?, element[5] as int?,
@@ -703,7 +689,6 @@ class Banco {
 
       ultPalete = listaResposta[listaResposta.length - 1]['ID'];
 
-      print('ÚLTIMO PALETE : $ultPalete');
     } catch (e) {
       print(e);
     }
@@ -711,25 +696,29 @@ class Banco {
     return ultPalete + 1;
   }
 
-  void paleteExiste(
+  ///Função para o verificar a existência e situação do Palete
+  void conferirPalete(
       int palete, BuildContext context, Usuario usur, Banco bd) async {
     Object? teste2 = DateTime.timestamp();
     var teste = 0;
-
-    ///Variável para manter a resposta do Banco
-    late final Result pedidos;
+    late List pedidos;
+    late final http.Response pedidosResponse;
 
     try {
-      pedidos = await conn
-          .execute('select ID,DATA_FECHAMENTO from palete where ID = $palete;');
+      pedidosResponse = await cliente.get(paletesAPI, headers: headerDefault);
+
+      pedidos = jsonDecode(utf8.decode(pedidosResponse.bodyBytes)) as List;
+
+      // pedidos = await conn
+      //     .execute('select ID,DATA_FECHAMENTO from palete where ID = $palete;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
     for (var element in pedidos) {
-      teste = (element[0] ?? 0) as int;
-      teste2 = element[1];
+      teste = (element['ID'] ?? 0) as int;
+      teste2 = element['Data Fechamento'];
     }
     if (context.mounted) {
       if (teste == 0) {
@@ -828,55 +817,118 @@ class Banco {
 
   Future<List<Paletes>> paleteAll(int palete, BuildContext context) async {
     var teste = <Paletes>[];
-    late final Result pedidos;
+    late final http.Response romResponse,
+        usuFechResponse,
+        usuCarrResponse,
+        bipResponse,
+        paleteResponse,
+        usuCriacaoResponse;
+    var bipList = [],
+        romList = [],
+        paleteList = [],
+        usuCriacaoList = [],
+        usuFechList = [],
+        usuCarrList = [];
 
     try {
-      pedidos = await conn.execute(
-          'select palete.ID,Bip.NOME,DATA_INCLUSAO,count(bipagem.PEDIDO),Fech.NOME,palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO  from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID left join usuarios Bip on Bip.ID = ID_USUR_CRIACAO left join usuarios Fech on Fech.ID = ID_USUR_FECHAMENTO LEFT JOIN usuarios Car on Car.ID = ID_USUR_CARREGAMENTO where palete.ID = $palete group by palete.ID, Bip.NOME, DATA_INCLUSAO, Fech.NOME, palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO order by ID;');
+      paleteResponse = await cliente.get(
+          Uri.http('127.0.0.1:5000', '/Paletes', {'palete': palete}),
+          headers: headerDefault);
+
+      paleteList = jsonDecode(utf8.decode(paleteResponse.bodyBytes)) as List;
+
+      romResponse = await cliente.get(
+          Uri.http(
+              '127.0.0.1:5000', '/Romaneios', paleteList[0]['ID Romaneio']),
+          headers: headerDefault);
+
+      romList = jsonDecode(utf8.decode(romResponse.bodyBytes)) as List;
+
+      bipResponse = await cliente.get(
+          Uri.http('127.0.0.1:5000', '/Bipagens', {'palete': palete}),
+          headers: headerDefault);
+
+      bipList = jsonDecode(utf8.decode(bipResponse.bodyBytes)) as List;
+
+      usuCriacaoResponse = await cliente.get(
+          Uri.http('127.0.0.1:5000', '/Usuarios',
+              {'id': paleteList[0]['ID Usur Criacao']}),
+          headers: headerDefault);
+
+      usuCriacaoList =
+          jsonDecode(utf8.decode(usuCriacaoResponse.bodyBytes)) as List;
+
+      usuFechResponse = await cliente.get(
+          Uri.http('127.0.0.1:5000', '/Usuarios',
+              {'id': paleteList[0]['ID Usur Fechamento']}),
+          headers: headerDefault);
+
+      usuFechList = jsonDecode(utf8.decode(usuFechResponse.bodyBytes)) as List;
+
+      usuCarrResponse = await cliente.get(
+          Uri.http('127.0.0.1:5000', '/Usuarios',
+              {'id': paleteList[0]['ID Usur Carregamento']}),
+          headers: headerDefault);
+
+      usuCarrList = jsonDecode(utf8.decode(usuCarrResponse.bodyBytes)) as List;
+
+      // pedidos = await conn.execute(
+      //     'select palete.ID,Bip.NOME,DATA_INCLUSAO,count(bipagem.PEDIDO),Fech.NOME,palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO  from palete left join romaneio on ID_ROMANEIO = romaneio.ID left join bipagem on PALETE = palete.ID left join usuarios Bip on Bip.ID = ID_USUR_CRIACAO left join usuarios Fech on Fech.ID = ID_USUR_FECHAMENTO LEFT JOIN usuarios Car on Car.ID = ID_USUR_CARREGAMENTO where palete.ID = $palete group by palete.ID, Bip.NOME, DATA_INCLUSAO, Fech.NOME, palete.DATA_FECHAMENTO, Car.NOME,palete.DATA_CARREGAMENTO order by ID;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-    for (var element in pedidos) {
-      if (element[4] == null) {
+
+    if (paleteList[0]['Data Fechamento'] == null) {
+      teste.add(Paletes(
+          paleteList[0]['ID'] as int?,
+          usuCriacaoList[0]['NOME'] as String?,
+          paleteList[0]['Data Inclus\u00e3o'] != '' &&
+                  paleteList[0]['Data Inclus\u00e3o'] != null
+              ? DateTime.parse('${paleteList[0]['Data Inclus\u00e3o']}')
+                  .toLocal()
+              : null,
+          bipList.length as int?));
+    } else {
+      if (paleteList[0]['Data Carregamento'] == null) {
         teste.add(Paletes(
-            element[0] as int?,
-            element[1] as String?,
-            element[2] != '' && element[2] != null
-                ? DateTime.parse('${element[2]}').toLocal()
+            paleteList[0]['ID'] as int?,
+            usuCriacaoList[0]['NOME'] as String?,
+            paleteList[0]['Data Inclus\u00e3o'] != '' &&
+                    paleteList[0]['Data Inclus\u00e3o'] != null
+                ? DateTime.parse('${paleteList[0]['Data Inclus\u00e3o']}')
+                    .toLocal()
                 : null,
-            element[3] as int?));
+            bipList.length as int?,
+            usurFechamento: usuFechList[0]['NOME'] as String?,
+            dtFechamento: paleteList[0]['Data Fechamento'] != '' &&
+                    paleteList[0]['Data Fechamento'] != null
+                ? DateTime.parse('${paleteList[0]['Data Fechamento']}')
+                    .toLocal()
+                : null));
       } else {
-        if (element[6] == null) {
-          teste.add(Paletes(
-              element[0] as int?,
-              element[1] as String?,
-              element[2] != '' && element[2] != null
-                  ? DateTime.parse('${element[2]}').toLocal()
-                  : null,
-              element[3] as int?,
-              usurFechamento: element[4] as String?,
-              dtFechamento: element[5] != '' && element[5] != null
-                  ? DateTime.parse('${element[5]}').toLocal()
-                  : null));
-        } else {
-          teste.add(Paletes(
-              element[0] as int?,
-              element[1] as String?,
-              element[2] != '' && element[2] != null
-                  ? DateTime.parse('${element[2]}').toLocal()
-                  : null,
-              element[3] as int?,
-              usurFechamento: element[4] as String?,
-              dtFechamento: element[5] != '' && element[5] != null
-                  ? DateTime.parse('${element[5]}').toLocal()
-                  : null,
-              usurCarregamento: element[6] as String?,
-              dtCarregamento: element[7] != '' && element[7] != null
-                  ? DateTime.parse('${element[7]}').toLocal()
-                  : null));
-        }
+        teste.add(Paletes(
+            paleteList[0]['ID'] as int?,
+            usuCriacaoList[0]['NOME'] as String?,
+            paleteList[0]['Data Inclus\u00e3o'] != '' &&
+                    paleteList[0]['Data Inclus\u00e3o'] != null
+                ? DateTime.parse('${paleteList[0]['Data Inclus\u00e3o']}')
+                    .toLocal()
+                : null,
+            bipList.length as int?,
+            usurFechamento: usuFechList[0]['NOME'] as String?,
+            dtFechamento: paleteList[0]['Data Fechamento'] != '' &&
+                    paleteList[0]['Data Fechamento'] != null
+                ? DateTime.parse('${paleteList[0]['Data Fechamento']}')
+                    .toLocal()
+                : null,
+            usurCarregamento: usuCarrList[0]['NOME'] as String?,
+            dtCarregamento: paleteList[0]['Data Carregamento'] != '' &&
+                    paleteList[0]['Data Carregamento'] != null
+                ? DateTime.parse('${paleteList[0]['Data Carregamento']}')
+                    .toLocal()
+                : null));
       }
     }
 
@@ -1041,37 +1093,113 @@ class Banco {
 
   // 1 - Create
 
-  void createromaneio(Usuario usur) async {
-    await conn.execute(
-        'insert into romaneio (DATA_ROMANEIO,ID_USUR) values (current_timestamp,${usur.id});');
+  ///Função para criar um Romaneio novo no Banco
+  void createRomaneio() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getInt('ID_Usur');
+
+    try {
+      var teste = await http.post(
+        romaneioAPI,
+        headers: headerDefault,
+        body: jsonEncode({'codUsur': '$id'}),
+      );
+      print('Response status: ${teste.statusCode}');
+      print('Response body: ${teste.body}');
+    } catch (e) {
+      print(e);
+    }
+
+    // await conn.execute(
+    //     'insert into romaneio (DATA_ROMANEIO,ID_USUR) values (current_timestamp,${usur.id});');
   }
 
   // 2 - Read
 
+  ///Função para puxar todos os Romaneios que estão abertos no Banco
   Future<List<Romaneio>> romaneioExiste() async {
     var teste = <Romaneio>[];
-
-    ///Variável para manter a resposta do Banco
-    late final Result pedidos;
+    late http.Response romResponse, usuResponse, palResponse, bipResponse;
+    var romaneioList = [], usuList = [], palList = [], bipList = [];
 
     try {
-      pedidos = await conn.execute(
-          'select romaneio.ID,romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\'), count(bipagem.ID) from romaneio left join palete on palete.ID_ROMANEIO = romaneio.ID left join bipagem on palete.ID = bipagem.PALETE left join usuarios on usuarios.ID = romaneio.ID_USUR group by romaneio.ID, romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, usuarios.NOME;');
+      romResponse = await cliente.get(romaneioAPI, headers: headerDefault);
+
+      romaneioList = jsonDecode(utf8.decode(romResponse.bodyBytes)) as List;
+
+      for (var romaneio in romaneioList) {
+        palResponse = await cliente.get(
+            Uri.http('127.0.0.1:5000', '/Paletes',
+                {'romaneio': '${romaneio['ID']}'}),
+            headers: headerDefault);
+
+        palList = jsonDecode(utf8.decode(palResponse.bodyBytes)) as List;
+
+        bipResponse = await cliente.get(
+            Uri.http('127.0.0.1:5000', '/Bipagens', {
+              'palete': palList
+                  .map(
+                    (e) {
+                      return e["ID"];
+                    },
+                  )
+                  .toString()
+                  .replaceAll('(', '')
+                  .replaceAll(')', '')
+            }),
+            headers: headerDefault);
+
+        bipList = jsonDecode(utf8.decode(bipResponse.bodyBytes)) as List;
+
+        try {
+          usuResponse = await cliente.get(
+              Uri.http('127.0.0.1:5000', '/Usuarios',
+                  {'id': '${romaneio['Id Usur.']}'}),
+              headers: headerDefault);
+
+          usuList = jsonDecode(utf8.decode(usuResponse.bodyBytes)) as List;
+        } catch (e) {
+          print('getUsuario $e');
+        }
+
+        try {
+          teste.add(Romaneio(
+              romaneio['ID'] as int?,
+              bipList.length as int?,
+              (romaneio['Data Fechamento'] != null
+                  ? (DateFormat('EEE, d MMM yyyy HH:mm:ss')
+                          .parse(romaneio['Data Fechamento']))
+                      .toLocal()
+                  : null),
+              (romaneio['Data Romaneio'] != null
+                  ? (DateFormat('EEE, d MMM yyyy HH:mm:ss')
+                          .parse(romaneio['Data Romaneio']))
+                      .toLocal()
+                  : null),
+              (usuList.isNotEmpty ? usuList[usuList.length - 1]['NOME'] : null)
+                  as String?,
+              palList
+                  .map(
+                    (e) {
+                      return e["ID"];
+                    },
+                  )
+                  .toString()
+                  .replaceAll('(', '')
+                  .replaceAll(')', '') as String?,
+              (romaneio['Cod. Trans.'] ?? 0) as int?,
+              ''));
+        } catch (e) {
+          print(e);
+        }
+      }
+
+      // pedidos = await conn.execute(
+      //     'select romaneio.ID,romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, COALESCE(string_agg(distinct cast(palete.ID as varchar) , \', \' ),\'0\'), count(bipagem.ID) from romaneio left join palete on palete.ID_ROMANEIO = romaneio.ID left join bipagem on palete.ID = bipagem.PALETE left join usuarios on usuarios.ID = romaneio.ID_USUR group by romaneio.ID, romaneio.DATA_FECHAMENTO, romaneio.DATA_ROMANEIO, usuarios.NOME, usuarios.NOME;');
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
-    }
-    for (var element in pedidos) {
-      teste.add(Romaneio(
-          element[0] as int?,
-          element[5] as int?,
-          (element[1] as DateTime?)?.toLocal(),
-          (element[2] as DateTime?)?.toLocal(),
-          element[3] as String?,
-          element[4] as String?,
-          0,
-          ''));
     }
     return teste;
   }
@@ -1103,44 +1231,34 @@ class Banco {
     return teste;
   }
 
-  Future<int?> getromaneio(BuildContext context) async {
-    int? teste;
-    late final Result pedidos;
+  ///Função para puxar o último romaneio criado
+  Future<int> novoRomaneio(BuildContext context) async {
+    int teste = 0;
+    late final http.Response romResponse;
+    var pedidosLista = [];
+    // late final Result pedidos;
 
     try {
-      pedidos = await conn.execute(
-          'select COALESCE(MAX(ID),0) from romaneio where DATA_FECHAMENTO IS NULL;');
+      romResponse = await cliente.get(romaneioAPI, headers: headerDefault);
+
+      pedidosLista = jsonDecode(utf8.decode(romResponse.bodyBytes)) as List;
+
+      // pedidos = await conn.execute(
+      //     'select COALESCE(MAX(ID),0) from romaneio where DATA_FECHAMENTO IS NULL;');
+
+      teste = pedidosLista[pedidosLista.length - 1]['ID'];
     } on Exception catch (e) {
       if (kDebugMode) {
         print(e);
       }
-    }
-    for (var element in pedidos) {
-      teste = element[0] as int?;
-    }
-    if (teste == 0) {
-      if (context.mounted) {
-        await showCupertinoModalPopup(
-            barrierDismissible: false,
-            builder: (context) {
-              return CupertinoAlertDialog(
-                title: const Text('Nenhum romaneio em Aberto'),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                      isDefaultAction: true,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Voltar'))
-                ],
-              );
-            },
-            context: context);
-      }
-    } else {
       return teste;
     }
-    return null;
+
+    teste = pedidosLista[pedidosLista.length - 1]['ID'] ?? 0;
+
+    print(teste);
+
+    return (teste);
   }
 
   Future<List<Romaneio>> romaneiosFinalizados(
@@ -1248,7 +1366,7 @@ class Banco {
   }
 
   Future<int> qtdFat() async {
-    var teste = 0;
+    var teste = 69;
     late Result volumeResponse;
 
     // try {
@@ -1292,7 +1410,7 @@ class Banco {
   }
 
   Future<int> qtdCanc() async {
-    var teste = 0;
+    var teste = 69;
     late Result volumeResponse;
 
     // volumeResponse = await conn.execute(
@@ -1578,21 +1696,57 @@ class Banco {
 
   // ------------------------ Funções do Cliente -------------------------------
 
+  // 2 - Read
+
   Future<Cliente> selectCliente(int cod) async {
     late var cli = Cliente(0, 0, '', '', '', '');
-    late Result volumeResponse;
-    volumeResponse = await conn.execute(
-        'select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON cidades.COD_CIDADE = clientes.COD_CIDADE where clientes.cod_cli = $cod');
+    late http.Response volumeResponse;
+
+    volumeResponse = await cliente.get(Uri.http('127.0.0.1:5000', '/Clientes'),
+        headers: headerDefault);
+
+    // volumeResponse = await conn.execute(
+    //     'select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON cidades.COD_CIDADE = clientes.COD_CIDADE where clientes.cod_cli = $cod');
+
+    var clienteLista =
+        jsonDecode(utf8.decode(volumeResponse.bodyBytes)) as List;
 
     if (cod != 0) {
-      for (var element in volumeResponse) {
+      for (var element in clienteLista) {
         cli = Cliente(
-            cod, 0, element[0] as String?, '', element[1] as String?, '',
-            cidade: element[2] as String?,
-            bairro: element[3] as String?,
-            cep: '${element[4]}' as String?,
-            endereco: element[5] as String?,
-            telefoneCelular: element[6] as String?);
+            element['Cod_Cli'],
+            element['Cod_Cidade'],
+            element['Cliente'],
+            element['Nome_Fantasia'],
+            element['CPF/CNPJ'],
+            element['Tipo']);
+      }
+    }
+
+    return cli;
+  }
+
+  // ------------------------ Funções da Cidade -------------------------------
+
+  // 2 - Read
+
+  Future<Cidade> selectCidade(int cod) async {
+    late var cli = Cidade(0, 0, '', '');
+    late http.Response volumeResponse;
+
+    volumeResponse = await cliente.get(
+        Uri.http('127.0.0.1:5000', '/Cidades', {'codibge': cod}),
+        headers: headerDefault);
+
+    // volumeResponse = await conn.execute(
+    //     'select CLIENTE, CNPJ, concat(CIDADE,\',\',UF), BAIRRO, CEP, ENDERECO, TELEFONE_COMERCIAL from clientes left join cidades ON cidades.COD_CIDADE = clientes.COD_CIDADE where clientes.cod_cli = $cod');
+
+    var cidadeLista = jsonDecode(utf8.decode(volumeResponse.bodyBytes)) as List;
+
+    if (cod != 0) {
+      for (var element in cidadeLista) {
+        cli = Cidade(element['Cod_Cidade'], element['Cod_IBGE'],
+            element['Cidade'], element['UF']);
       }
     }
 

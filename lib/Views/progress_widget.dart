@@ -92,7 +92,6 @@ class _ProgressWidgetState extends State<ProgressWidget>
   }
 
   void rodarBanco() async{
-      getPed = bd.selectAll();
       qtdCancFut = bd.qtdCanc();
       qtdFatFut = bd.qtdFat();
   }

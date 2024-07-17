@@ -58,7 +58,7 @@ class _AtualizarWidget extends State<AtualizarWidget> {
   }
 
   void rodarBanco() async {
-    ultAttfut = bd.ultAttget();
+    // ultAttfut = bd.ultAttget();
     teste = AtualizacaoWidget(usur: usur, context: context, bd: bd,);
 
     qtdCancFut = bd.qtdCanc();
@@ -249,10 +249,10 @@ class _AtualizarWidget extends State<AtualizarWidget> {
                                 onTap: () async {
                                   if (await bd.connected(context) == 1){
                                     if (context.mounted) {
-                                      bd.atualizar(ultAtt, context);
-                                    }
-                                  }
-                                },
+                                  // bd.atualizar(ultAtt, context);
+                                }
+                              }
+                            },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),
@@ -297,10 +297,10 @@ class _AtualizarWidget extends State<AtualizarWidget> {
                                 onTap: () async {
                                   if (await bd.connected(context) == 1){
                                     if (context.mounted) {
-                                      bd.atualizarFull(ultAtt, context);
-                                    }
-                                  }
-                                },
+                                  // bd.atualizarFull(ultAtt, context);
+                                }
+                              }
+                            },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),

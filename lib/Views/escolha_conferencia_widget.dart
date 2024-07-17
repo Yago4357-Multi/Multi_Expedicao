@@ -364,7 +364,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                             if (await bd.connected(
                                                                     context) ==
                                                                 1) {
-                                                              bd.paleteExiste(
+                                                              bd.conferirPalete(
                                                                   int.parse(
                                                                       value),
                                                                   context,
@@ -754,7 +754,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                           if (await bd.connected(
                                                                   context) ==
                                                               1) {
-                                                            bd.paleteExiste(
+                                                            bd.conferirPalete(
                                                                 int.parse(
                                                                     value),
                                                                 context,
