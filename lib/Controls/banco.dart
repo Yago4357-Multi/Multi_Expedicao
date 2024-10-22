@@ -335,7 +335,9 @@ class Banco {
     } else {
       var codArrumado = cod.substring(14, 33);
       var ped = codArrumado.substring(0, 10);
-      var cx = codArrumado.substring(14, 16);
+      var cx = codArrumado.substring(13, 16);
+
+      print(cx);
 
       try {
         await conn.execute(

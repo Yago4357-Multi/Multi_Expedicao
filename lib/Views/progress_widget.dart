@@ -6,6 +6,7 @@ import '../Components/Model/progress_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
 import 'conferencia_widget.dart';
@@ -49,7 +50,7 @@ class _ProgressWidgetState extends State<ProgressWidget>
   final animationsMap = {
     'containerOnPageLoadAnimation4': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
-      effects: [
+      effectsBuilder: () => [
         FadeEffect(
           curve: Curves.easeInOut,
           delay: 0.ms,

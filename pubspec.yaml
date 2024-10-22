@@ -46,7 +46,7 @@ dependencies:
   flutter:
     sdk: flutter
   fl_chart:
-  flutterflow_ui:
+  flutterflow_ui: ^0.3.1
   barcode_widget:
   postgres:
   http:
@@ -56,10 +56,12 @@ dependencies:
   flutter_animate:
   pdf:
   csv:
-  google_fonts: ^4.0.3
+  google_fonts:
   file_picker:
   syncfusion_flutter_datepicker:
   printing:
+  rive_common:
+  rive:
   go_router: ^14.2.0
   shared_preferences: ^2.2.3
 

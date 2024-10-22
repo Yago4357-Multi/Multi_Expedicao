@@ -8,6 +8,7 @@ import '../Components/Model/home_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/contagem.dart';
 import '../Models/usur.dart';
 import 'carregamento_widget.dart';
@@ -56,7 +57,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   final animationsMap = {
     'containerOnPageLoadAnimation4': AnimationInfo(
       trigger: AnimationTrigger.onPageLoad,
-      effects: [
+      effectsBuilder: () => [
         FadeEffect(
           curve: Curves.easeInOut,
           delay: 0.ms,

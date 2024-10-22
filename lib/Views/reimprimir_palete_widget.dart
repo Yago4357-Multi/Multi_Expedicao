@@ -10,6 +10,7 @@ import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/palete.dart';
 import '../Models/usur.dart';
 import 'home_widget.dart';
