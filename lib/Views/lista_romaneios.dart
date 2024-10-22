@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../FlutterFlowTheme.dart';
 import '/Components/Widget/drawer_widget.dart';
 import '../Components/Model/lista_romaneios.dart';
 import '../Components/Widget/atualizacao.dart';
@@ -46,7 +48,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
   String dica2 = 'Procure um Pedido...';
 
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 31))).startOfDay;
   DateTime dtFim = (getCurrentTimestamp.endOfDay);
   late PickerDateRange datasRange;
 
@@ -546,10 +548,10 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
 
                                           if (datasRange.endDate != null) {
                                             if (datasRange.endDate! >=
-                                                (dtIni.add(
-                                                    const Duration(days: 7)))) {
+                                                (dtIni.add(const Duration(
+                                                    days: 31)))) {
                                               dtFim = dtIni
-                                                  .add(const Duration(days: 7))
+                                                  .add(const Duration(days: 31))
                                                   .endOfDay;
                                             } else {
                                               dtFim = (datasRange.endDate!).endOfDay;
@@ -559,7 +561,9 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                                 .endOfDay;
                                           }
                                         } catch(e){
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         datasRange = PickerDateRange(dtIni, dtFim);
                                         datas.selectedRange = datasRange;
@@ -591,6 +595,7 @@ class _ListaRomaneiosWidget extends State<ListaRomaneiosWidget> {
                                       }
                                       setState(() {});
                                     },
+                                    minDate: DateTime.utc(2024, 6, 5),
                                     monthViewSettings:
                                     const DateRangePickerMonthViewSettings(
                                       weekendDays: [6, 7],

@@ -6,6 +6,7 @@ import '../Components/Model/escolha_bipagem_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/usur.dart';
 import 'criar_palete_widget.dart';
 import 'declaracoes.dart';
@@ -364,7 +365,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                             if (await bd.connected(
                                                                     context) ==
                                                                 1) {
-                                                              bd.paleteExiste(
+                                                              bd.conferirPalete(
                                                                   int.parse(
                                                                       value),
                                                                   context,
@@ -754,7 +755,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                           if (await bd.connected(
                                                                   context) ==
                                                               1) {
-                                                            bd.paleteExiste(
+                                                            bd.conferirPalete(
                                                                 int.parse(
                                                                     value),
                                                                 context,
@@ -1154,7 +1155,7 @@ class _EscolhaBipagemWidgetState extends State<EscolhaBipagemWidget> {
                                                   color: Colors.white,
                                                 ),
                                                 Text(
-                                                  'Reimprimir Paletes',
+                                                  'Declarações',
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .titleLarge,

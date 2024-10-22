@@ -7,6 +7,7 @@ import '../Components/Model/escolha_romaneio_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/romaneio.dart';
 import '../Models/usur.dart';
 import 'lista_cancelados.dart';
@@ -222,9 +223,10 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
           ),
           actions: [
             IconButton(icon: const Icon(Icons.lock_reset_outlined),onPressed: () {
-              setState(() {
-              });
-            }, color: Colors.white,),
+                setState(rodarBanco);
+              },
+              color: Colors.white,
+            ),
           ],
           centerTitle: true,
           elevation: 2,
@@ -281,14 +283,16 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     if (await bd.connected(context) == 1) {
-                                      bd.createromaneio(usur);
-                                      var i = 0;
-                                      if (context.mounted) {
-                                        i = await bd.getromaneio(context) ?? 0;
-                                      }
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                        await Navigator.push(
+                                                      bd.createRomaneio();
+                                                      var i = 0;
+                                                      if (context.mounted) {
+                                                        i = await bd
+                                                            .novoRomaneio(
+                                                                context);
+                                                      }
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                        await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
@@ -362,12 +366,13 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.done) {
                                                   romaneiosLista =
-                                                  snapshot.data as List<
-                                                      Romaneio>;
-                                                  return Padding(
-                                                    padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(
+                                                                (snapshot
+                                                                        .data ??
+                                                                    []);
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
                                                         16, 12, 16, 12),
                                                     child: Row(
                                                       mainAxisSize: MainAxisSize
@@ -1775,14 +1780,15 @@ class _EscolhaRomaneioWidgetState extends State<EscolhaRomaneioWidget> {
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   if (await bd.connected(context) == 1) {
-                                    bd.createromaneio(usur);
-                                    var i = 0;
-                                    if (context.mounted) {
-                                      i = await bd.getromaneio(context) ?? 0;
-                                    }
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                      await Navigator.push(
+                                                    bd.createRomaneio();
+                                                    var i = 0;
+                                                    if (context.mounted) {
+                                                      i = await bd.novoRomaneio(
+                                                          context);
+                                                    }
+                                                    if (context.mounted) {
+                                                      Navigator.pop(context);
+                                                      await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>

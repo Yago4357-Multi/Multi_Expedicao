@@ -1,14 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '/Components/Widget/drawer_widget.dart';
 import '../Components/Model/lista_faturados.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/palete.dart';
 import '../Models/pedido.dart';
 import '../Models/usur.dart';
-import '/Components/Widget/drawer_widget.dart';
 import 'lista_cancelados.dart';
 
 ///Página da listagem de Romaneio
@@ -40,7 +42,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
   String dica = 'Procure um pedido...';
 
   DateTime dtIni =
-      (getCurrentTimestamp.subtract(const Duration(days: 7))).startOfDay;
+      (getCurrentTimestamp.subtract(const Duration(days: 31))).startOfDay;
   DateTime? dtFim = (getCurrentTimestamp).endOfDay;
   late PickerDateRange datasRange;
 
@@ -69,7 +71,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
     _model.textFieldFocusNode ??= FocusNode();
     _model.choiceChipsValue;
     _model.choiceChipsValueController = FormFieldController<List<String>>(
-      ['Todos'],
+      ['N Ignorados'],
     );
     rodarBanco();
   }
@@ -239,7 +241,8 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                           child: TextFormField(
                                             canRequestFocus: true,
                                             onChanged: (value) {
-                                              _model.choiceChipsValue = 'Todos';
+                                              _model.choiceChipsValue =
+                                                  'N Ignorados';
                                               setState(() {
                                                 if (pedidosSalvos.length <
                                                     pedidos.length) {
@@ -341,6 +344,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                       FlutterFlowChoiceChips(
                                           options: const [
                                             ChipData('Todos'),
+                                            ChipData('Ignorados'),
                                             ChipData('N Ignorados'),
                                           ],
                                           onChanged: (val) {
@@ -348,11 +352,20 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                               if (_model.choiceChipsValue == 'Todos') {
                                                 pedidos = pedidosSalvos;
                                               } else {
-                                                pedidos = pedidosSalvos
-                                                    .where((element) =>
-                                                element.ignorar ==
-                                                    false)
-                                                    .toList();
+                                                if (_model.choiceChipsValue ==
+                                                    'N Ignorados') {
+                                                  pedidos = pedidosSalvos
+                                                      .where((element) =>
+                                                          element.ignorar ==
+                                                          false)
+                                                      .toList();
+                                                } else {
+                                                  pedidos = pedidosSalvos
+                                                      .where((element) =>
+                                                          element.ignorar ==
+                                                          true)
+                                                      .toList();
+                                                }
                                               }
                                             });
                                           },
@@ -412,11 +425,13 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                     navigationDirection:
                                         DateRangePickerNavigationDirection.vertical,
                                     maxDate: getCurrentTimestamp,
+                                    minDate: DateTime.utc(2024, 6, 5),
                                     startRangeSelectionColor: Colors.green.shade700,
                                     initialDisplayDate: dtFim,
                                     onSelectionChanged:
                                         (dateRangePickerSelectionChangedArgs) async {
-                                          _model.choiceChipsValueController?.value = ['Todos'];
+                                      _model.choiceChipsValueController?.value =
+                                          ['N Ignorados'];
                                       if (await bd.connected(context) == 1) {
                                         datasRange =
                                             dateRangePickerSelectionChangedArgs
@@ -428,10 +443,10 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
 
                                           if (datasRange.endDate != null) {
                                             if (datasRange.endDate! >=
-                                                (dtIni.add(
-                                                    const Duration(days: 7)))) {
+                                                (dtIni.add(const Duration(
+                                                    days: 31)))) {
                                               dtFim = dtIni
-                                                  .add(const Duration(days: 7))
+                                                  .add(const Duration(days: 31))
                                                   .endOfDay;
                                             } else {
                                               dtFim = (datasRange.endDate!).endOfDay;
@@ -441,7 +456,9 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 .endOfDay;
                                           }
                                         } catch(e){
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         datasRange = PickerDateRange(dtIni, dtFim);
                                         datas.selectedRange = datasRange;
@@ -596,6 +613,19 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         ),
                                       ),
                                     ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Ignorar',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelSmall
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              letterSpacing: 0,
+                                            ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -608,6 +638,16 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                   if (pedidosSalvos != snapshot.data) {
                                     pedidos = snapshot.data ?? [];
                                     pedidosSalvos = pedidos;
+                                    pedidos = pedidos
+                                        .where(
+                                          (element) =>
+                                              element.ignorar! ==
+                                              (_model.choiceChipsValue ==
+                                                      'Ignorados'
+                                                  ? true
+                                                  : false),
+                                        )
+                                        .toList();
                                   }
                                   return ListView.builder(
                                     itemCount: pedidos.length,
@@ -640,7 +680,7 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                         child: Row(
                                           children: [
                                             Container(
-                                              width: 960,
+                                              width: 920,
                                               decoration: BoxDecoration(
                                                 color: corStatus,
                                                 borderRadius:
@@ -798,16 +838,53 @@ class _ListaFaturadosWidget extends State<ListaFaturadosWidget> {
                                                 ),
                                               ),
                                             ),
-                                            Checkbox(
-                                                value: pedidos[index].ignorar,
-                                                onChanged: (value) async {
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
                                                   await bd.updateIgnorar(
-                                                      pedidos[index].ped, value);
+                                                      pedidos[index].ped,
+                                                      ignorar: !pedidos[index]
+                                                          .ignorar!);
                                                   pedidoResposta =
                                                       bd.faturadosNBipados(
                                                           dtIni, dtFim!);
+                                                  _model.choiceChipsValue =
+                                                      pedidos[index].ignorar!
+                                                          ? 'N Ignorados'
+                                                          : 'Ignorados';
                                                   setState(() {});
-                                                })
+                                                },
+                                                child: Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    8)),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .green.shade700,
+                                                            width: 4)),
+                                                    child: pedidos[index]
+                                                            .ignorar!
+                                                        ? Icon(
+                                                            Icons.check_rounded,
+                                                            color: Colors
+                                                                .green.shade700,
+                                                            size: 16,
+                                                          )
+                                                        : Container()),
+                                              ),
+                                            )
                                           ],
                                         ),
                                       );

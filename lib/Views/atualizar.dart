@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
@@ -6,6 +5,7 @@ import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/usur.dart';
 import 'lista_cancelados.dart';
 import 'lista_faturados.dart';
@@ -19,10 +19,10 @@ class AtualizarWidget extends StatefulWidget {
   final Banco bd;
 
   ///Construtor da página de criação de novos Paletes
-  const AtualizarWidget(
-      this.usur, {
+  const AtualizarWidget({
         super.key,
-        required this.bd,
+    required this.usur,
+    required this.bd,
       });
 
   @override
@@ -59,7 +59,7 @@ class _AtualizarWidget extends State<AtualizarWidget> {
   }
 
   void rodarBanco() async {
-    ultAttfut = bd.ultAttget();
+    // ultAttfut = bd.ultAttget();
     teste = AtualizacaoWidget(usur: usur, context: context, bd: bd,);
 
     qtdCancFut = bd.qtdCanc();
@@ -250,10 +250,10 @@ class _AtualizarWidget extends State<AtualizarWidget> {
                                 onTap: () async {
                                   if (await bd.connected(context) == 1){
                                     if (context.mounted) {
-                                      bd.atualizar(ultAtt, context);
-                                    }
-                                  }
-                                },
+                                  // bd.atualizar(ultAtt, context);
+                                }
+                              }
+                            },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),
@@ -298,10 +298,10 @@ class _AtualizarWidget extends State<AtualizarWidget> {
                                 onTap: () async {
                                   if (await bd.connected(context) == 1){
                                     if (context.mounted) {
-                                      bd.atualizarFull(ultAtt, context);
-                                    }
-                                  }
-                                },
+                                  // bd.atualizarFull(ultAtt, context);
+                                }
+                              }
+                            },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),

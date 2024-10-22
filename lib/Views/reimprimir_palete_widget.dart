@@ -10,6 +10,7 @@ import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/palete.dart';
 import '../Models/usur.dart';
 import 'home_widget.dart';
@@ -1269,8 +1270,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                                                         await Navigator.push(
                                                                             context,
                                                                             MaterialPageRoute(
-                                                                              builder: (context) =>
-                                                                                  HomeWidget(usur, bd: bd),
+                                                                              builder: (context) => HomeWidget(bd: bd),
                                                                             ));
                                                                       }
                                                                     }
@@ -1356,7 +1356,7 @@ class _ReimprimirPaleteWidgetState extends State<ReimprimirPaleteWidget> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              HomeWidget(usur, bd: bd),
+                                              HomeWidget(bd: bd),
                                         ));
                                   }
                                 }

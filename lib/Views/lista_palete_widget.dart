@@ -7,6 +7,7 @@ import '../Components/Model/lista_palete_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/contagem.dart';
 import '../Models/palete.dart';
 import '../Models/usur.dart';
@@ -2068,7 +2069,6 @@ class _ListaPaleteWidgetState extends State<ListaPaleteWidget> {
                                                                                               if (await bd.connected(
                                                                                                   context) ==
                                                                                                   1) {
-                                                                                                print(cont);
                                                                                                 if (await bd
                                                                                                     .selectPallet(
                                                                                                     cont,

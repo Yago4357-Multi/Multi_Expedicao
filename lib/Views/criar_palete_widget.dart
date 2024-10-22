@@ -9,6 +9,7 @@ import '../Components/Model/criar_palete_model.dart';
 import '../Components/Widget/atualizacao.dart';
 import '../Components/Widget/drawer_widget.dart';
 import '../Controls/banco.dart';
+import '../FlutterFlowTheme.dart';
 import '../Models/usur.dart';
 import 'conferencia_widget.dart';
 import 'lista_cancelados.dart';
@@ -65,8 +66,8 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
   var i = 0;
 
   void rodarBanco() async {
-      getPalete = bd.getpalete();
-      qtdCancFut = bd.qtdCanc();
+    getPalete = bd.novoPalete();
+    qtdCancFut = bd.qtdCanc();
       qtdFatFut = bd.qtdFat();
 
   }
@@ -230,7 +231,7 @@ class _CriarPaleteWidgetState extends State<CriarPaleteWidget> {
               FutureBuilder(
                 future: getPalete,
                 builder: (context, snapshot) {
-                    i = snapshot.data!;
+                  i = snapshot.data ?? 0;
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

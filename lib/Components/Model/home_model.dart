@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 
-import '../../Views/home_widget.dart';
 import '/components/Widget/drawer_widget.dart';
+import '../../Views/home_widget.dart';
 
 ///Modelo para a página inicial do app
 class HomePageModel extends FlutterFlowModel<HomeWidget> {

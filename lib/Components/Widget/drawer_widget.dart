@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../Controls/banco.dart';
+import '../../FlutterFlowTheme.dart';
 import '../../Models/usur.dart';
 import '../../Views/carregamento_widget.dart';
 import '../../Views/deletar_pedido_widget.dart';
 import '../../Views/escolha_conferencia_widget.dart';
 import '../../Views/escolha_romaneio_widget.dart';
-import '../../Views/home_widget.dart';
 import '../../Views/lista_cancelados.dart';
 import '../../Views/lista_faturados.dart';
 import '../../Views/lista_pedido_widget.dart';
@@ -145,9 +144,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             const EdgeInsetsDirectional.fromSTEB(8, 0, 6, 0),
                             child: MaterialButton(
                               onPressed: () async {
-                                Navigator.pop(context);
-                                Navigator.pop(context2);
-                                await Navigator.push(context, MaterialPageRoute(builder: (context) => HomeWidget(usur,bd: bd),));
+                                await Navigator.popAndPushNamed(
+                                    context, '/Home',
+                                    arguments: bd);
                               },
                               child: InkWell(
                                 splashColor: Colors.transparent,
